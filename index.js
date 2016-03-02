@@ -99,8 +99,11 @@ app.post('/sendEndorseLink',
     console.log('Emails collected: To(' + toEmails.length + '):' + toEmails.toString() + ' Cc(' + ccEmails.length + '):' + ccEmails.toString() + ' Subject: ' + request.body.subject);
 
     // First we initialize our module
-	
-	var mailgun = new Mailgun({apiKey: api_key, domain: domain});
+
+    var mailgun = new Mailgun({
+      apiKey: api_key,
+      domain: domain
+    });
 
     var fed360params = '?project=' + encodeURIComponent(request.body.subject) + '&emails=' + toEmails.toString();
 
@@ -120,17 +123,19 @@ app.post('/sendEndorseLink',
     }
 
     // Then we create a cloud function
-    mailgun.messages().send(params, function (err, body) {
-		    //If there is an error, render the error page
-        if (err) {
-            res.render('error', { error : err});
-            console.log("got an error: ", err);
-        }
-        //Else we can greet    and leave
-        else {
-			console.log('mail submitted');
-            console.log(body);
-        }
+    mailgun.messages().send(params, function(err, body) {
+      //If there is an error, render the error page
+      if (err) {
+        res.render('error', {
+          error: err
+        });
+        console.log("got an error: ", err);
+      }
+      //Else we can greet    and leave
+      else {
+        console.log('mail submitted');
+        console.log(body);
+      }
     });
 
     // This code section saves the incoming email to the Parse cloud database - TODO
@@ -143,3 +148,105 @@ app.post('/sendEndorseLink',
     //response.send('Error');
   }
 );
+
+//var base = new Airtable({ apiKey: 'keyWInwqgSshQe7GV' }).base('appYLZr7VvVPKZGvf');
+var Airtable = require('airtable');
+Airtable.configure({
+  endpointUrl: 'https://api.airtable.com',
+  apiKey: 'keyWInwqgSshQe7GV'
+});
+var base = Airtable.base('appYLZr7VvVPKZGvf');
+
+app.post('/saveProfile', function(request, response) {
+  var foundRecord = [];
+
+  base('People').select({
+    // Selecting the first 3 records in Main View:
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      console.log('Retrieved ', record.get('id'));
+	  var fields = record.get('fields');
+	  //if ((fields["Name (First)"] == request.body.profile.firstname) && 
+	  //(fields["Name (Last)"] == request.body.profile.lastname)) {
+		  if ((fields["Username"] == request.body.profile.username) && 
+		  (fields["Password"] == request.body.profile.password)) {
+		  foundRecord.push(record));
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+    if (error) {
+      console.log(error);
+    } else {
+		if (foundRecord.length == 0) {
+			  createProfile(request);
+		} else {
+			if (foundRecord.length == 1) {
+				updateProfile(request, foundRecord[0]);
+			} else {
+				//duplicate IDs found
+				var listIds = ''
+				for (var index in foundRecord) {
+					listIds = listIds + foundRecord[index].get('ID');
+					if (index != (foundRecord.length - 1)) {
+						listIds = listIds + ',';
+					}
+				}
+				console.log('Duplicates found: ' + listIds);
+				console.log('Updating all records');
+				for (var index in foundRecord) {
+					updateProfile(request, foundRecord[index]);
+				}
+			}
+		}
+	}
+  });
+  
+
+});
+
+function updateProfile(request, record) {
+	var fields = record.get('fields');
+	
+}
+
+function createProfile(request) {
+	var organizationId = '';
+
+	
+	base('People').create({
+  "Name (First)": request.body.profile.firstname,
+  "Password": request.body.profile.password,
+  "Name (Last)": request.body.profile.lastname,
+  "Endorsements (received)": [
+  ],
+  "Endorsements (given)": [
+  ],
+  "Deliveries": [],
+  "Organization": organizationId,
+  "Direct Supervisor (email)": request.body.profile.supervisoremail,
+  "Email": request.body.profile.email,
+  "Job Changes": [
+  ],
+  "Username": request.body.profile.username,
+  "Training Ratings": "1",  // ask Logan about this
+  "Deliveries copy": []
+}, function(err, record) {
+    if (err) {
+		console.log(err);
+		return;
+	}
+    console.log(record);
+}
+);
+
+
+}
