@@ -100,7 +100,7 @@ app.post('/sendEndorseLink',
 
     // First we initialize our module
 	
-	var mailgun = newMailgun({apiKey: api_key, domain: domain});
+	var mailgun = new Mailgun({apiKey: api_key, domain: domain});
 
     var fed360params = '?project=' + encodeURIComponent(request.body.subject) + '&emails=' + toEmails.toString();
 
