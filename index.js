@@ -209,7 +209,7 @@ function getProfile(ID) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
-	  console.log('received record' + record.get('Profile ID'));
+	  console.log('received record: ' + record.get('Profile ID'));
 	  //console.log(JSON.stringify(record));
       if (record.get('Profile ID') == ID) {
 		console.log('found ID' + ID);
@@ -225,7 +225,7 @@ function getProfile(ID) {
 
   }, function done(error) {
     if (error) {
-        console.log(error);
+        console.log('getProfile: ' + error);
     }
 	console.log('no profile found for ' + ID);
 	return;
@@ -250,7 +250,7 @@ function addProfile(request) {
       "Deliveries copy": []
     }, function(err, record) {
       if (err) {
-        console.log(err);
+        console.log('addProfile: ' + err);
         return;
       }
       console.log('profile added: ' + record.get('id'));
@@ -276,7 +276,7 @@ function updateProfile(request, profileRecord, organizationRecord) {
       "Deliveries copy": profileRecord.get('Deliveries copy')
     }, function(err, record) {
       if (err) {
-        console.log(err);
+        console.log('updateProfile error: ' + err);
         return false;
       }
       console.log('profile updated: ' + record.get('id'));
@@ -308,7 +308,7 @@ function getOrganizationId(organization) {
 
   }, function done(error) {
     if (error) {
-      console.log(error);
+      console.log('getOrganizationId error: ' + error);
     }
 	console.log('no organization found for ' + organization);
     return;
@@ -326,7 +326,7 @@ function addOrganization(request) {
     "Position Changes (to)": []
   }, function(err, record) {
     if (err) { 
-      console.log(err); 
+      console.log('addOrganization error: ' + err); 
       return; 
     }
     console.log('organization added: ' + request.body.profile.organization);
@@ -347,7 +347,7 @@ function updateOrganization(request, profileRecord, organizationRecord) {
     "Position Changes (from)": organizationRecord.get('Position Changes (from)'),
     "Position Changes (to)": organizationRecord.get('Position Changes (to)')
   }, function(err, record) {
-    if (err) { console.log(err); return false; }
+    if (err) { console.log('updateOrganization error:' + err); return false; }
     console.log('updated ' + record.get('id'));
     return true;
   });
