@@ -338,7 +338,7 @@ function addOrganization(profileJSON) {
 }
 
 function updateOrganization(profileJSON, profileRecord, organizationRecord) {
-  console.log('preparing to update organization: ' + organizationRecord.get('Name') + ' for ' + profileRecord.get('Profile ID');
+  console.log('preparing to update organization: ' + organizationRecord.get('Name') + ' for ' + profileRecord.get('Profile ID'));
   var people = organizationRecord.get('People');
   if (people.indexOf(profileRecord.get('id') == -1)) {
     people.push(profileRecord.get('id'));
