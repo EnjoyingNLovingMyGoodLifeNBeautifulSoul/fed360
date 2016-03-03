@@ -321,7 +321,7 @@ function addOrganization(request) {
 
 function updateOrganization(request, profileRecord, organizationRecord) {
   var people = organizationRecord.get('People');
-  if (people.indexOf(profileRecord.get('id') == -1) {
+  if (people.indexOf(profileRecord.get('id') == -1)) {
     people.push(profileRecord.get('id'));
   }
 
