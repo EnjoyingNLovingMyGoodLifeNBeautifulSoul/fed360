@@ -200,6 +200,8 @@ function getProfile(ID) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
+	  console.log('received record');
+	  console.log(record);
       var fields = record.get('fields');
       if (fields.ID == ID) {
         console.log('Located existing profile ', record.get('ID'));
