@@ -164,12 +164,13 @@ app.post('/saveProfile', function(request, response) {
 
 
 function saveProfile(request, response) {
+  var profileJSON = JSON.parse(request.body.profile);
   var profileRecord = '';
   console.log(JSON.stringify(request.body));
-  if (request.body.profile.username == '') {
-     profileRecord = getProfile(request.body.profile.email);
+  if (profileJSON.username == '') {
+     profileRecord = getProfile(profileJSON.email);
   } else {
-     profileRecord = getProfile(request.body.profile.username);
+     profileRecord = getProfile(profileJSON.username);
   }
   if (typeof profileRecord == 'undefined') {
     profileRecord = addProfile(request);
@@ -177,7 +178,7 @@ function saveProfile(request, response) {
 
   var organizationRecord = '';
 
-  organizationRecord = getOrganizationId(request.body.profile.organization);
+  organizationRecord = getOrganizationId(profileJSON.organization);
   if (typeof organizationRecord == 'undefined') {
     organizationRecord = addOrganization(request);
   }
