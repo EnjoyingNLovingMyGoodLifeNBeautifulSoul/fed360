@@ -165,7 +165,7 @@ app.post('/saveProfile', function(request, response) {
 
 function saveProfile(request, response) {
   var profileRecord = '';
-
+  console.log(JSON.stringify(request.body));
   if (request.body.profile.username == '') {
      profileRecord = getProfile(request.body.profile.email);
   } else {
