@@ -225,7 +225,7 @@ function getProfile(ID) {
 
   }, function done(error) {
     if (error) {
-        console.log('getProfile: ' + error);
+        console.log('getProfile error: ' + error);
     }
 	console.log('no profile found for ' + ID);
 	return;
@@ -235,7 +235,7 @@ function getProfile(ID) {
 function addProfile(request) {
   // save profile to Airtable
     base('People').create({
-      "Name (First)": request.body.profile.firstname,
+      "Name (First)": request.body.profile.firstname/*,
       "Password": request.body.profile.password,
       "Name (Last)": request.body.profile.lastname,
       "Endorsements (received)": [],
@@ -247,10 +247,10 @@ function addProfile(request) {
       "Job Changes": [],
       "Username": request.body.profile.username,
       "Training Ratings": "1", // ask Logan about this
-      "Deliveries copy": []
+      "Deliveries copy": []*/
     }, function(err, record) {
       if (err) {
-        console.log('addProfile: ' + err);
+        console.log('addProfile error: ' + err);
         return;
       }
       console.log('profile added: ' + record.get('id'));
