@@ -179,7 +179,7 @@ function saveProfile(request, response) {
      profileRecord = getProfile(profileJSON.username);
   }
   if (typeof profileRecord == 'undefined') {
-    profileRecord = addProfile(request);
+    profileRecord = addProfile(profileJSON);
   }
 
   console.log('processing organization');
@@ -187,11 +187,11 @@ function saveProfile(request, response) {
 
   organizationRecord = getOrganizationId(profileJSON.organization);
   if (typeof organizationRecord == 'undefined') {
-    organizationRecord = addOrganization(request);
+    organizationRecord = addOrganization(profileJSON);
   }
 
-  var updateProfileSuccess = updateProfile(request, profileRecord, organizationRecord);
-  var updateOrganizationSuccess = updateOrganization(request, profileRecord, organizationRecord);
+  var updateProfileSuccess = updateProfile(profileJSON, profileRecord, organizationRecord);
+  var updateOrganizationSuccess = updateOrganization(profileJSON, profileRecord, organizationRecord);
   if ((updateProfileSucess == true)
     && (updateOrganizationSuccess == true)) {
     response.send('success');
@@ -232,20 +232,20 @@ function getProfile(ID) {
   });
 }
 
-function addProfile(request) {
+function addProfile(profileJSON) {
   // save profile to Airtable
     base('People').create({
-      "Name (First)": request.body.profile.firstname/*,
-      "Password": request.body.profile.password,
-      "Name (Last)": request.body.profile.lastname,
+      "Name (First)": profileJSON.firstname/*,
+      "Password": profileJSON.password,
+      "Name (Last)": profileJSON.lastname,
       "Endorsements (received)": [],
       "Endorsements (given)": [],
       "Deliveries": [],
       "Organization": '',
-      "Direct Supervisor (email)": request.body.profile.supervisoremail,
-      "Email": request.body.profile.email,
+      "Direct Supervisor (email)": profileJSON.supervisoremail,
+      "Email": profileJSON.email,
       "Job Changes": [],
-      "Username": request.body.profile.username,
+      "Username": profileJSON.username,
       "Training Ratings": "1", // ask Logan about this
       "Deliveries copy": []*/
     }, function(err, record) {
@@ -258,20 +258,20 @@ function addProfile(request) {
     });
 }
 
-function updateProfile(request, profileRecord, organizationRecord) {
+function updateProfile(profileJSON, profileRecord, organizationRecord) {
 
   base('People').update(profileRecord.get('id'), {
-      "Name (First)": request.body.profile.firstname,
-      "Password": request.body.profile.password,
-      "Name (Last)": request.body.profile.lastname,
+      "Name (First)": profileJSON.firstname,
+      "Password": profileJSON.password,
+      "Name (Last)": profileJSON.lastname,
       "Endorsements (received)": profileRecord.get('Endorsements (received)'),
       "Endorsements (given)": profileRecord.get('Endorsements (given)'),
       "Deliveries": profileRecord.get('Deliveries'),
       "Organization": organizationRecord.get('id'),
-      "Direct Supervisor (email)": request.body.profile.supervisoremail,
-      "Email": request.body.profile.email,
+      "Direct Supervisor (email)": profileJSON.supervisoremail,
+      "Email": profileJSON.email,
       "Job Changes": profileRecord.get('Job Changes'),
-      "Username": request.body.profile.username,
+      "Username": profileJSON.username,
       "Training Ratings": "1", // ask Logan about this
       "Deliveries copy": profileRecord.get('Deliveries copy')
     }, function(err, record) {
@@ -316,10 +316,10 @@ function getOrganizationId(organization) {
 
 }
 
-function addOrganization(request) {
+function addOrganization(profileJSON) {
       // add organziation to organziation table
   base('Organizations').create({
-    "Name": request.body.profile.organization,
+    "Name": profileJSON.organization,
     "People": [],
     "Positions": [],
     "Position Changes (from)": [],
@@ -329,19 +329,19 @@ function addOrganization(request) {
       console.log('addOrganization error: ' + err); 
       return; 
     }
-    console.log('organization added: ' + request.body.profile.organization);
+    console.log('organization added: ' + profileJSON.organization);
     return record;
   });
 }
 
-function updateOrganization(request, profileRecord, organizationRecord) {
+function updateOrganization(profileJSON, profileRecord, organizationRecord) {
   var people = organizationRecord.get('People');
   if (people.indexOf(profileRecord.get('id') == -1)) {
     people.push(profileRecord.get('id'));
   }
 
   base('Organizations').update(organizationRecord.get('id'), {
-    "Name": request.body.profile.organization,
+    "Name": profileJSON.organization,
     "People": people,
     "Positions": organizationRecord.get('Positions'),
     "Position Changes (from)": organizationRecord.get('Position Changes (from)'),
