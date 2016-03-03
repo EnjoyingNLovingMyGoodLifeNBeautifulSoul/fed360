@@ -182,6 +182,7 @@ function saveProfile(request, response) {
     profileRecord = addProfile(request);
   }
 
+  console.log('processing organization');
   var organizationRecord = '';
 
   organizationRecord = getOrganizationId(profileJSON.organization);
