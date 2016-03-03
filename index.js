@@ -164,9 +164,9 @@ app.post('/saveProfile', function(request, response) {
 
 
 function saveProfile(request, response) {
-  console.log(JSON.stringify(request.body));
+  //console.log(JSON.stringify(request.body));
   var profileJSON = JSON.parse(request.body.profile);
-  console.log(JSON.stringify(profileJSON));
+  console.log('data being processed: ' + JSON.stringify(profileJSON));
   var profileRecord = '';
 
   if ((typeof profileJSON.username == 'undefined') || (profileJSON.username == '')) {
