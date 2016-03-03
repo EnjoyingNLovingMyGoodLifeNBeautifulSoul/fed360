@@ -169,8 +169,8 @@ function saveProfile(request, response) {
   console.log(JSON.stringify(profileJSON));
   var profileRecord = '';
 
-  if ((typeof profile.JSON.username == 'undefined') || (profileJSON.username == '')) {
-	 if (typeof profile.JSON.email == 'undefined') {
+  if ((typeof profileJSON.username == 'undefined') || (profileJSON.username == '')) {
+	 if (typeof profileJSON.email == 'undefined') {
 		 console.log('no username or email found');
 		 response.send('no username or email found');
 	 }
