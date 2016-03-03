@@ -236,13 +236,13 @@ function addProfile(profileJSON) {
 	console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
     base('People').create({
-      "Name (First)": profileJSON.firstname,
+      "Name (First)": profileJSON.firstname//,
       "Password": profileJSON.password,
-      "Name (Last)": profileJSON.lastname,
-      "Endorsements (received)": [],
-      "Endorsements (given)": [],
-      "Deliveries": [],
-      "Organization": '',
+      //"Name (Last)": profileJSON.lastname,
+      //"Endorsements (received)": [],
+      //"Endorsements (given)": [],
+      //"Deliveries": [],
+      //"Organization": '',
       "Direct Supervisor (email)": profileJSON.supervisoremail,
       "Email": profileJSON.email,
       "Job Changes": [],
@@ -294,7 +294,7 @@ function getOrganizationId(organization) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
-      console.log('recieved organization record');
+      console.log('recieved organization record ' + record.get('Name'));
       if (record.get('Name') == organization) {
         organizationId = records.get('ID');
         console.log('Located existing organization ' + record.get('Name'));
