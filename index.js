@@ -209,7 +209,7 @@ function getProfile(ID) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
-	  console.log('received record');
+	  console.log('received record' + record.get('Profile ID'));
 	  //console.log(JSON.stringify(record));
       if (record.get('Profile ID') == ID) {
 		console.log('found ID' + ID);
