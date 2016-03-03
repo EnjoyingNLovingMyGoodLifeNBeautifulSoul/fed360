@@ -211,9 +211,8 @@ function getProfile(ID) {
     records.forEach(function(record) {
 	  console.log('received record');
 	  console.log(JSON.stringify(record));
-      var fields = record.get('fields');
-      if (fields.ID == ID) {
-        console.log('Located existing profile ', record.get('ID'));
+      if (record.get('Profile ID')== ID) {
+        console.log('Located existing profile ', record.get('id'));
         return record;
       }
     });
