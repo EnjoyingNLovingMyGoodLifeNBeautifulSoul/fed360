@@ -183,8 +183,8 @@ function saveProfile(request, response) {
 
   var updateProfileSuccess = updateProfile(request, profileRecord, organizationRecord);
   var updateOrganizationSuccess = updateOrganization(request, profileRecord, organizationRecord);
-  if (updateProfileSucess == true)
-    && (updateOrganizationSuccess == true {
+  if ((updateProfileSucess == true)
+    && (updateOrganizationSuccess == true)) {
     response.send('success');
   } else {
     response.send('error');
