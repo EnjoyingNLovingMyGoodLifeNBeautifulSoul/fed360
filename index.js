@@ -164,9 +164,11 @@ app.post('/saveProfile', function(request, response) {
 
 
 function saveProfile(request, response) {
-  var profileJSON = JSON.parse(request.body.profile);
-  var profileRecord = '';
   console.log(JSON.stringify(request.body));
+  var profileJSON = JSON.parse(request.body.profile);
+  console.log(JSON.stringify(profileJSON));
+  var profileRecord = '';
+
   if ((typeof profile.JSON.username == 'undefined') || (profileJSON.username == '')) {
 	 if (typeof profile.JSON.email == 'undefined') {
 		 console.log('no username or email found');
