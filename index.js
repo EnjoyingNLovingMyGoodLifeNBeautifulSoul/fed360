@@ -212,7 +212,7 @@ function getProfile(ID) {
 	  console.log('received record');
 	  //console.log(JSON.stringify(record));
       if (record.get('Profile ID')== ID) {
-        console.log('Located existing profile ', record.get('id'));
+        console.log('Located existing profile ' + record.get('id'));
         return record;
       }
     });
@@ -291,10 +291,10 @@ function getOrganizationId(organization) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
-      var fields = record.get('fields');
-      if (fields['Name'] == organization) {
+      console.log('recieved organization record');
+      if (record.get('Name') == organization) {
         organizationId = records.get('ID');
-        console.log('Located existing organization ', record.get('Name'));
+        console.log('Located existing organization ' + record.get('Name'));
         return record;
       }
 
