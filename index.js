@@ -157,67 +157,12 @@ Airtable.configure({
 });
 var base = Airtable.base('appYLZr7VvVPKZGvf');
 
-app.post('/saveProfile', function(request, response) {
-  var foundRecord = [];
-
-  base('People').select({
-    // Selecting the first 3 records in Main View:
-    view: "Main View"
-  }).eachPage(function page(records, fetchNextPage) {
-
-    // This function (`page`) will get called for each page of records.
-
-    records.forEach(function(record) {
-      console.log('Retrieved ', record.get('id'));
-      var fields = record.get('fields');
-      //if ((fields["Name (First)"] == request.body.profile.firstname) && 
-      //(fields["Name (Last)"] == request.body.profile.lastname)) {
-      if ((fields["Username"] == request.body.profile.username) &&
-        (fields["Password"] == request.body.profile.password)) {
-        foundRecord.push(record));
-    });
-
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    // If there are no more records, `done` will get called.
-    fetchNextPage();
-
-  }, function done(error) {
-    if (error) {
-      console.log(error);
-    } else {
-      if (foundRecord.length == 0) {
-        createProfile(request);
-      } else {
-        if (foundRecord.length == 1) {
-          updateProfile(request, foundRecord[0]);
-        } else {
-          //duplicate IDs found
-          var listIds = ''
-          for (var index in foundRecord) {
-            listIds = listIds + foundRecord[index].get('ID');
-            if (index != (foundRecord.length - 1)) {
-              listIds = listIds + ',';
-            }
-          }
-          console.log('Duplicates found: ' + listIds);
-          console.log('Updating all records');
-          for (var index in foundRecord) {
-            updateProfile(request, foundRecord[index]);
-          }
-        }
-      }
-    }
-  });
-
+app.post('/saveProfile', function(request, response) {  
+  saveProfile(request, response);
 });
 
-function updateProfile(request, profileId, organizatoinId) {
-  var fields = record.get('fields');
 
-}
-
-function createProfile(request) {
+function saveProfile(request, response) {
   var profileRecord = '';
 
   if (request.body.profile.username == '') {
@@ -236,8 +181,14 @@ function createProfile(request) {
     organizationRecord = addOrganization(request);
   }
 
-  updateProfile(request, profileRecord, organizationRecord);
-  updateOrganization(request, profileRecord, organizationRecord);
+  var updateProfileSuccess = updateProfile(request, profileRecord, organizationRecord);
+  var updateOrganizationSuccess = updateOrganization(request, profileRecord, organizationRecord);
+  if (updateProfileSucess == true)
+    && (updateOrganizationSuccess == true {
+    response.send('success');
+  } else {
+    response.send('error');
+  }
 }
 
 function getProfile(ID) {
@@ -312,10 +263,10 @@ function updateProfile(request, profileRecord, organizationRecord) {
     }, function(err, record) {
       if (err) {
         console.log(err);
-        return;
+        return false;
       }
-      console.log('profile added: ' + record.get('id'));
-      return record;
+      console.log('profile updated: ' + record.get('id'));
+      return true;
     });
 }
 
@@ -381,7 +332,8 @@ function updateOrganization(request, profileRecord, organizationRecord) {
     "Position Changes (from)": organizationRecord.get('Position Changes (from)'),
     "Position Changes (to)": organizationRecord.get('Position Changes (to)')
   }, function(err, record) {
-    if (err) { console.log(err); return; }
+    if (err) { console.log(err); return false; }
     console.log('updated ' + record.get('id'));
+    return true;
   });
 }
