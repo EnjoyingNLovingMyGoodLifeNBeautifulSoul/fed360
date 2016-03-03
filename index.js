@@ -169,12 +169,12 @@ app.post('/saveProfile', function(request, response) {
 
     records.forEach(function(record) {
       console.log('Retrieved ', record.get('id'));
-	  var fields = record.get('fields');
-	  //if ((fields["Name (First)"] == request.body.profile.firstname) && 
-	  //(fields["Name (Last)"] == request.body.profile.lastname)) {
-		  if ((fields["Username"] == request.body.profile.username) && 
-		  (fields["Password"] == request.body.profile.password)) {
-		  foundRecord.push(record));
+      var fields = record.get('fields');
+      //if ((fields["Name (First)"] == request.body.profile.firstname) && 
+      //(fields["Name (Last)"] == request.body.profile.lastname)) {
+      if ((fields["Username"] == request.body.profile.username) &&
+        (fields["Password"] == request.body.profile.password)) {
+        foundRecord.push(record));
     });
 
     // To fetch the next page of records, call `fetchNextPage`.
@@ -186,67 +186,202 @@ app.post('/saveProfile', function(request, response) {
     if (error) {
       console.log(error);
     } else {
-		if (foundRecord.length == 0) {
-			  createProfile(request);
-		} else {
-			if (foundRecord.length == 1) {
-				updateProfile(request, foundRecord[0]);
-			} else {
-				//duplicate IDs found
-				var listIds = ''
-				for (var index in foundRecord) {
-					listIds = listIds + foundRecord[index].get('ID');
-					if (index != (foundRecord.length - 1)) {
-						listIds = listIds + ',';
-					}
-				}
-				console.log('Duplicates found: ' + listIds);
-				console.log('Updating all records');
-				for (var index in foundRecord) {
-					updateProfile(request, foundRecord[index]);
-				}
-			}
-		}
-	}
+      if (foundRecord.length == 0) {
+        createProfile(request);
+      } else {
+        if (foundRecord.length == 1) {
+          updateProfile(request, foundRecord[0]);
+        } else {
+          //duplicate IDs found
+          var listIds = ''
+          for (var index in foundRecord) {
+            listIds = listIds + foundRecord[index].get('ID');
+            if (index != (foundRecord.length - 1)) {
+              listIds = listIds + ',';
+            }
+          }
+          console.log('Duplicates found: ' + listIds);
+          console.log('Updating all records');
+          for (var index in foundRecord) {
+            updateProfile(request, foundRecord[index]);
+          }
+        }
+      }
+    }
   });
-  
 
 });
 
-function updateProfile(request, record) {
-	var fields = record.get('fields');
-	
+function updateProfile(request, profileId, organizatoinId) {
+  var fields = record.get('fields');
+
 }
 
 function createProfile(request) {
-	var organizationId = '';
+  var profileRecord = '';
 
-	
-	base('People').create({
-  "Name (First)": request.body.profile.firstname,
-  "Password": request.body.profile.password,
-  "Name (Last)": request.body.profile.lastname,
-  "Endorsements (received)": [
-  ],
-  "Endorsements (given)": [
-  ],
-  "Deliveries": [],
-  "Organization": organizationId,
-  "Direct Supervisor (email)": request.body.profile.supervisoremail,
-  "Email": request.body.profile.email,
-  "Job Changes": [
-  ],
-  "Username": request.body.profile.username,
-  "Training Ratings": "1",  // ask Logan about this
-  "Deliveries copy": []
-}, function(err, record) {
-    if (err) {
-		console.log(err);
-		return;
-	}
-    console.log(record);
+  if (request.body.profile.username == '') {
+     profileRecord = getProfile(request.body.profile.email);
+  } else {
+     profileRecord = getProfile(request.body.profile.username);
+  }
+  if (typeof profileRecord == 'undefined') {
+    profileRecord = addProfile(request);
+  }
+
+  var organizationRecord = '';
+
+  organizationRecord = getOrganizationId(request.body.profile.organization);
+  if (typeof organizationRecord == 'undefined') {
+    organizationRecord = addOrganization(request);
+  }
+
+  updateProfile(request, profileRecord, organizationRecord);
+  updateOrganization(request, profileRecord, organizationRecord);
 }
-);
 
+function getProfile(ID) {
+  base('People').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
 
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      var fields = record.get('fields');
+      if (fields.ID == ID) {
+        console.log('Located existing profile ', record.get('ID'));
+        return record;
+      }
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+    if (error) {
+        console.log(error);
+    }
+  });
+}
+
+function addProfile(request) {
+  // save profile to Airtable
+    base('People').create({
+      "Name (First)": request.body.profile.firstname,
+      "Password": request.body.profile.password,
+      "Name (Last)": request.body.profile.lastname,
+      "Endorsements (received)": [],
+      "Endorsements (given)": [],
+      "Deliveries": [],
+      "Organization": '',
+      "Direct Supervisor (email)": request.body.profile.supervisoremail,
+      "Email": request.body.profile.email,
+      "Job Changes": [],
+      "Username": request.body.profile.username,
+      "Training Ratings": "1", // ask Logan about this
+      "Deliveries copy": []
+    }, function(err, record) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('profile added: ' + record.get('id'));
+      return record;
+    });
+}
+
+function updateProfile(request, profileRecord, organizationRecord) {
+
+  base('People').update(profileRecord.get('id'), {
+      "Name (First)": request.body.profile.firstname,
+      "Password": request.body.profile.password,
+      "Name (Last)": request.body.profile.lastname,
+      "Endorsements (received)": profileRecord.get('Endorsements (received)'),
+      "Endorsements (given)": profileRecord.get('Endorsements (given)'),
+      "Deliveries": profileRecord.get('Deliveries'),
+      "Organization": organizationRecord.get('id'),
+      "Direct Supervisor (email)": request.body.profile.supervisoremail,
+      "Email": request.body.profile.email,
+      "Job Changes": profileRecord.get('Job Changes'),
+      "Username": request.body.profile.username,
+      "Training Ratings": "1", // ask Logan about this
+      "Deliveries copy": profileRecord.get('Deliveries copy')
+    }, function(err, record) {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('profile added: ' + record.get('id'));
+      return record;
+    });
+}
+
+function getOrganizationId(organization) {
+  base('Organizations').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      var fields = record.get('fields');
+      if (fields['Name'] == organization) {
+        organizationId = records.get('ID');
+        console.log('Located existing organization ', record.get('Name'));
+        return record;
+      }
+
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+    if (error) {
+      console.log(error);
+    }
+    return;
+  });
+
+}
+
+function addOrganization(request) {
+      // add organziation to organziation table
+  base('Organizations').create({
+    "Name": request.body.profile.organization,
+    "People": [],
+    "Positions": [],
+    "Position Changes (from)": [],
+    "Position Changes (to)": []
+  }, function(err, record) {
+    if (err) { 
+      console.log(err); 
+      return; 
+    }
+    console.log('organization added: ' + request.body.profile.organization);
+    return record;
+  });
+}
+
+function updateOrganization(request, profileRecord, organizationRecord) {
+  var people = organizationRecord.get('People');
+  if (people.indexOf(profileRecord.get('id') == -1) {
+    people.push(profileRecord.get('id'));
+  }
+
+  base('Organizations').update(organizationRecord.get('id'), {
+    "Name": request.body.profile.organization,
+    "People": people,
+    "Positions": organizationRecord.get('Positions'),
+    "Position Changes (from)": organizationRecord.get('Position Changes (from)'),
+    "Position Changes (to)": organizationRecord.get('Position Changes (to)')
+  }, function(err, record) {
+    if (err) { console.log(err); return; }
+    console.log('updated ' + record.get('id'));
+  });
 }
