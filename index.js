@@ -157,7 +157,8 @@ Airtable.configure({
 });
 var base = Airtable.base('appYLZr7VvVPKZGvf');
 
-app.post('/saveProfile', function(request, response) {  
+app.post('/saveProfile', function(request, response) {
+  console.log('POST received');
   saveProfile(request, response);
 });
 
@@ -215,6 +216,8 @@ function getProfile(ID) {
     if (error) {
         console.log(error);
     }
+	console.log('no profile found for ' + ID);
+	return;
   });
 }
 
@@ -296,6 +299,7 @@ function getOrganizationId(organization) {
     if (error) {
       console.log(error);
     }
+	console.log('no organization found for ' + organization);
     return;
   });
 
