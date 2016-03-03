@@ -193,6 +193,7 @@ function saveProfile(request, response) {
 }
 
 function getProfile(ID) {
+  console.log('getting profile for ' + ID);
   base('People').select({
     view: "Main View"
   }).eachPage(function page(records, fetchNextPage) {
