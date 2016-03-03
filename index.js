@@ -233,9 +233,10 @@ function getProfile(ID) {
 }
 
 function addProfile(profileJSON) {
+	console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
     base('People').create({
-      "Name (First)": profileJSON.firstname/*,
+      "Name (First)": profileJSON.firstname,
       "Password": profileJSON.password,
       "Name (Last)": profileJSON.lastname,
       "Endorsements (received)": [],
@@ -247,7 +248,7 @@ function addProfile(profileJSON) {
       "Job Changes": [],
       "Username": profileJSON.username,
       "Training Ratings": "1", // ask Logan about this
-      "Deliveries copy": []*/
+      "Deliveries copy": []
     }, function(err, record) {
       if (err) {
         console.log('addProfile error: ' + err);
@@ -259,7 +260,7 @@ function addProfile(profileJSON) {
 }
 
 function updateProfile(profileJSON, profileRecord, organizationRecord) {
-
+  console.log('updating organization: ' + profileRecord.get('Profile ID') + ' for ' + organizationRecord.get('Name'));
   base('People').update(profileRecord.get('id'), {
       "Name (First)": profileJSON.firstname,
       "Password": profileJSON.password,
@@ -285,6 +286,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord) {
 }
 
 function getOrganizationId(organization) {
+  console.log('getting organization ID: ' + organization);
   base('Organizations').select({
     view: "Main View"
   }).eachPage(function page(records, fetchNextPage) {
@@ -317,7 +319,8 @@ function getOrganizationId(organization) {
 }
 
 function addOrganization(profileJSON) {
-      // add organziation to organziation table
+  console.log('adding organization: ' + profileJSON.organization);
+  // add organziation to organziation table
   base('Organizations').create({
     "Name": profileJSON.organization,
     "People": [],
@@ -335,6 +338,7 @@ function addOrganization(profileJSON) {
 }
 
 function updateOrganization(profileJSON, profileRecord, organizationRecord) {
+  console.log('preparing to update organization: ' + organizationRecord.get('Name') + ' for ' + profileRecord.get('Profile ID');
   var people = organizationRecord.get('People');
   if (people.indexOf(profileRecord.get('id') == -1)) {
     people.push(profileRecord.get('id'));
