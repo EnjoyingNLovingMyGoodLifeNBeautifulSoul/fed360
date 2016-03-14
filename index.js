@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var cors = require('cors');
 var Mailgun = require('mailgun-js');
+var $ = require('jQuery');
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -164,6 +165,7 @@ app.post('/saveProfile', function(request, response) {
 
 
 function saveProfile(request, response) {
+	
   //console.log(JSON.stringify(request.body));
   var profileJSON = JSON.parse(request.body.profile);
   var profileId = '';
@@ -171,7 +173,7 @@ function saveProfile(request, response) {
   
   var getProfileJSON = {
 	  record: {},
-	  deferred: $.Deferred();
+	  deferred: $.Deferred()
   };
 
   if ((typeof profileJSON.username == 'undefined') || (profileJSON.username == '')) {
@@ -188,7 +190,7 @@ function saveProfile(request, response) {
   
   var addProfileJSON = {
 		record: {},
-		deferred: $.Deferred();
+		deferred: $.Deferred()
   };
   
   $.when(getProfileJSON.deferred).done(function(){
@@ -200,19 +202,19 @@ function saveProfile(request, response) {
 	  console.log('error getting profile data');
 	  addProfileJSON = addProfile(getProfileJSON.record, addProfileJSON);
   });
-
+  
   console.log('processing organization');
 
   var getOrganizationJSON = {
 		record: {},
-		deferred: $.Deferred();
+		deferred: $.Deferred()
   };
 
   getOrganizationJSON = getOrganization(profileJSON.organization, getOrganizationJSON);
   
   var addOrganizationJSON = {
 		record: {},
-		deferred: $.Deferred();
+		deferred: $.Deferred()
   };
   $.when(getOrganizationJSON.deferred).done(function() {
 	  console.log('gotten organization data');
