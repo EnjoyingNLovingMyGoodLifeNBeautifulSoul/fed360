@@ -192,10 +192,12 @@ function saveProfile(request, response) {
   };
   
   $.when(getProfileJSON.deferred).done(function(){
+	  console.log('gotten profile data');
 	  addProfileJSON.record = getProfileJSON.record;
 	  addProfileJSON.deferred.resolve();
   });
   $.when(getProfileJSON.deferred).fail(function(){
+	  console.log('error getting profile data');
 	  addProfileJSON = addProfile(getProfileJSON.record, addProfileJSON);
   });
 
@@ -213,10 +215,12 @@ function saveProfile(request, response) {
 		deferred: $.Deferred();
   };
   $.when(getOrganizationJSON.deferred).done(function() {
+	  console.log('gotten organization data');
 	  addOrganizationJSON.record = getOrganization.record;
 	  addOrganizationJSON.resolve();
   });
   $.when(getOrganizationIdJSON.deferred).fail(function() {
+	  console.log('error getting organization data');
 	  addOrganizationJSON = addOrganization(profileJSON, addOrganizationJSON);
   });
 
