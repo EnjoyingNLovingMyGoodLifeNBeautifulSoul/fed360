@@ -3,7 +3,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var cors = require('cors');
 var Mailgun = require('mailgun-js');
-var asynch = require('async');
+var async = require('async');
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -187,7 +187,7 @@ function saveProfile(request, response) {
      //getProfileJSON = getProfile(profileId, getProfileJSON);
   }
   
-    asynch.waterfall([
+    async.series([
     function(callback) {
 		console.log('processing profile');
 		getProfile(profileId, profileJSON, callback);
@@ -272,6 +272,7 @@ function addProfile(profileJSON, callback) {
         callback('addProfile error: ' + err, null);
       } else {
         console.log('profile added: ' + record.get('id'));
+		console.log(record);
         callback(null, record);
 	  }
 	  
