@@ -190,7 +190,7 @@ function saveProfile(request, response) {
     async.series([
     function(callback) {
 		console.log('processing profile');
-		getProfile(profileId, profileJSON, callback);
+		//getProfile(profileId, profileJSON, callback);
 	},
 	function(callback) {
    	    console.log('processing organization');
