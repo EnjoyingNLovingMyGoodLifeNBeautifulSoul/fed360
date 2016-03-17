@@ -161,6 +161,7 @@ var base = Airtable.base('appYLZr7VvVPKZGvf');
 app.post('/saveProfile', function(request, response) {
   console.log('POST received');
   saveProfile(request, response);
+
 });
 
 
@@ -187,10 +188,13 @@ function saveProfile(request, response) {
      //getProfileJSON = getProfile(profileId, getProfileJSON);
   }
   
+  getProfile(profileId, profileJSON, response);
+  /*
     async.series([
     function(callback) {
 		console.log('processing profile');
-		//getProfile(profileId, profileJSON, callback);
+		getProfile(profileId, profileJSON, callback);
+		console.log('testing 2');
 	},
 	function(callback) {
    	    console.log('processing organization');
@@ -210,10 +214,11 @@ function saveProfile(request, response) {
 		  updateOrganization(profileJSON, profileRecord, organizationRecord, response);
 		}
 	});
+ */
  
 }
 
-function getProfile(ID, profileJSON, callback) {
+function getProfile(ID, profileJSON, response) {
   console.log('getting profile for ' + ID);
   
   base('People').select({
@@ -228,7 +233,8 @@ function getProfile(ID, profileJSON, callback) {
       if (record.get('Profile ID') == ID) {
 		console.log('found ID' + ID);
         console.log('Located existing profile ' + record.get('id'));
-		callback(null, record);
+		//callback(null, record);
+		getOrganization(profileJSON.organization, profileJSON, record, response);
       }
     });
 
@@ -240,16 +246,16 @@ function getProfile(ID, profileJSON, callback) {
   }, function done(error) {
     if (error) {
         console.log('getProfile error: ' + error);
-        callback('getProfile error: ' + error, null);
+        //callback('getProfile error: ' + error, null);
     } else {
 		console.log('no profile found for ' + ID);
-		addProfile(profileJSON, callback);
+		addProfile(profileJSON, response);
 	}
   });
   
 }
 
-function addProfile(profileJSON, callback) {
+function addProfile(profileJSON, response) {
 	console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
     base('People').create({
@@ -267,13 +273,15 @@ function addProfile(profileJSON, callback) {
       //"Training Ratings": "1", // ask Logan about this
       //"Deliveries copy": []
     }, function(err, record) {
+	  console.log('finished adding profile');
       if (err) {
         console.log('addProfile error: ' + err);
-        callback('addProfile error: ' + err, null);
+        //callback('addProfile error: ' + err, null);
       } else {
         console.log('profile added: ' + record.get('id'));
-		console.log(record);
-        callback(null, record);
+		console.log(JSON.stringify(record));
+        //callback(null, record);
+		 getOrganization(profileJSON.organization, profileJSON, record, response);
 	  }
 	  
     });
@@ -308,7 +316,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 
 }
 
-function getOrganization(organization, profileJSON, callback) {
+function getOrganization(organization, profileJSON, profileRecord, response) {
   console.log('getting organization ID: ' + organization);
   base('Organizations').select({
     view: "Main View"
@@ -317,13 +325,16 @@ function getOrganization(organization, profileJSON, callback) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
-      console.log('recieved organization record ' + record.get('Name'));
+      console.log('received organization record ' + record.get('Name'));
+	  console.log('comparing record name');
       if (record.get('Name') == organization) {
+		console.log('attempting to get ID');
         organizationId = records.get('ID');
         console.log('Located existing organization ' + record.get('Name'));
-        callback(null, record);
+        //callback(null, record);
+		updateOrganization(profileJSON, profileRecord, record, response)
       }
-
+      console.log('fetching next record');
     });
 
     // To fetch the next page of records, call `fetchNextPage`.
@@ -332,18 +343,20 @@ function getOrganization(organization, profileJSON, callback) {
     fetchNextPage();
 
   }, function done(error) {
+	  console.log('did not find organization');
     if (error) {
       console.log('getOrganization error: ' + error);
-	  callback('Error: ' + error, null);
+	  //callback('Error: ' + error, null);
     } else {
       console.log('no organization found for ' + organization);
-	  addOrganization(profileJSON, callback);
+	  addOrganization(profileJSON, profileRecord, response);
 	}
   });
 
 }
 
-function addOrganization(profileJSON, callback) {
+function addOrganization(profileJSON, profileRecord, response) {
+  console.log('adding organization');
   console.log('adding organization: ' + profileJSON.organization);
   // add organziation to organziation table
   base('Organizations').create({
@@ -353,17 +366,20 @@ function addOrganization(profileJSON, callback) {
     "Position Changes (from)": [],
     "Position Changes (to)": []
   }, function(err, record) {
+	  console.log('added organization');
     if (err) { 
       console.log('addOrganization error: ' + err);
-      callback('addOrganization error: ' + err, null); 
+      //callback('addOrganization error: ' + err, null); 
     } else {
       console.log('organization added: ' + profileJSON.organization);
-	  callback(null, record); 
+	  //callback(null, record);
+	  updateOrganization(profileJSON, profileRecord, record, response);
     }
   });
 }
 
 function updateOrganization(profileJSON, profileRecord, organizationRecord, response) {
+  console.log('updating organization');
   console.log('preparing to update organization: ' + organizationRecord.get('Name') + ' for ' + profileRecord.get('Profile ID'));
   var people = organizationRecord.get('People');
   if (people.indexOf(profileRecord.get('id') == -1)) {
@@ -381,7 +397,9 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
 	  console.log('updateOrganization error:' + err);
       response.send('updateOrganization error:' + err);	  
 	} else {
-	  response.send('Successfully added/updated record: ' + record.get('id'));
+	  //response.send('Successfully added/updated record: ' + record.get('id'));
+	  console.log('updateOrganization successful:' + record.get('id'));
+	  updateProfile(profileJSON, profileRecord, organizationRecord, response);
 	}
   });
 }
