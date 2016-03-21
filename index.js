@@ -256,11 +256,12 @@ function getProfile(ID, profileJSON, response) {
     } else {
 		if (foundId == false) {
 		  console.warn('no profile found for ' + ID);
-		  addProfile(profileJSON, response);
+		  //addProfile(profileJSON, response);
 		} else {
 		  console.warn('end of getProfile: ' + ID);
 		}		
 	}
+	response.send('not found and done.');
   });
   console.warn('getProfile end');
 }
