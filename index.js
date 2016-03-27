@@ -158,66 +158,336 @@ Airtable.configure({
 });
 var base = Airtable.base('appYLZr7VvVPKZGvf');
 
+app.get('/loadProfiles', function(request, response) {
+  console.log('loading profiles');
+  var emails = (JSON.parse(request.body.emails)).emails;
+  var profilesJSON = {
+    'profiles': []
+  };
+
+  async.series([
+      function(callback) {
+        console.log('loading profile');
+
+        base('People').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
+
+          // This function (`page`) will get called for each page of records.
+
+          records.forEach(function(record) {
+            console.log('processing profile ' + record.get('Profile ID'));
+            var profile = {
+              'id': record.getId(),
+              'firstname': record.get('Name (First)'),
+              'lastname': record.get('Name (Last)'),
+              'organization': record.get('Organization'), //id
+              'email': record.get('Email'),
+              'supervisoremail': record.get('Direct Supervisor (email)'),
+              'title': record.get('Position'), //id
+              'endorsements': record.get('Endorsements (Received)'),
+              'competencies': record.get('Competencies')
+            };
+            for (var index in emails) {
+              if (emails[index] == profile.email) {
+                console.log('found ' + emails[index]);
+                profilesJSON.profiles.push(profile);
+                console.log(profile);
+              }
+            }
+
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log(error);
+            response.send('Error: ' + error);
+            return callback(error);
+          }
+          console.log('successfully loaded base profiles');
+          callback(null, 'success');
+        });
+
+      },
+
+      function(callback) {
+        console.log('loading organization');
+        if (profilesJSON.profiles.length == 0) {
+          callback(null, 'success');
+          return;
+        }
+
+        for (var index in profilesJSON.profiles) {
+          (function(indexCopy) { // javascript clouse method to pass in a copy of the changing variable
+            if ((typeof profilesJSON.profiles[indexCopy].organization == 'undefined') ||
+              (profilesJSON.profiles[indexCopy].organization == '') ||
+              (profilesJSON.profiles[indexCopy].organization.length == 0)) {
+              if (profilesJSON.profiles.length == (indexCopy + 1)) {
+                callback(null, 'success');
+              }
+              return;
+            }
+            base('Organizations').find(profilesJSON.profiles[indexCopy].organization, function(err, record) {
+              if (err) {
+                console.log(err);
+                return callback(err);
+              }
+              console.log('loaded organization ' + record.get('Name') + ' for index ' + indexCopy);
+              profilesJSON.profiles[indexCopy].organization = record.get('Name');
+              if (profilesJSON.profiles.length == (indexCopy + 1)) {
+                callback(null, 'success');
+              }
+            });
+
+          })(index);
+
+        }
+      },
+
+      function(callback) {
+        console.log('loading position');
+        if (profilesJSON.profiles.length == 0) {
+          callback(null, 'success');
+          return;
+        }
+
+        for (var index in profilesJSON.profiles) {
+          (function(indexCopy) {
+            console.log('position id ' + profilesJSON.profiles[indexCopy].title);
+
+            // skip if undefined
+            if ((typeof profilesJSON.profiles[indexCopy].title == 'undefined') ||
+              (profilesJSON.profiles[indexCopy].title == '') ||
+              (profilesJSON.profiles[indexCopy].title.length == 0)) {
+              if (profilesJSON.profiles.length == (indexCopy + 1)) {
+                callback(null, 'success');
+              }
+              return;
+            }
+
+            // otherwise retrieve position title
+            base('Positions').find(profilesJSON.profiles[indexCopy].title[0], function(err, record) {
+              if (err) {
+                console.log(err);
+                return callback(err);
+              }
+              console.log('successfully loaded position for profile index ' + indexCopy);
+              profilesJSON.profiles[indexCopy].title = record.get('Title');
+              if (profilesJSON.profiles.length == (indexCopy + 1)) {
+                callback(null, 'success');
+              }
+            });
+          })(index);
+        }
+      },
+
+      function(callback) {
+        console.log('loading competencies');
+        // skip if undefined
+        if (profilesJSON.profiles.length == 0) {
+          callback(null, 'success');
+          return;
+        }
+
+        for (var index in profilesJSON.profiles) {
+          console.log('competencies profile index ' + index);
+          console.log(profilesJSON.profiles[index].competencies);
+
+          // skip if undefined
+          if ((typeof profilesJSON.profiles[index].competencies == 'undefined') ||
+            (profilesJSON.profiles[index].competencies == '') ||
+            (profilesJSON.profiles[index].competencies.length == 0)) {
+            if (profilesJSON.profiles.length == (parseInt(index) + 1)) {
+              callback(null, 'success');
+            }
+            continue;
+          }
+
+          for (var index2 in profilesJSON.profiles[index].competencies) {
+            console.log('compentency index ' + index2);
+            (function(index1Copy, index2Copy) {
+              console.log('loading competency ' + profilesJSON.profiles[index1Copy].competencies[index2Copy]);
+              base('Competencies').find(profilesJSON.profiles[index1Copy].competencies[index2Copy], function(err, record) {
+                if (err) {
+                  console.log(err);
+                  return callback(err);
+                }
+                console.log('successfully loaded position ' + record.get('Name'));
+                profilesJSON.profiles[index1Copy].competencies[index2Copy] = {
+                  'id': profilesJSON.profiles[index1Copy].competencies[index2Copy],
+                  'name': record.get('Name'),
+                  'description': record.get('Short Description'),
+                  'readMoreURL': record.get('Link'),
+                  'checked': false,
+                  'compentencyEndorsements': 0, // will be filled in next async
+                  'endorsedTraining': [], // will be filled in next async
+                  'updateScore': false
+                };
+                if (((parseInt(index1Copy) + 1) == profilesJSON.profiles.length) &&
+                  ((parseInt(index2Copy) + 1) == profilesJSON.profiles[index1Copy].competencies.length)) {
+                  callback(null, 'success');
+                }
+              });
+
+            })(index, index2);
+          }
+        }
+      },
+
+      function(callback) {
+        console.log('loading endorsements');
+        // skip if undefined
+        if (profilesJSON.profiles.length == 0) {
+          callback(null, 'success');
+          return;
+        }
+
+        for (var index in profilesJSON.profiles) {
+          console.log('endorsements profile index ' + index);
+          console.log(profilesJSON.profiles[index].endorsements);
+
+          // skip if undefined
+          if ((typeof profilesJSON.profiles[index].endorsements == 'undefined') ||
+            (profilesJSON.profiles[index].endorsements == '') ||
+            (profilesJSON.profiles[index].endorsements.length == 0)) {
+            if (profilesJSON.profiles.length == (parseInt(index) + 1)) {
+              callback(null, 'success');
+            }
+            continue;
+          }
+
+          for (var index2 in profilesJSON.profiles[index].endorsements) {
+            console.log('endorsemenrs index ' + index2);
+            console.log(profilesJSON.profiles[index].endorsements[index2]);
+
+            (function(index1Copy, index2Copy) {
+              console.log('checking endorsements ' + profilesJSON.profiles[index1Copy].endorsements[index2Copy]);
+              base('Competencies').find(profilesJSON.profiles[index1Copy].endorsements[index2Copy], function(err, record) {
+                if (err) {
+                  console.log(err);
+                  return callback(err);
+                }
+                console.log('successfully loaded endorsement');
+
+                var endorsedCompetencyName = record.get('Competency');
+                if (typeof profilesJSON.profiles[index1Copy].competencies != 'undefined') {
+                  for (var index3 in profilesJSON.profiles[index1Copy].competencies) {
+                    if (profilesJSON.profiles[index1Copy].competencies[index3].name == endorsedCompetencyName) {
+                      profilesJSON.profiles[index1Copy].competencies[index3].competencyEndorsements++;
+                    }
+                  }
+                }
+
+                if (((parseInt(index1Copy) + 1) == profilesJSON.profiles.length) &&
+                  ((parseInt(index2Copy) + 1) == profilesJSON.profiles[index1Copy].endorsements.length)) {
+                  callback(null, 'success');
+                }
+              });
+
+            })(index, index2);
+          }
+        }
+      },
+
+    ],
+    //optional callback
+    function(err, results) {
+      console.log('finishing async');
+      if (err) {
+        console.log('Error: ' + err);
+        response.send('Error: ' + err);
+      } else {
+        // results is now equal to ['one', 'two']
+        //var profileRecord = results[0];
+        console.log('all profiles loaded');
+        console.log(JSON.stringify(profilesJSON) + '\n');
+        response.send(JSON.stringify(profilesJSON));
+      }
+    });
+
+  /*
+  profileData.endorsements = 0;
+  profileData.competencies = [
+    {
+      name: 'User Design Experience',
+      description: 'A category of digital design in which user needs are are identified through research methods such as interviews, shadowing and prototyping then translated into design requirements for product teams.',
+      readMoreURL: '#',
+      checked: true,
+      competencyEndorsements: 0,
+      endorsedTraining: [],
+      updatedScore: true
+    }];
+  profileData.competencies[0].endorsedTraining[0] = 
+    {
+       endorsedName: 'Innovation Facilitation 101',
+       endorsedDescription, 'Innovation facilitation concerns itself with all the tasks needed to run a productive and impartial problem solving collaboration, serving the needs of any group who are meeting with a common purpose',
+       endorsedReadMoreURL: '#'
+    }*/
+});
+
 app.post('/saveProfile', function(request, response) {
   console.log('POST received');
   saveProfile(request, response);
   //response.send('done');
 });
 
-
 function saveProfile(request, response) {
-	console.log('starting save Profile');
+  console.log('starting save Profile');
   //console.log(JSON.stringify(request.body));
   console.log(request.body.profile);
   console.log(JSON.parse(request.body.profile));
   var profileJSON = JSON.parse(request.body.profile);
   var profileId = '';
   console.log('data being processed: ' + JSON.stringify(profileJSON));
-  
-  
+
   if ((typeof profileJSON.username == 'undefined') || (profileJSON.username == '')) {
-	 if (typeof profileJSON.email == 'undefined') {
-		 console.log('no username or email found');
-		 response.send('no username or email found');
-		 return;
-	 }
-	 console.log('email: ' + profileJSON.email);
-	 profileId = profileJSON.email;
-     //getProfileJSON = getProfile(profileId, getProfileJSON);
+    if (typeof profileJSON.email == 'undefined') {
+      console.log('no username or email found');
+      response.send('no username or email found');
+      return;
+    }
+    console.log('email: ' + profileJSON.email);
+    profileId = profileJSON.email;
+    //getProfileJSON = getProfile(profileId, getProfileJSON);
   } else {
-	  console.log('username: ' + profileJSON.username);
-	  profileId = profileJSON.username;
-     //getProfileJSON = getProfile(profileId, getProfileJSON);
+    console.log('username: ' + profileJSON.username);
+    profileId = profileJSON.username;
+    //getProfileJSON = getProfile(profileId, getProfileJSON);
   }
-  
-    async.series([
-    function(callback) {
-		  console.log('processing profile');
-		  getProfile(profileId, profileJSON, callback);
-	  },
-	  function(callback) {
-   	    console.log('processing organization');
+
+  async.series([
+      function(callback) {
+        console.log('processing profile');
+        getProfile(profileId, profileJSON, callback);
+      },
+      function(callback) {
+        console.log('processing organization');
         getOrganization(profileJSON.organization, profileJSON, callback);
-	  }
-	  ],
-	  //optional callback
-	  function(err, results) {
-    console.log('finishing async');
-		if (err) {
-			console.log('Error: '  + err);
-			response.send('Error: ' + err);
-		} else {
-		// results is now equal to ['one', 'two']
-		  var profileRecord = results[0];
-      console.log('profile record id: ' + profileRecord.getId());
-		  var organizationRecord = results[1];
-      console.log('organization record id: ' + organizationRecord.getId());
-      console.log('temporarily done');
-		  updateProfile(profileJSON, profileRecord, organizationRecord, response);
-		  updateOrganization(profileJSON, profileRecord, organizationRecord, response);
-		}
-	});
- 
+      }
+    ],
+    //optional callback
+    function(err, results) {
+      console.log('finishing async');
+      if (err) {
+        console.log('Error: ' + err);
+        response.send('Error: ' + err);
+      } else {
+        // results is now equal to ['one', 'two']
+        var profileRecord = results[0];
+        console.log('profile record id: ' + profileRecord.getId());
+        var organizationRecord = results[1];
+        console.log('organization record id: ' + organizationRecord.getId());
+        console.log('temporarily done');
+        updateProfile(profileJSON, profileRecord, organizationRecord, response);
+        updateOrganization(profileJSON, profileRecord, organizationRecord, response);
+      }
+    });
+
 }
 
 function getProfile(ID, profileJSON, callback) {
@@ -230,13 +500,13 @@ function getProfile(ID, profileJSON, callback) {
     // This function (`page`) will get called for each page of records.
 
     records.forEach(function(record) {
-	  console.log('received profile record: ' + record.get('Profile ID'));
-	  //console.log(JSON.stringify(record));
+      console.log('received profile record: ' + record.get('Profile ID'));
+      //console.log(JSON.stringify(record));
       if (record.get('Profile ID') == ID) {
-		    console.log('found ID' + ID);
+        console.log('found ID' + ID);
         console.log('Located existing profile ' + record.getId());
         foundRecord = record;
-		    
+
       }
     });
 
@@ -247,8 +517,8 @@ function getProfile(ID, profileJSON, callback) {
 
   }, function done(error) {
     if (error) {
-        console.log('getProfile error: ' + error);
-        callback('getProfile error: ' + error, null);
+      console.log('getProfile error: ' + error);
+      callback('getProfile error: ' + error, null);
     } else {
       if (typeof foundRecord == 'undefined') {
         console.log('no profile found for ' + ID);
@@ -257,17 +527,17 @@ function getProfile(ID, profileJSON, callback) {
         console.log('completed profile search: ' + foundRecord.get('Profile ID'));
         callback(null, foundRecord);
       }
-		
-	}
+
+    }
   });
-  
+
 }
 
 function addProfile(profileJSON, callback) {
-	console.log('adding profile: ' + profileJSON.firstname);
+  console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
-    base('People').create({
-      "Name (First)": profileJSON.firstname//,
+  base('People').create({
+    "Name (First)": profileJSON.firstname //,
       //"Password": profileJSON.password,
       //"Name (Last)": profileJSON.lastname,
       //"Endorsements (received)": [],
@@ -280,47 +550,46 @@ function addProfile(profileJSON, callback) {
       //"Username": profileJSON.username,
       //"Training Ratings": "1", // ask Logan about this
       //"Deliveries copy": []
-    }, function(err, record) {
-      if (err) {
-        console.log('addProfile error: ' + err);
-        callback('addProfile error: ' + err, null);
-      } else {
-        console.log('profile added: ' + record.getId());
-		console.log(record);
-        callback(null, record);
-	  }
-	  
-    });
+  }, function(err, record) {
+    if (err) {
+      console.log('addProfile error: ' + err);
+      callback('addProfile error: ' + err, null);
+    } else {
+      console.log('profile added: ' + record.getId());
+      console.log(record);
+      callback(null, record);
+    }
+
+  });
 
 }
 
 function updateProfile(profileJSON, profileRecord, organizationRecord, response) {
   console.log('updating profile: ' + profileRecord.get('Profile ID') + ' for ' + organizationRecord.get('Name'));
 
-
   base('People').update(profileRecord.getId(), {
-      //"Name (First)": profileJSON.firstname,
-      //"Password": profileJSON.password,
-      //"Name (Last)": profileJSON.lastname,
-      //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
-      //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
-      //"Deliveries": profileRecord.get('Deliveries'),
-      //"Organization": organizationRecord.getId(),
-      //"Direct Supervisor (email)": profileJSON.supervisoremail,
-      "Email": profileJSON.email,
-      //"Job Changes": profileRecord.get('Job Changes'),
-      "Username": profileJSON.username//,
+    //"Name (First)": profileJSON.firstname,
+    //"Password": profileJSON.password,
+    //"Name (Last)": profileJSON.lastname,
+    //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
+    //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
+    //"Deliveries": profileRecord.get('Deliveries'),
+    //"Organization": organizationRecord.getId(),
+    //"Direct Supervisor (email)": profileJSON.supervisoremail,
+    "Email": profileJSON.email,
+    //"Job Changes": profileRecord.get('Job Changes'),
+    "Username": profileJSON.username //,
       //"Training Ratings": "1", // ask Logan about this
       //"Deliveries copy": profileRecord.get('Deliveries copy')
-    }, function(err, record) {
-      if (err) {
-        console.log('updateProfile error: ' + err);
-        response.send('Error: ' + err + '\n');
-      } else {
-		console.log('profile updated: ' + record.getId());
-		//response.send('Sucessfully added/updated record: ' + record.getId());
-      }
-    });
+  }, function(err, record) {
+    if (err) {
+      console.log('updateProfile error: ' + err);
+      response.send('Error: ' + err + '\n');
+    } else {
+      console.log('profile updated: ' + record.getId());
+      //response.send('Sucessfully added/updated record: ' + record.getId());
+    }
+  });
 
 }
 
@@ -350,7 +619,7 @@ function getOrganization(organization, profileJSON, callback) {
   }, function done(error) {
     if (error) {
       console.log('getOrganization error: ' + error);
-	  callback('Error: ' + error, null);
+      callback('Error: ' + error, null);
     } else {
       if (typeof foundRecord == 'undefined') {
         console.log('no organization found for ' + organization);
@@ -359,8 +628,8 @@ function getOrganization(organization, profileJSON, callback) {
         console.log('completed organization search');
         callback(null, foundRecord);
       }
-      
-	}
+
+    }
   });
 
 }
@@ -375,12 +644,12 @@ function addOrganization(profileJSON, callback) {
     "Position Changes (from)": [],
     "Position Changes (to)": []
   }, function(err, record) {
-    if (err) { 
+    if (err) {
       console.log('addOrganization error: ' + err);
-      callback('addOrganization error: ' + err, null); 
+      callback('addOrganization error: ' + err, null);
     } else {
       console.log('organization added: ' + profileJSON.organization);
-	  callback(null, record); 
+      callback(null, record);
     }
   });
 }
@@ -399,12 +668,12 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
     //"Position Changes (from)": organizationRecord.get('Position Changes (from)'),
     //"Position Changes (to)": organizationRecord.get('Position Changes (to)')
   }, function(err, record) {
-    if (err) { 
-	  console.log('updateOrganization error:' + err);
-      response.send('updateOrganization error:' + err + '\n');	  
-	} else {
-    console.log('organization updated: ' + record.getId());
-	  response.send('Successfully added/updated record: ' + record.getId() + '\n');
-	}
+    if (err) {
+      console.log('updateOrganization error:' + err);
+      response.send('updateOrganization error:' + err + '\n');
+    } else {
+      console.log('organization updated: ' + record.getId());
+      response.send('Successfully added/updated record: ' + record.getId() + '\n');
+    }
   });
 }
