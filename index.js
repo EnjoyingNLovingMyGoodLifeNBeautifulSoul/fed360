@@ -320,7 +320,8 @@ app.get('/loadProfiles', function(request, response) {
             console.log(error);
             return callback(error);
           }
-          console.log('successfully loaded positions');(typeof profilesJSON.profiles[index].title == 'undefined')
+          console.log('successfully loaded positions');
+
           //console.log(organizations);
           for (var index in profilesJSON.profiles) {
             if ((typeof profilesJSON.profiles[index].title == 'undefined') || (profilesJSON.profiles[index].title.length == 0)) {
