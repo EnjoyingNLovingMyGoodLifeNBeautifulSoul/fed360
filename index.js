@@ -164,6 +164,7 @@ app.get('/loadProfiles', function(request, response) {
     'profiles': []
   };
   var emails = request.query.emails; // Used for messages in URL
+  console.log(emails);
   /*console.log(request.body);
   if (typeof request.body == 'undefined') {
     response.send(JSON.stringify(profilesJSON));
