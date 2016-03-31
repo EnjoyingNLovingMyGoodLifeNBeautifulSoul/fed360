@@ -266,6 +266,9 @@ app.get('/loadProfiles', function(request, response) {
           console.log('successfully loaded organizations');
           //console.log(organizations);
           for (var index in profilesJSON.profiles) {
+            if (typeof profilesJSON.profiles[index].organization == 'undefined') {
+              continue;
+            }
             profilesJSON.profiles[index].organization = organizations[profilesJSON.profiles[index].organization[0]].name;
             console.log('assigned ' + profilesJSON.profiles[index].organization + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
           }
