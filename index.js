@@ -320,13 +320,14 @@ app.get('/loadProfiles', function(request, response) {
             console.log(error);
             return callback(error);
           }
-          console.log('successfully loaded positions');
+          console.log('successfully loaded positions');(typeof profilesJSON.profiles[index].title == 'undefined')
           //console.log(organizations);
           for (var index in profilesJSON.profiles) {
-            if (typeof profilesJSON.profiles[index].title == 'undefined') {
+            if ((typeof profilesJSON.profiles[index].title == 'undefined') || (profilesJSON.profiles[index].title.length == 0)) {
               continue;
             }
-            profilesJSON.profiles[index].title = positions[profilesJSON.profiles[index].title].title;
+            var id = profilesJSON.profiles[index].title[0];
+            profilesJSON.profiles[index].title = positions[id].title;
             console.log('assigned ' + profilesJSON.profiles[index].title + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
           }
           callback(null, 'success');
