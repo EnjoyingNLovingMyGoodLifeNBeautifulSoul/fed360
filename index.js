@@ -160,6 +160,8 @@ var base = Airtable.base('appYLZr7VvVPKZGvf');
 
 app.get('/loadProfiles', function(request, response) {
   console.log('loading profiles');
+  console.log(request.body);
+  console.log(request.body.emails);
   var emails = (JSON.parse(request.body.emails)).emails;
   var profilesJSON = {
     'profiles': []
