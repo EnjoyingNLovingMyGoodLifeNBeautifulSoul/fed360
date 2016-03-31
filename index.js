@@ -163,13 +163,13 @@ app.get('/loadProfiles', function(request, response) {
   var profilesJSON = {
     'profiles': []
   };
-
-  console.log(request.body);
+  var emails = request.query.emails; // Used for messages in URL
+  /*console.log(request.body);
   if (typeof request.body == 'undefined') {
     response.send(JSON.stringify(profilesJSON));
   }
   console.log(request.body.emails);
-  var emails = (JSON.parse(request.body.emails)).emails;
+  var emails = (JSON.parse(request.body.emails)).emails; */ // Used for messages in body
 
   var organizations = {};
   var positions = {};
