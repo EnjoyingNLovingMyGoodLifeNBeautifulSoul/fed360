@@ -164,6 +164,11 @@ app.get('/loadProfiles', function(request, response) {
   var profilesJSON = {
     'profiles': []
   };
+  var organizations = {};
+  var positions = {};
+  var competencies = {};
+  var endorsements = {};
+  var trainings = {};
 
   async.series([
       function(callback) {
@@ -185,7 +190,7 @@ app.get('/loadProfiles', function(request, response) {
               'email': record.get('Email'),
               'supervisoremail': record.get('Direct Supervisor (email)'),
               'title': record.get('Position'), //id
-              'endorsements': record.get('Endorsements (Received)'),
+              'endorsements': record.get('Endorsements (received)'),
               'competencies': record.get('Competencies')
             };
             for (var index in emails) {
@@ -221,177 +226,295 @@ app.get('/loadProfiles', function(request, response) {
           callback(null, 'success');
           return;
         }
+        base('Organizations').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
 
-        for (var index in profilesJSON.profiles) {
-          (function(indexCopy) { // javascript clouse method to pass in a copy of the changing variable
-            if ((typeof profilesJSON.profiles[indexCopy].organization == 'undefined') ||
-              (profilesJSON.profiles[indexCopy].organization == '') ||
-              (profilesJSON.profiles[indexCopy].organization.length == 0)) {
-              if (profilesJSON.profiles.length == (indexCopy + 1)) {
-                callback(null, 'success');
-              }
-              return;
-            }
-            base('Organizations').find(profilesJSON.profiles[indexCopy].organization, function(err, record) {
-              if (err) {
-                console.log(err);
-                return callback(err);
-              }
-              console.log('loaded organization ' + record.get('Name') + ' for index ' + indexCopy);
-              profilesJSON.profiles[indexCopy].organization = record.get('Name');
-              if (profilesJSON.profiles.length == (indexCopy + 1)) {
-                callback(null, 'success');
-              }
-            });
+          // This function (`page`) will get called for each page of records.
 
-          })(index);
+          records.forEach(function(record) {
+            console.log('processing organization ' + record.get('Name'));
+            organizations[record.getId()] = {
+              'name': record.get('Name'),
+              'people': record.get('People'),
+              'number': record.get('Number'),
+              'positions': record.get('Positions'),
+              'positionfrom': record.get('Position Changes (from)'),
+              'positionto': record.get('Position Changes (to)')
+            };
 
-        }
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log(error);
+            return callback(error);
+          }
+          console.log('successfully loaded organizations');
+          //console.log(organizations);
+          for (var index in profilesJSON.profiles) {
+            profilesJSON.profiles[index].organization = organizations[profilesJSON.profiles[index].organization[0]].name;
+            console.log('assigned ' + profilesJSON.profiles[index].organization + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
+          }
+          callback(null, 'success');
+        });
+
       },
-
+    
       function(callback) {
-        console.log('loading position');
+        console.log('loading positions');
         if (profilesJSON.profiles.length == 0) {
           callback(null, 'success');
           return;
         }
+        base('Positions').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
 
-        for (var index in profilesJSON.profiles) {
-          (function(indexCopy) {
-            console.log('position id ' + profilesJSON.profiles[indexCopy].title);
+          // This function (`page`) will get called for each page of records.
 
-            // skip if undefined
-            if ((typeof profilesJSON.profiles[indexCopy].title == 'undefined') ||
-              (profilesJSON.profiles[indexCopy].title == '') ||
-              (profilesJSON.profiles[indexCopy].title.length == 0)) {
-              if (profilesJSON.profiles.length == (indexCopy + 1)) {
-                callback(null, 'success');
-              }
-              return;
-            }
+          records.forEach(function(record) {
+            console.log('processing position ' + record.get('Title'));
+            positions[record.getId()] = {
+              'title': record.get('Title'),
+              'series': record.get('Series (if applicable)'),
+              'grade': record.get('Grade (if applicable)'),
+              'officialtitle': record.get('Official Title'),
+              'shortdescription': record.get('Short Description'),
+              'longdescription': record.get('Long Description'),
+              'movesfrom': record.get('Moves from'),
+              'movesto': record.get('Moves to'),
+              'organizations': record.get('Organizations'),
+              'minpay': record.get('Pay (min)'),
+              'maxpay': record.get('Pay (max)'),
+              'payperiod': record.get('Pay Period'),
+              'people': record.get('People')
+              
+            };
 
-            // otherwise retrieve position title
-            base('Positions').find(profilesJSON.profiles[indexCopy].title[0], function(err, record) {
-              if (err) {
-                console.log(err);
-                return callback(err);
-              }
-              console.log('successfully loaded position for profile index ' + indexCopy);
-              profilesJSON.profiles[indexCopy].title = record.get('Title');
-              if (profilesJSON.profiles.length == (indexCopy + 1)) {
-                callback(null, 'success');
-              }
-            });
-          })(index);
-        }
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log(error);
+            return callback(error);
+          }
+          console.log('successfully loaded positions');
+          //console.log(organizations);
+          for (var index in profilesJSON.profiles) {
+            profilesJSON.profiles[index].title = positions[profilesJSON.profiles[index].title].title;
+            console.log('assigned ' + profilesJSON.profiles[index].title + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
+          }
+          callback(null, 'success');
+        });
+
       },
-
+    
       function(callback) {
         console.log('loading competencies');
-        // skip if undefined
         if (profilesJSON.profiles.length == 0) {
           callback(null, 'success');
           return;
         }
+        base('Competencies').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
 
-        for (var index in profilesJSON.profiles) {
-          console.log('competencies profile index ' + index);
-          console.log(profilesJSON.profiles[index].competencies);
+          // This function (`page`) will get called for each page of records.
 
-          // skip if undefined
-          if ((typeof profilesJSON.profiles[index].competencies == 'undefined') ||
-            (profilesJSON.profiles[index].competencies == '') ||
-            (profilesJSON.profiles[index].competencies.length == 0)) {
-            if (profilesJSON.profiles.length == (parseInt(index) + 1)) {
-              callback(null, 'success');
-            }
-            continue;
+          records.forEach(function(record) {
+            console.log('processing competency ' + record.get('Name'));
+            competencies[record.getId()] = {
+              'name': record.get('Name'),
+              'shortdescription': record.get('Short Description'),
+              'type': record.get('Type'),
+              'link': record.get('Link'),
+              'endorsements': record.get('Endorsements'),
+              'relatedtrainings': record.get('Related Trainings'),
+              'people': record.get('People')
+              
+            };
+
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log(error);
+            return callback(error);
           }
-
-          for (var index2 in profilesJSON.profiles[index].competencies) {
-            console.log('compentency index ' + index2);
-            (function(index1Copy, index2Copy) {
-              console.log('loading competency ' + profilesJSON.profiles[index1Copy].competencies[index2Copy]);
-              base('Competencies').find(profilesJSON.profiles[index1Copy].competencies[index2Copy], function(err, record) {
-                if (err) {
-                  console.log(err);
-                  return callback(err);
-                }
-                console.log('successfully loaded position ' + record.get('Name'));
-                profilesJSON.profiles[index1Copy].competencies[index2Copy] = {
-                  'id': profilesJSON.profiles[index1Copy].competencies[index2Copy],
-                  'name': record.get('Name'),
-                  'description': record.get('Short Description'),
-                  'readMoreURL': record.get('Link'),
+          console.log('successfully loaded competencies');
+          //console.log(competencies);
+          for (var index in profilesJSON.profiles) {
+            for (var index2 in profilesJSON.profiles[index].competencies) {
+              var id = profilesJSON.profiles[index].competencies[index2];
+              var competencyJSON = {
+                  'id': id,
+                  'name': competencies[id].name,
+                  'description': competencies[id].shortdescription,
+                  'readMoreURL': competencies[id].link,
                   'checked': false,
-                  'compentencyEndorsements': 0, // will be filled in next async
-                  'endorsedTraining': [], // will be filled in next async
+                  'competencyEndorsements': 0, // will be filled in next async
+                  'endorsedTraining': [], // will be filled in following async
                   'updateScore': false
-                };
-                if (((parseInt(index1Copy) + 1) == profilesJSON.profiles.length) &&
-                  ((parseInt(index2Copy) + 1) == profilesJSON.profiles[index1Copy].competencies.length)) {
-                  callback(null, 'success');
-                }
-              });
-
-            })(index, index2);
+              }
+              profilesJSON.profiles[index].competencies[index2] = competencyJSON;
+              console.log('assigned ' + profilesJSON.profiles[index].competencies[index2].name + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
+            }
           }
-        }
-      },
+          callback(null, 'success');
+        });
 
-      function(callback) {
+      },
+    
+    function(callback) {
         console.log('loading endorsements');
-        // skip if undefined
         if (profilesJSON.profiles.length == 0) {
           callback(null, 'success');
           return;
         }
+        base('Endorsements').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
 
-        for (var index in profilesJSON.profiles) {
-          console.log('endorsements profile index ' + index);
-          console.log(profilesJSON.profiles[index].endorsements);
+          // This function (`page`) will get called for each page of records.
 
-          // skip if undefined
-          if ((typeof profilesJSON.profiles[index].endorsements == 'undefined') ||
-            (profilesJSON.profiles[index].endorsements == '') ||
-            (profilesJSON.profiles[index].endorsements.length == 0)) {
-            if (profilesJSON.profiles.length == (parseInt(index) + 1)) {
-              callback(null, 'success');
-            }
-            continue;
+          records.forEach(function(record) {
+            console.log('processing endorsement ' + record.get('Endorsement ID'));
+            endorsements[record.getId()] = {
+              'endorsementid': record.get('Endorsement ID'),
+              'timestamp': record.get('Timestamp'),
+              'relateddelivery': record.get('Related Delivery'),
+              'competency': record.get('Competency'),
+              'of': record.get('Of'),
+              'by': record.get('By'),
+              'endorsement': record.get('Endorsement'),
+              'recommendedtraining': record.get('Recommended Training')
+              
+              
+            };
+
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log(error);
+            return callback(error);
           }
-
-          for (var index2 in profilesJSON.profiles[index].endorsements) {
-            console.log('endorsemenrs index ' + index2);
-            console.log(profilesJSON.profiles[index].endorsements[index2]);
-
-            (function(index1Copy, index2Copy) {
-              console.log('checking endorsements ' + profilesJSON.profiles[index1Copy].endorsements[index2Copy]);
-              base('Competencies').find(profilesJSON.profiles[index1Copy].endorsements[index2Copy], function(err, record) {
-                if (err) {
-                  console.log(err);
-                  return callback(err);
+          console.log('successfully loaded endorsements');
+          //console.log(endorsements);
+          for (var index in profilesJSON.profiles) {
+            for (var index2 in profilesJSON.profiles[index].endorsements) {
+              var endorsementId = profilesJSON.profiles[index].endorsements[index2];
+              var endorsedCompetencyId = endorsements[endorsementId].competency;
+              
+              for (var index3 in profilesJSON.profiles[index].competencies) {
+                
+                
+                if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id)  {
+                      profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
+                      profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedTraining);
+                      console.log('incremented ' + profilesJSON.profiles[index].competencies[index2].name + 
+                          ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' + 
+                          profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
+                      console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2] + 
+                          ' to ' + profilesJSON.profiles[index].firstname + ' competency ' + 
+                          profilesJSON.profiles[index].competencies[index2].name);
                 }
-                console.log('successfully loaded endorsement');
+              }
+              
+            }
+          }
+          callback(null, 'success');
+        });
 
-                var endorsedCompetencyName = record.get('Competency');
-                if (typeof profilesJSON.profiles[index1Copy].competencies != 'undefined') {
-                  for (var index3 in profilesJSON.profiles[index1Copy].competencies) {
-                    if (profilesJSON.profiles[index1Copy].competencies[index3].name == endorsedCompetencyName) {
-                      profilesJSON.profiles[index1Copy].competencies[index3].competencyEndorsements++;
+      },
+    
+    function(callback) {
+        console.log('loading trainings');
+        if (profilesJSON.profiles.length == 0) {
+          callback(null, 'success');
+          return;
+        }
+        base('Trainings').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
+
+          // This function (`page`) will get called for each page of records.
+
+          records.forEach(function(record) {
+            console.log('processing training ' + record.get('Title'));
+            trainings[record.getId()] = {
+              'title': record.get('Title'),
+              'subtitle': record.get('Subtitle'),
+              'abstract': record.get('Abstract'),
+              'description': record.get('Description (markdown compatible?)'),
+              'link': record.get('Link'),
+              'related': record.get('Related Competencies'),
+              'associated': record.get('Associated Endorsements'),
+              'recommendations': record.get('Recommendations')
+
+            };
+
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log(error);
+            return callback(error);
+          }
+          console.log('successfully loaded trainings');
+          //console.log(trainings);
+          for (var index in profilesJSON.profiles) {
+              
+              for (var index2 in profilesJSON.profiles[index].competencies) {
+                
+                for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
+                  for (var index4 in trainings) {
+                    if (profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] == index4) {
+                      var id = index4;
+                      profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] = {
+                    'id': index4,
+                    'endorsedName': trainings[index4].title,
+                    'endorsedDescription': trainings[index4].description,
+                    'endorsedReadMoreURL': trainings[index4].link
+                  };
+                      console.log('assigned training ' + trainings[index4].title + 
+                          ' to ' + profilesJSON.profiles[index].competencies[index2].name + ' competency ' + 
+                          profilesJSON.profiles[index].firstname);
                     }
                   }
+                  
                 }
-
-                if (((parseInt(index1Copy) + 1) == profilesJSON.profiles.length) &&
-                  ((parseInt(index2Copy) + 1) == profilesJSON.profiles[index1Copy].endorsements.length)) {
-                  callback(null, 'success');
-                }
-              });
-
-            })(index, index2);
+              }
           }
-        }
+          callback(null, 'success');
+        });
+
       },
 
     ],
@@ -405,6 +528,7 @@ app.get('/loadProfiles', function(request, response) {
         // results is now equal to ['one', 'two']
         //var profileRecord = results[0];
         console.log('all profiles loaded');
+        console.log(profilesJSON);
         console.log(JSON.stringify(profilesJSON) + '\n');
         response.send(JSON.stringify(profilesJSON));
       }
