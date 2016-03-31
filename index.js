@@ -160,12 +160,17 @@ var base = Airtable.base('appYLZr7VvVPKZGvf');
 
 app.get('/loadProfiles', function(request, response) {
   console.log('loading profiles');
-  console.log(request.body);
-  console.log(request.body.emails);
-  var emails = (JSON.parse(request.body.emails)).emails;
   var profilesJSON = {
     'profiles': []
   };
+
+  console.log(request.body);
+  if (typeof request.body == 'undefined') {
+    response.send(JSON.stringify(profilesJSON));
+  }
+  console.log(request.body.emails);
+  var emails = (JSON.parse(request.body.emails)).emails;
+
   var organizations = {};
   var positions = {};
   var competencies = {};
@@ -267,7 +272,7 @@ app.get('/loadProfiles', function(request, response) {
         });
 
       },
-    
+
       function(callback) {
         console.log('loading positions');
         if (profilesJSON.profiles.length == 0) {
@@ -296,7 +301,7 @@ app.get('/loadProfiles', function(request, response) {
               'maxpay': record.get('Pay (max)'),
               'payperiod': record.get('Pay Period'),
               'people': record.get('People')
-              
+
             };
 
           });
@@ -321,7 +326,7 @@ app.get('/loadProfiles', function(request, response) {
         });
 
       },
-    
+
       function(callback) {
         console.log('loading competencies');
         if (profilesJSON.profiles.length == 0) {
@@ -344,7 +349,7 @@ app.get('/loadProfiles', function(request, response) {
               'endorsements': record.get('Endorsements'),
               'relatedtrainings': record.get('Related Trainings'),
               'people': record.get('People')
-              
+
             };
 
           });
@@ -365,14 +370,14 @@ app.get('/loadProfiles', function(request, response) {
             for (var index2 in profilesJSON.profiles[index].competencies) {
               var id = profilesJSON.profiles[index].competencies[index2];
               var competencyJSON = {
-                  'id': id,
-                  'name': competencies[id].name,
-                  'description': competencies[id].shortdescription,
-                  'readMoreURL': competencies[id].link,
-                  'checked': false,
-                  'competencyEndorsements': 0, // will be filled in next async
-                  'endorsedTraining': [], // will be filled in following async
-                  'updateScore': false
+                'id': id,
+                'name': competencies[id].name,
+                'description': competencies[id].shortdescription,
+                'readMoreURL': competencies[id].link,
+                'checked': false,
+                'competencyEndorsements': 0, // will be filled in next async
+                'endorsedTraining': [], // will be filled in following async
+                'updateScore': false
               }
               profilesJSON.profiles[index].competencies[index2] = competencyJSON;
               console.log('assigned ' + profilesJSON.profiles[index].competencies[index2].name + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
@@ -382,8 +387,8 @@ app.get('/loadProfiles', function(request, response) {
         });
 
       },
-    
-    function(callback) {
+
+      function(callback) {
         console.log('loading endorsements');
         if (profilesJSON.profiles.length == 0) {
           callback(null, 'success');
@@ -406,8 +411,7 @@ app.get('/loadProfiles', function(request, response) {
               'by': record.get('By'),
               'endorsement': record.get('Endorsement'),
               'recommendedtraining': record.get('Recommended Training')
-              
-              
+
             };
 
           });
@@ -428,30 +432,29 @@ app.get('/loadProfiles', function(request, response) {
             for (var index2 in profilesJSON.profiles[index].endorsements) {
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
               var endorsedCompetencyId = endorsements[endorsementId].competency;
-              
+
               for (var index3 in profilesJSON.profiles[index].competencies) {
-                
-                
-                if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id)  {
-                      profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
-                      profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedTraining);
-                      console.log('incremented ' + profilesJSON.profiles[index].competencies[index2].name + 
-                          ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' + 
-                          profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
-                      console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2] + 
-                          ' to ' + profilesJSON.profiles[index].firstname + ' competency ' + 
-                          profilesJSON.profiles[index].competencies[index2].name);
+
+                if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
+                  profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
+                  profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedTraining);
+                  console.log('incremented ' + profilesJSON.profiles[index].competencies[index2].name +
+                    ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
+                    profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
+                  console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2] +
+                    ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
+                    profilesJSON.profiles[index].competencies[index2].name);
                 }
               }
-              
+
             }
           }
           callback(null, 'success');
         });
 
       },
-    
-    function(callback) {
+
+      function(callback) {
         console.log('loading trainings');
         if (profilesJSON.profiles.length == 0) {
           callback(null, 'success');
@@ -492,27 +495,27 @@ app.get('/loadProfiles', function(request, response) {
           console.log('successfully loaded trainings');
           //console.log(trainings);
           for (var index in profilesJSON.profiles) {
-              
-              for (var index2 in profilesJSON.profiles[index].competencies) {
-                
-                for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
-                  for (var index4 in trainings) {
-                    if (profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] == index4) {
-                      var id = index4;
-                      profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] = {
-                    'id': index4,
-                    'endorsedName': trainings[index4].title,
-                    'endorsedDescription': trainings[index4].description,
-                    'endorsedReadMoreURL': trainings[index4].link
-                  };
-                      console.log('assigned training ' + trainings[index4].title + 
-                          ' to ' + profilesJSON.profiles[index].competencies[index2].name + ' competency ' + 
-                          profilesJSON.profiles[index].firstname);
-                    }
+
+            for (var index2 in profilesJSON.profiles[index].competencies) {
+
+              for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
+                for (var index4 in trainings) {
+                  if (profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] == index4) {
+                    var id = index4;
+                    profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] = {
+                      'id': index4,
+                      'endorsedName': trainings[index4].title,
+                      'endorsedDescription': trainings[index4].description,
+                      'endorsedReadMoreURL': trainings[index4].link
+                    };
+                    console.log('assigned training ' + trainings[index4].title +
+                      ' to ' + profilesJSON.profiles[index].competencies[index2].name + ' competency ' +
+                      profilesJSON.profiles[index].firstname);
                   }
-                  
                 }
+
               }
+            }
           }
           callback(null, 'success');
         });
