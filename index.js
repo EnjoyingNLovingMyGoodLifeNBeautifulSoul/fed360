@@ -199,7 +199,8 @@ app.get('/loadProfiles', function(request, response) {
               'supervisoremail': record.get('Direct Supervisor (email)'),
               'title': record.get('Position'), //id
               'endorsements': record.get('Endorsements (received)'),
-              'competencies': record.get('Competencies')
+              'competencies': record.get('Competencies'),
+              'picture': record.get('Profile Picture')
             };
             for (var index in emails) {
               if (emails[index] == profile.email) {
