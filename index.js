@@ -384,7 +384,7 @@ app.get('/loadProfiles', function(request, response) {
                 'name': competencies[id].name,
                 'description': competencies[id].shortdescription,
                 'readMoreURL': competencies[id].link,
-                'checked': false,
+                'checked': true, // enabled (endorsable)
                 'competencyEndorsements': 0, // will be filled in next async
                 'endorsedTraining': [], // will be filled in following async
                 'updateScore': false
