@@ -518,7 +518,7 @@ app.get('/loadProfiles', function(request, response) {
                       'endorsedDescription': trainings[index4].description,
                       'endorsedReadMoreURL': trainings[index4].link
                     };
-                    console.log('assigned training ' + trainings[index4].title +
+                    console.log('assigned training name ' + trainings[index4].title +
                       ' to ' + profilesJSON.profiles[index].competencies[index2].name + ' competency ' +
                       profilesJSON.profiles[index].firstname);
                   }
