@@ -547,7 +547,9 @@ app.get('/loadProfiles', function(request, response) {
         console.log('trainings:');
         console.log(trainings);
         profilesJSON.trainings = trainings;
+        console.log('profiles:');
         console.log(profilesJSON);
+        console.log('full string:');
         console.log(JSON.stringify(profilesJSON) + '\n');
         response.send(JSON.stringify(profilesJSON));
       }
