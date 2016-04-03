@@ -543,6 +543,8 @@ app.get('/loadProfiles', function(request, response) {
         // results is now equal to ['one', 'two']
         //var profileRecord = results[0];
         console.log('all profiles loaded');
+        // include all trainings
+        profilesJSON.trainings = trainings;
         console.log(profilesJSON);
         console.log(JSON.stringify(profilesJSON) + '\n');
         response.send(JSON.stringify(profilesJSON));
