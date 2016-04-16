@@ -893,7 +893,7 @@ app.post('/saveEndorsements', function(request, response) {
               callback2(err);
               return; 
             }
-
+            console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
             callback2(null,'success');
 
         });
