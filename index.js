@@ -903,11 +903,11 @@ app.post('/saveEndorsements', function(request, response) {
         }, function(error) {
           if (error) {
             console.log('Error: ' + error);
-            callback2(error);
+            callback(error);
             return;
           } else {
             console.log('done replacing all entries');
-            callback2(null, 'done replacing all entries');
+            callback(null, 'success');
           }
         });
         
