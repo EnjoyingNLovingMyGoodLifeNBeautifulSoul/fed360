@@ -869,8 +869,11 @@ app.post('/saveEndorsements', function(request, response) {
             };
           }
         }
+        console.log('endorsement array created ');
+        console.log(endorsements);
 
         async.each(endorsements, function(endorsement, callback2) {
+          console.log('calling Airtable save for table Endorsements');
           base('Endorsements').create({
             "Of": [
             endorsement['Of']
@@ -896,9 +899,7 @@ app.post('/saveEndorsements', function(request, response) {
             console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
             callback2(null,'success');
 
-        });
-
-
+           });
         
         }, function(error) {
           if (error) {
