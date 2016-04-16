@@ -839,7 +839,7 @@ app.post('/saveEndorsements', function(request, response) {
 
 
   // TODO
-  profilesJSON.delivery.id = 'recXyBASMPAOe7vBX';
+  profilesJSON.delivery = {'id':'recXyBASMPAOe7vBX'};
 
   async.series([
       function(callback) {
