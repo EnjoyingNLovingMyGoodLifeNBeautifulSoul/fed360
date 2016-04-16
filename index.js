@@ -860,14 +860,15 @@ app.post('/saveEndorsements', function(request, response) {
           "Timestamp": "2016-01-25T17:10:00.000Z",
           "Endorsement": "endorsed"
         }, function(err, record) {
-          if (err) { h.console.log(err); return; }
-          console.log(record);
-          callback(err);
-          return;
-        });
+          if (err) { 
+            console.log(err);
+            callback(err);
+            return; 
+          }
+          callback(null,'success');
 
-        callback(null,'success');
-        // TOODO saveEndorsement(profileJSON);
+        });
+        
       },
       function(callback) {
         console.log('currently blank function');
