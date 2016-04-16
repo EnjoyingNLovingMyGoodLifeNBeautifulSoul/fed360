@@ -447,7 +447,7 @@ app.get('/loadProfiles', function(request, response) {
 
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
                   profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
-                  profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedTraining);
+                  profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining);
                   console.log('incremented ' + profilesJSON.profiles[index].competencies[index2].name +
                     ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                     profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
