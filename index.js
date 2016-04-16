@@ -830,10 +830,10 @@ app.post('/saveEndorsements', function(request, response) {
     console.log('request body is undefined');
     response.send('undefined body');
   }
-  
-  console.log(request.body.result);
-  console.log(JSON.parse(request.body.result));
-  var profilesJSON = JSON.parse(request.body.result);
+
+  console.log(request.body.results);
+  console.log(JSON.parse(request.body.results));
+  var profilesJSON = JSON.parse(request.body.results);
   var profileId = '';
   console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
