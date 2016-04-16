@@ -826,7 +826,11 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
   console.log('starting save Endorsements');
-  //console.log(JSON.stringify(request.body));
+  if (typeof request.body == 'undefined') {
+    console.log('request body is undefined');
+    response.send('undefined body');
+  }
+  
   console.log(request.body.result);
   console.log(JSON.parse(request.body.result));
   var profilesJSON = JSON.parse(request.body.result);
