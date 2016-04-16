@@ -837,6 +837,10 @@ app.post('/saveEndorsements', function(request, response) {
   var profileId = '';
   console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
+
+  // TODO
+  profilesJSON.delivery.id = 'recXyBASMPAOe7vBX';
+
   async.series([
       function(callback) {
         console.log('saving endorsement');
