@@ -840,42 +840,81 @@ app.post('/saveEndorsements', function(request, response) {
   async.series([
       function(callback) {
         console.log('saving endorsement');
+        
+
         var date = new Date();
-        // 2016-01-25T17:10:00.000Z
+        // Timestamp format: 2016-01-25T17:10:00.000Z
         var dateString = date.getFullYear() + '-' + date.getDate() + '-' + date.getMonth() + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds() + 'Z';
-
-        base('Endorsements').create({
-          "Of": [
-          "recu52h0rS87Ze2Pa"
-        ],
-          "Related Delivery": [
-          "recXyBASMPAOe7vBX"
-        ],
-          "By": [
-          "rec4u0NAiah5eWb8n"
-        ],
-          "Competency": [
-          "recCBuosShpbOXayr"
-        ],
-          "Timestamp": "2016-01-25T17:10:00.000Z",
-          "Endorsement": "endorsed"
-        }, function(err, record) {
-          if (err) { 
-            console.log(err);
-            callback(err);
-            return; 
+        
+        var endorsements = [];
+        for (var index in profilesJSON.profiles) {
+          for (var index2 in profilesJSON.profiles[index].competencies) {
+            var trainingArray = [];
+            for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
+              trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
+            }
+            var endorsement = {
+              'Of': profilesJSON.profiles[index].id,
+              'Related Delivery': profilesJSON.delivery.id,
+              'By': profilesJSON.submitter.id,
+              'Competency': [profilesJSON.profiles[index].competencies[index2].id],
+              'Timestamp': dateString,
+              'Endorsement': profilesJSON.profiles[index].endorsement,
+              'Recommended Training': trainingArray
+            };
           }
-          callback(null,'success');
+        }
 
+        async.each(endorsements function(endorsement, callback2) {
+          base('Endorsements').create({
+            "Of": [
+            endorsement['Of']
+          ],
+            "Related Delivery": [
+            endorsement['Related Delivery']
+          ],
+            "By": [
+            endorsement['By']
+          ],
+            "Competency": [
+            endorsement['Competency']
+          ],
+            "Timestamp": endorsement['Timestamp'],
+            "Endorsement": endorsement['Endorsement'],
+            "Recommended Training": endorsement['Recommended Training']
+          }, function(err, record) {
+            if (err) { 
+              console.log(err);
+              callback2(err);
+              return; 
+            }
+
+            callback2(null,'success');
+
+        });
+
+
+        
+        }, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+            callback2(error);
+            return;
+          } else {
+            console.log('done replacing all entries');
+            callback2(null, 'done replacing all entries');
+          }
         });
         
       },
+
       function(callback) {
         console.log('currently blank function');
         callback(null,'success');
       }
+
     ],
-    //optional callback
+    // series callback
     function(err, results) {
       console.log('finishing async');
       if (err) {
