@@ -825,11 +825,11 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
 
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
-  console.log('starting save Profile');
+  console.log('starting save Endorsements');
   //console.log(JSON.stringify(request.body));
-  console.log(request.body.profile);
-  console.log(JSON.parse(request.body.profile));
-  var profilesJSON = JSON.parse(request.body.profile);
+  console.log(request.body.result);
+  console.log(JSON.parse(request.body.result));
+  var profilesJSON = JSON.parse(request.body.result);
   var profileId = '';
   console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
