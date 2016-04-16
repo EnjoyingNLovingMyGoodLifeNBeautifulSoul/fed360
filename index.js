@@ -822,3 +822,38 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
     }
   });
 }
+
+app.post('/saveEndorsements', function(request, response) {
+  console.log('POST received');
+  console.log('starting save Profile');
+  //console.log(JSON.stringify(request.body));
+  console.log(request.body.profile);
+  console.log(JSON.parse(request.body.profile));
+  var profilesJSON = JSON.parse(request.body.profile);
+  var profileId = '';
+  console.log('data being processed: ' + JSON.stringify(profilesJSON));
+
+  async.series([
+      function(callback) {
+        console.log('saving endorsement');
+        callback(null,'success');
+        // TOODO saveEndorsement(profileJSON);
+      },
+      function(callback) {
+        console.log('currently blank function');
+        callback(null,'success');
+      }
+    ],
+    //optional callback
+    function(err, results) {
+      console.log('finishing async');
+      if (err) {
+        console.log('Error: ' + err);
+        response.send('Error: ' + err);
+      } else {
+        response.send('Done');
+      }
+    });
+
+
+});
