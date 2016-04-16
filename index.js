@@ -840,6 +840,32 @@ app.post('/saveEndorsements', function(request, response) {
   async.series([
       function(callback) {
         console.log('saving endorsement');
+        var date = new Date();
+        // 2016-01-25T17:10:00.000Z
+        var dateString = date.getFullYear() + '-' + date.getDate() + '-' + date.getMonth() + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds() + 'Z';
+
+        base('Endorsements').create({
+          "Of": [
+          "recu52h0rS87Ze2Pa"
+        ],
+          "Related Delivery": [
+          "recXyBASMPAOe7vBX"
+        ],
+          "By": [
+          "rec4u0NAiah5eWb8n"
+        ],
+          "Competency": [
+          "recCBuosShpbOXayr"
+        ],
+          "Timestamp": "2016-01-25T17:10:00.000Z",
+          "Endorsement": "endorsed"
+        }, function(err, record) {
+          if (err) { h.console.log(err); return; }
+          console.log(record);
+          callback(err);
+          return;
+        });
+
         callback(null,'success');
         // TOODO saveEndorsement(profileJSON);
       },
