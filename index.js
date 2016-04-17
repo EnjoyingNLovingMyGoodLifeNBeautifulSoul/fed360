@@ -191,6 +191,7 @@ app.get('/loadProfiles', function(request, response) {
           // This function (`page`) will get called for each page of records.
 
           records.forEach(function(record) {
+            console.log('processing');
             console.log('processing profile ' + record.get('Profile ID'));
             var profile = {
               'id': record.getId(),
