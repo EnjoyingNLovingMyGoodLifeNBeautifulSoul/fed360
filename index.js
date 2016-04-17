@@ -233,7 +233,7 @@ app.get('/loadProfiles', function(request, response) {
       function(callback) {
         console.log('loading organization');
         if (profilesJSON.profiles.length == 0) {
-          callback(null, 'success');
+          callback();
           return;
         }
         base('Organizations').select({
@@ -264,7 +264,7 @@ app.get('/loadProfiles', function(request, response) {
           if (error) {
             console.log('error:');
             console.log(error);
-            return callback(error, error);
+            return callback(error);
           }
           console.log('successfully loaded organizations');
           //console.log(organizations);
@@ -275,7 +275,7 @@ app.get('/loadProfiles', function(request, response) {
             profilesJSON.profiles[index].organization = organizations[profilesJSON.profiles[index].organization[0]].name;
             console.log('assigned ' + profilesJSON.profiles[index].organization + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
           }
-          callback(null, 'success');
+          callback();
         });
 
       },
@@ -283,7 +283,7 @@ app.get('/loadProfiles', function(request, response) {
       function(callback) {
         console.log('loading positions');
         if (profilesJSON.profiles.length == 0) {
-          callback(null, 'success');
+          callback();
           return;
         }
         base('Positions').select({
@@ -322,7 +322,7 @@ app.get('/loadProfiles', function(request, response) {
           if (error) {
             console.log('error:');
             console.log(error);
-            return callback(error, error);
+            return callback(error);
           }
           console.log('successfully loaded positions');
 
@@ -335,7 +335,7 @@ app.get('/loadProfiles', function(request, response) {
             profilesJSON.profiles[index].title = positions[id].title;
             console.log('assigned ' + profilesJSON.profiles[index].title + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
           }
-          callback(null, 'success');
+          callback();
         });
 
       },
@@ -343,7 +343,7 @@ app.get('/loadProfiles', function(request, response) {
       function(callback) {
         console.log('loading competencies');
         if (profilesJSON.profiles.length == 0) {
-          callback(null, 'success');
+          callback();
           return;
         }
         base('Competencies').select({
@@ -376,7 +376,7 @@ app.get('/loadProfiles', function(request, response) {
           if (error) {
             console.log('error:');
             console.log(error);
-            return callback(error, error);
+            return callback(error);
           }
           console.log('successfully loaded competencies');
           //console.log(competencies);
@@ -397,7 +397,7 @@ app.get('/loadProfiles', function(request, response) {
               console.log('assigned ' + profilesJSON.profiles[index].competencies[index2].name + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
             }
           }
-          callback(null, 'success');
+          callback();
         });
 
       },
@@ -405,7 +405,7 @@ app.get('/loadProfiles', function(request, response) {
       function(callback) {
         console.log('loading endorsements');
         if (profilesJSON.profiles.length == 0) {
-          callback(null, 'success');
+          callback();
           return;
         }
         base('Endorsements').select({
@@ -439,7 +439,7 @@ app.get('/loadProfiles', function(request, response) {
           if (error) {
             console.log('error:');
             console.log(error);
-            return callback(error, error);
+            return callback(error);
           }
           console.log('successfully loaded endorsements');
           //console.log(endorsements);
@@ -464,7 +464,7 @@ app.get('/loadProfiles', function(request, response) {
 
             }
           }
-          callback(null, 'success');
+          callback();
         });
 
       },
@@ -472,7 +472,7 @@ app.get('/loadProfiles', function(request, response) {
       function(callback) {
         console.log('loading trainings');
         if (profilesJSON.profiles.length == 0) {
-          callback(null, 'success');
+          callback();
           return;
         }
         base('Trainings').select({
@@ -506,7 +506,7 @@ app.get('/loadProfiles', function(request, response) {
           if (error) {
             console.log('error:');
             console.log(error);
-            return callback(error, error);
+            return callback(error);
           }
           console.log('successfully loaded trainings');
           //console.log(trainings);
@@ -539,7 +539,7 @@ app.get('/loadProfiles', function(request, response) {
               }
             }
           }
-          callback(null, 'success');
+          callback();
         });
 
       }
