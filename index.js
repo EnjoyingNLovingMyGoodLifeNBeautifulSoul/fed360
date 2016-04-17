@@ -206,7 +206,7 @@ app.get('/loadProfiles', function(request, response) {
               if (emails[index] == profile.email) {
                 console.log('found ' + emails[index]);
                 profilesJSON.profiles.push(profile);
-                console.log(profile);
+                //console.log(profile);
               }
             }
 
@@ -835,7 +835,7 @@ app.post('/saveEndorsements', function(request, response) {
   console.log(JSON.parse(request.body.results));
   var profilesJSON = JSON.parse(request.body.results);
   var profileId = '';
-  console.log('data being processed: ' + JSON.stringify(profilesJSON));
+  //console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
 
   // TODO
