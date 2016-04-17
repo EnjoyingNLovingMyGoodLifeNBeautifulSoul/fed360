@@ -219,14 +219,13 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           
-          /*if (error) {
+          if (error) {
             console.log('error:');
             console.log(error);
-            return;
-            //return callback(error, error);
-          }*/
+            return callback(error);
+          }
           console.log('successfully loaded base profiles');
-          callback(null, 'success');
+          callback();
         });
 
       },
@@ -547,7 +546,7 @@ app.get('/loadProfiles', function(request, response) {
 
     ],
     //optional callback
-    function(err, results) {
+    function(err) {
       console.log('finishing async');
       if (err) {
         console.log('Async Error: ' + err);
