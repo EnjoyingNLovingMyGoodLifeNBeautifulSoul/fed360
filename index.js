@@ -521,6 +521,11 @@ app.get('/loadProfiles', function(request, response) {
                     console.log('assigned training name ' + trainings[index4].title +
                       ' to ' + profilesJSON.profiles[index].competencies[index2].name + ' competency ' +
                       profilesJSON.profiles[index].firstname);
+                  } else {
+                    if (index4 == (Object.keys(trainings)).length - 1) {
+                      console.log('no tranings found for id ' + index4);
+
+                    }
                   }
                 }
 
