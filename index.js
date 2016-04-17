@@ -543,7 +543,7 @@ app.get('/loadProfiles', function(request, response) {
     function(err, results) {
       console.log('finishing async');
       if (err) {
-        console.log('Error: ' + err);
+        console.log('Async Error: ' + err);
         response.send('Error: ' + err);
       } else {
         // results is now equal to ['one', 'two']
@@ -556,7 +556,7 @@ app.get('/loadProfiles', function(request, response) {
         console.log('profiles:');
         //console.log(profilesJSON);
         console.log('full string:');
-        console.log(JSON.stringify(profilesJSON) + '\n');
+        //console.log(JSON.stringify(profilesJSON) + '\n');
         response.send(JSON.stringify(profilesJSON));
       }
     });
