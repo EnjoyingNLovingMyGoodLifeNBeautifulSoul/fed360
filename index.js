@@ -218,7 +218,8 @@ app.get('/loadProfiles', function(request, response) {
           fetchNextPage();
 
         }, function done(error) {
-          console.log('error?:' + error);
+          console.log('error?:');
+          console.log(error);
           if (error) {
             console.log('error: ' + error);
             //response.send('Error: ' + error);
