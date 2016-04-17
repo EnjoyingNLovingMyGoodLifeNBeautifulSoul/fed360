@@ -204,7 +204,7 @@ app.get('/loadProfiles', function(request, response) {
             };
             for (var index in emails) {
               if (emails[index] == profile.email) {
-                //console.log('found ' + emails[index]);
+                console.log('found ' + emails[index]);
                 profilesJSON.profiles.push(profile);
                 //console.log(profile);
               }
