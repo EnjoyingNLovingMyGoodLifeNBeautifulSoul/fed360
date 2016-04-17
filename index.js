@@ -193,7 +193,7 @@ app.get('/loadProfiles', function(request, response) {
           records.forEach(function(record) {
             console.log('processing profile');
             console.log(record.get('Profile ID'));
-            console.log('processing profile ' + record.get('Profile ID'));
+            console.log('processing profile ' + record.get('Email'));
             var profile = {
               'id': record.getId(),
               'firstname': record.get('Name (First)'),
