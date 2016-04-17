@@ -218,12 +218,11 @@ app.get('/loadProfiles', function(request, response) {
           fetchNextPage();
 
         }, function done(error) {
-          console.log('error?:');
-          console.log(error);
+          
           if (error) {
-            console.log('error: ' + error);
-            //response.send('Error: ' + error);
-            return callback(error);
+            console.log('error:');
+            console.log(error);
+            return callback(error, error);
           }
           console.log('successfully loaded base profiles');
           callback(null, 'success');
@@ -263,8 +262,9 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log('error: ' + error);
-            return callback(error);
+            console.log('error:');
+            console.log(error);
+            return callback(error, error);
           }
           console.log('successfully loaded organizations');
           //console.log(organizations);
@@ -320,8 +320,9 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log('error: ' + error);
-            return callback(error);
+            console.log('error:');
+            console.log(error);
+            return callback(error, error);
           }
           console.log('successfully loaded positions');
 
@@ -373,8 +374,9 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log('error: ' + error);
-            return callback(error);
+            console.log('error:');
+            console.log(error);
+            return callback(error, error);
           }
           console.log('successfully loaded competencies');
           //console.log(competencies);
@@ -435,8 +437,9 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log('error: ' + error);
-            return callback(error);
+            console.log('error:');
+            console.log(error);
+            return callback(error, error);
           }
           console.log('successfully loaded endorsements');
           //console.log(endorsements);
@@ -501,8 +504,9 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log('error: ' + error);
-            return callback(error);
+            console.log('error:');
+            console.log(error);
+            return callback(error, error);
           }
           console.log('successfully loaded trainings');
           //console.log(trainings);
