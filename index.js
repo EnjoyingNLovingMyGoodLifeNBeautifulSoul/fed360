@@ -219,7 +219,7 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log(error);
+            console.log('error: ' + error);
             response.send('Error: ' + error);
             return callback(error);
           }
@@ -261,7 +261,7 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log(error);
+            console.log('error: ' + error);
             return callback(error);
           }
           console.log('successfully loaded organizations');
@@ -318,7 +318,7 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log(error);
+            console.log('error: ' + error);
             return callback(error);
           }
           console.log('successfully loaded positions');
@@ -371,7 +371,7 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log(error);
+            console.log('error: ' + error);
             return callback(error);
           }
           console.log('successfully loaded competencies');
@@ -433,7 +433,7 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log(error);
+            console.log('error: ' + error);
             return callback(error);
           }
           console.log('successfully loaded endorsements');
@@ -499,7 +499,7 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           if (error) {
-            console.log(error);
+            console.log('error: ' + error);
             return callback(error);
           }
           console.log('successfully loaded trainings');
