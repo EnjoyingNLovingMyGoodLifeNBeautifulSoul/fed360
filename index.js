@@ -509,11 +509,11 @@ app.get('/loadProfiles', function(request, response) {
             for (var index2 in profilesJSON.profiles[index].competencies) {
 
               for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
-                console.log(profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3]);
+                console.log(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3]);
                 for (var index4 in trainings) {
-                  if (profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] == index4) {
+                  if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3] == index4) {
                     var id = index4;
-                    profilesJSON.profiles[index].competencies[index3].endorsedTraining[index3] = {
+                    profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3] = {
                       'id': index4,
                       'endorsedName': trainings[index4].title,
                       'endorsedDescription': trainings[index4].description,
