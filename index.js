@@ -165,6 +165,7 @@ app.get('/loadProfiles', function(request, response) {
     'profiles': []
   };
   var emails = JSON.parse(request.query.emails).emails; // Used for messages in URL
+  console.log('searching for emails: ');
   console.log(emails);
   /*console.log(request.body);
   if (typeof request.body == 'undefined') {
@@ -219,7 +220,8 @@ app.get('/loadProfiles', function(request, response) {
           fetchNextPage();
 
         }, function done(error) {
-          
+          console.log('error?');
+          console.log(error);
           if (error) {
             console.log('error:');
             console.log(error);
