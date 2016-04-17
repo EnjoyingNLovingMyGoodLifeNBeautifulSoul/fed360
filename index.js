@@ -222,7 +222,8 @@ app.get('/loadProfiles', function(request, response) {
           if (error) {
             console.log('error:');
             console.log(error);
-            return callback(error, error);
+            return;
+            //return callback(error, error);
           }
           console.log('successfully loaded base profiles');
           callback(null, 'success');
