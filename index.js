@@ -536,7 +536,7 @@ app.get('/loadProfiles', function(request, response) {
           callback(null, 'success');
         });
 
-      },
+      }
 
     ],
     //optional callback
