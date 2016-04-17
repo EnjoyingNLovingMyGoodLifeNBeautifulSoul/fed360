@@ -219,12 +219,12 @@ app.get('/loadProfiles', function(request, response) {
 
         }, function done(error) {
           
-          if (error) {
+          /*if (error) {
             console.log('error:');
             console.log(error);
             return;
             //return callback(error, error);
-          }
+          }*/
           console.log('successfully loaded base profiles');
           callback(null, 'success');
         });
