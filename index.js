@@ -224,7 +224,7 @@ console.log('record: ' + testCounter);
           fetchNextPage();
 
         }, function done(error) {
-doneCounter++;
+doneCounter++; // this did not show up for some reason
 console.log('done: ' + doneCounter);
           if (error) {
             console.log('error:');
