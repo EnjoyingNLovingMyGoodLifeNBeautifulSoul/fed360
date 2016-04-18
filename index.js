@@ -572,7 +572,7 @@ app.get('/loadProfiles', function(request, response) {
         console.log('profiles:');
         //console.log(profilesJSON);
         console.log('full string:');
-        //console.log(JSON.stringify(profilesJSON) + '\n');
+        console.log(JSON.stringify(profilesJSON) + '\n');
         console.log('returning compiled profiles in response');
         response.send(JSON.stringify(profilesJSON));
       }
@@ -854,10 +854,11 @@ app.post('/saveEndorsements', function(request, response) {
     response.send('undefined body');
   }
 
-  console.log(request.body.results);
-  console.log(JSON.parse(request.body.results));
+  //console.log(request.body.results);
+  //console.log(JSON.parse(request.body.results));
   var profilesJSON = JSON.parse(request.body.results);
   var profileId = '';
+  console.log('profiles recevied:' + profilesJSON.profiles.length);
   //console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
 
@@ -891,6 +892,7 @@ app.post('/saveEndorsements', function(request, response) {
               'Recommended Training': trainingArray
             };
             endorsements.push(endorsement);
+            console.log('adding endorsement ' + endorsement('Of') + ' by ' + endorsement('By'));
           }
         }
         console.log('endorsement array created ');
