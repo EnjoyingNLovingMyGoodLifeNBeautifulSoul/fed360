@@ -518,7 +518,7 @@ app.get('/loadProfiles', function(request, response) {
           for (var index in profilesJSON.profiles) {
 
             for (var index2 in profilesJSON.profiles[index].competencies) {
-
+              console.log(profilesJSON.profiles[index].competencies[index2].endorsedTraining);
               for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
                 console.log(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3]);
                 for (var index4 in trainings) {
