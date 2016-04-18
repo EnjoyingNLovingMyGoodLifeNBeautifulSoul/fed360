@@ -466,13 +466,21 @@ app.get('/loadProfiles', function(request, response) {
                   console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2] +
                     ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
                     profilesJSON.profiles[index].competencies[index3].name);
+
+                  profilesJSON.profiles[index].endorsements[index2] = {
+                    'id': endorsementId,
+                    'competency': profilesJSON.profiles[index].competencies[index3].name,
+                    'training': endorsements[endorsementId].recommendedtraining
+                  };
                 }
               }
 
+              if (foundMatchingCompetency == false) {
+                console.log('no matching competency for ' + endorsementId);
+              }
+
             }
-            if (foundMatchingCompetency == false) {
-              console.log('no matching competency for ' + endorsementId);
-            }
+            
           }
           callback5(null, 'success');
         });
@@ -872,13 +880,9 @@ app.post('/saveEndorsements', function(request, response) {
   var allEndorsements = {};
 
   async.series([
-      function(callback) {
-        loadEndorsements(allEndorsements, callback);
 
-      },
       function(callback) {
         console.log('saving endorsement');
-        console.log(allEndorsements);
 
         var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
@@ -901,6 +905,7 @@ app.post('/saveEndorsements', function(request, response) {
             }
             if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
               var endorsement = {
+                'id': profilesJSON.profiles[index].competencies[index2].endorsementId
                 'Of': profilesJSON.profiles[index].id,
                 'Related Delivery': profilesJSON.delivery.id,
                 'By': profilesJSON.submitter.id,
@@ -919,6 +924,12 @@ app.post('/saveEndorsements', function(request, response) {
         //console.log(endorsements);
 
         async.each(endorsements, function(endorsement, callback2) {
+          if (typeof endorsement['id'] == 'undefined') {
+
+          
+
+
+          
           console.log('calling Airtable save for table Endorsements');
           base('Endorsements').create({
             "Of": [
