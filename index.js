@@ -881,7 +881,7 @@ app.post('/saveEndorsements', function(request, response) {
         if (twoDigitDay.length == 1) {
           twoDigitDay = '0' + twoDigitDay;
         }
-        var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds() + 'Z';
+        var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds() + 'Z';
         
         var endorsements = [];
         for (var index in profilesJSON.profiles) {
