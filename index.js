@@ -924,10 +924,6 @@ app.post('/saveEndorsements', function(request, response) {
         //console.log(endorsements);
 
         async.each(endorsements, function(endorsement, callback2) {
-          if (typeof endorsement['id'] == 'undefined') {
-
-          
-
 
           
           console.log('calling Airtable save for table Endorsements');
