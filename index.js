@@ -455,7 +455,7 @@ app.get('/loadProfiles', function(request, response) {
 
               var foundMatchingCompetency = false;
               for (var index3 in profilesJSON.profiles[index].competencies) {
-                console.log('searching if id ' + endorsedCompetencyId + ' = ' + profilesJSON.profiles[index].competencies[index3].id);
+                //console.log('searching if id ' + endorsedCompetencyId + ' = ' + profilesJSON.profiles[index].competencies[index3].id);
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
                   foundMatchingCompetency = true;
                   profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
@@ -523,9 +523,9 @@ app.get('/loadProfiles', function(request, response) {
           for (var index in profilesJSON.profiles) {
 
             for (var index2 in profilesJSON.profiles[index].competencies) {
-              console.log(profilesJSON.profiles[index].competencies[index2].endorsedTraining);
+
               for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
-                console.log(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3]);
+                //console.log(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3]);
                 for (var index4 in trainings) {
                   if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3] == index4) {
                     var id = index4;
