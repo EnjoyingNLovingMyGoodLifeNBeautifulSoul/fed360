@@ -179,7 +179,8 @@ app.get('/loadProfiles', function(request, response) {
   var competencies = {};
   var endorsements = {};
   var trainings = {};
-
+  var testCounter = 0;
+  var doneCounter = 0;
   async.series([
       function(callback) {
         console.log('loading profile');
@@ -213,7 +214,8 @@ app.get('/loadProfiles', function(request, response) {
                 //console.log(profile);
               }
             }
-
+testCounter++;
+console.log('record: ' + testCounter);
           });
 
           // To fetch the next page of records, call `fetchNextPage`.
@@ -222,14 +224,15 @@ app.get('/loadProfiles', function(request, response) {
           fetchNextPage();
 
         }, function done(error) {
-
+doneCounter++;
+console.log('done: ' + doneCounter);
           if (error) {
             console.log('error:');
             console.log(error);
             return callback(error);
           }
           console.log('successfully loaded base profiles');
-          callback();
+          return callback();
         });
 
       },
@@ -567,6 +570,7 @@ app.get('/loadProfiles', function(request, response) {
         //console.log(profilesJSON);
         console.log('full string:');
         //console.log(JSON.stringify(profilesJSON) + '\n');
+        console.log('returning compiled profiles in response');
         response.send(JSON.stringify(profilesJSON));
       }
     });
