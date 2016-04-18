@@ -234,7 +234,7 @@ app.get('/loadProfiles', function(request, response) {
 
       },
 
-      function(callback2) {
+      /*function(callback2) {
         console.log('loading organization');
         if (profilesJSON.profiles.length == 0) {
           callback2();
@@ -547,7 +547,7 @@ app.get('/loadProfiles', function(request, response) {
         });
 
       }
-
+*/
     ],
     //optional callback
     function(err) {
