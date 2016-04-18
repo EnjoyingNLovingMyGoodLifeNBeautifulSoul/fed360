@@ -572,7 +572,7 @@ app.get('/loadProfiles', function(request, response) {
         console.log('profiles:');
         //console.log(profilesJSON);
         console.log('full string:');
-        console.log(profilesJSON);
+        //console.log(profilesJSON);
         console.log('returning compiled profiles in response');
         response.send(JSON.stringify(profilesJSON));
       }
@@ -858,7 +858,7 @@ app.post('/saveEndorsements', function(request, response) {
   //console.log(JSON.parse(request.body.results));
   var profilesJSON = JSON.parse(request.body.results);
   var profileId = '';
-  console.log('profiles recevied:' + profilesJSON.profiles.length);
+  console.log('profiles received: ' + profilesJSON.profiles.length);
   //console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
 
@@ -882,17 +882,20 @@ app.post('/saveEndorsements', function(request, response) {
             for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
               trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
             }
-            var endorsement = {
-              'Of': profilesJSON.profiles[index].id,
-              'Related Delivery': profilesJSON.delivery.id,
-              'By': profilesJSON.submitter.id,
-              'Competency': [profilesJSON.profiles[index].competencies[index2].id],
-              'Timestamp': dateString,
-              'Endorsement': profilesJSON.profiles[index].endorsement,
-              'Recommended Training': trainingArray
-            };
-            endorsements.push(endorsement);
-            console.log('adding endorsement ' + endorsement('Of') + ' by ' + endorsement('By'));
+            if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
+              var endorsement = {
+                'Of': profilesJSON.profiles[index].id,
+                'Related Delivery': profilesJSON.delivery.id,
+                'By': profilesJSON.submitter.id,
+                'Competency': [profilesJSON.profiles[index].competencies[index2].id],
+                'Timestamp': dateString,
+                'Endorsement': profilesJSON.profiles[index].endorsement,
+                'Recommended Training': trainingArray
+              };
+              endorsements.push(endorsement);
+              console.log('adding endorsement ' + endorsement['Of'] + ' by ' + endorsement['By']);
+            }
+            
           }
         }
         console.log('endorsement array created ');
