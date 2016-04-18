@@ -214,8 +214,7 @@ app.get('/loadProfiles', function(request, response) {
                 //console.log(profile);
               }
             }
-testCounter++;
-console.log('record: ' + testCounter);
+
           });
 
           // To fetch the next page of records, call `fetchNextPage`.
@@ -224,8 +223,7 @@ console.log('record: ' + testCounter);
           fetchNextPage();
 
         }, function done(error) {
-doneCounter++; // this did not show up for some reason
-console.log('done: ' + doneCounter);
+
           if (error) {
             console.log('error:');
             console.log(error);
@@ -237,10 +235,10 @@ console.log('done: ' + doneCounter);
 
       },
 
-      /*function(callback2) {
+      function(callback2) {
         console.log('loading organization');
         if (profilesJSON.profiles.length == 0) {
-          callback2();
+          callback2(null,'success');
           return;
         }
         base('Organizations').select({
@@ -282,7 +280,7 @@ console.log('done: ' + doneCounter);
             profilesJSON.profiles[index].organization = organizations[profilesJSON.profiles[index].organization[0]].name;
             console.log('assigned ' + profilesJSON.profiles[index].organization + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
           }
-          callback2();
+          callback2(null, 'success');
         });
 
       },
@@ -290,7 +288,7 @@ console.log('done: ' + doneCounter);
       function(callback3) {
         console.log('loading positions');
         if (profilesJSON.profiles.length == 0) {
-          callback3();
+          callback3(null, 'success');
           return;
         }
         base('Positions').select({
@@ -342,7 +340,7 @@ console.log('done: ' + doneCounter);
             profilesJSON.profiles[index].title = positions[id].title;
             console.log('assigned ' + profilesJSON.profiles[index].title + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
           }
-          callback3();
+          callback3(null, 'success');
         });
 
       },
@@ -350,7 +348,7 @@ console.log('done: ' + doneCounter);
       function(callback4) {
         console.log('loading competencies');
         if (profilesJSON.profiles.length == 0) {
-          callback4();
+          callback4(null, 'success');
           return;
         }
         base('Competencies').select({
@@ -404,7 +402,7 @@ console.log('done: ' + doneCounter);
               console.log('assigned ' + profilesJSON.profiles[index].competencies[index2].name + ' to ' + profilesJSON.profiles[index].firstname + ' profile');
             }
           }
-          callback4();
+          callback4(null, 'success');
         });
 
       },
@@ -412,7 +410,7 @@ console.log('done: ' + doneCounter);
       function(callback5) {
         console.log('loading endorsements');
         if (profilesJSON.profiles.length == 0) {
-          callback5();
+          callback5(null, 'success');
           return;
         }
         base('Endorsements').select({
@@ -471,7 +469,7 @@ console.log('done: ' + doneCounter);
 
             }
           }
-          callback5();
+          callback5(null, 'success');
         });
 
       },
@@ -479,7 +477,7 @@ console.log('done: ' + doneCounter);
       function(callback6) {
         console.log('loading trainings');
         if (profilesJSON.profiles.length == 0) {
-          callback6();
+          callback6(null, 'success');
           return;
         }
         base('Trainings').select({
@@ -546,11 +544,11 @@ console.log('done: ' + doneCounter);
               }
             }
           }
-          callback6();
+          callback6(null, 'success');
         });
 
       }
-*/
+
     ],
     //optional callback
     function(err, results) {
