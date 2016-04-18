@@ -980,6 +980,7 @@ app.post('/saveEndorsements', function(request, response) {
 });
 
 function loadEndorsements(endorsementsReference, callback) {
+  console.log('loading endorsements');
 
   base('Endorsements').select({
     view: "Main View"
