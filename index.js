@@ -230,7 +230,7 @@ app.get('/loadProfiles', function(request, response) {
             return callback(error);
           }
           console.log('successfully loaded base profiles');
-          return callback(null,'success');
+          return callback(null, 'success');
         });
 
       },
@@ -238,7 +238,7 @@ app.get('/loadProfiles', function(request, response) {
       function(callback2) {
         console.log('loading organization');
         if (profilesJSON.profiles.length == 0) {
-          callback2(null,'success');
+          callback2(null, 'success');
           return;
         }
         base('Organizations').select({
@@ -861,15 +861,24 @@ app.post('/saveEndorsements', function(request, response) {
   console.log('profiles received: ' + profilesJSON.profiles.length);
   //console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
-
   // TODO
-  profilesJSON.delivery = {'id':'recXyBASMPAOe7vBX'};
-  profilesJSON.submitter = {'id':'recu52h0rS87Ze2Pa'};
+  profilesJSON.delivery = {
+    'id': 'recXyBASMPAOe7vBX'
+  };
+  profilesJSON.submitter = {
+    'id': 'recu52h0rS87Ze2Pa'
+  };
+
+  var endorsements;
 
   async.series([
       function(callback) {
+        endorsements = loadEndorsements(callback);
+
+      },
+      function(callback) {
         console.log('saving endorsement');
-        
+        console.log(endorsements);
 
         var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
@@ -882,7 +891,7 @@ app.post('/saveEndorsements', function(request, response) {
           twoDigitDay = '0' + twoDigitDay;
         }
         var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds() + 'Z';
-        
+
         var endorsements = [];
         for (var index in profilesJSON.profiles) {
           for (var index2 in profilesJSON.profiles[index].competencies) {
@@ -903,7 +912,7 @@ app.post('/saveEndorsements', function(request, response) {
               endorsements.push(endorsement);
               console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
             }
-            
+
           }
         }
         console.log('endorsement array created ');
@@ -913,31 +922,31 @@ app.post('/saveEndorsements', function(request, response) {
           console.log('calling Airtable save for table Endorsements');
           base('Endorsements').create({
             "Of": [
-            endorsement['Of']
-          ],
+              endorsement['Of']
+            ],
             "Related Delivery": [
-            endorsement['Related Delivery']
-          ],
+              endorsement['Related Delivery']
+            ],
             "By": [
-            endorsement['By']
-          ],
+              endorsement['By']
+            ],
             "Competency": [
-            endorsement['Competency']
-          ],
+              endorsement['Competency']
+            ],
             "Timestamp": endorsement['Timestamp'],
             "Endorsement": endorsement['Endorsement'],
             "Recommended Training": endorsement['Recommended Training']
           }, function(err, record) {
-            if (err) { 
+            if (err) {
               console.log(err);
               callback2(err);
-              return; 
+              return;
             }
             console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
-            callback2(null,'success');
+            callback2(null, 'success');
 
-           });
-        
+          });
+
         }, function(error) {
           if (error) {
             console.log('Error: ' + error);
@@ -948,12 +957,12 @@ app.post('/saveEndorsements', function(request, response) {
             callback(null, 'success');
           }
         });
-        
+
       },
 
       function(callback) {
         console.log('currently blank function');
-        callback(null,'success');
+        callback(null, 'success');
       }
 
     ],
@@ -968,5 +977,46 @@ app.post('/saveEndorsements', function(request, response) {
       }
     });
 
-
 });
+
+function loadEndorsements(endorsementsReference, callback) {
+
+  base('Endorsements').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      console.log('processing endorsement ' + record.get('Endorsement ID'));
+      endorsementsReference[record.getId()] = {
+        'endorsementid': record.get('Endorsement ID'),
+        'timestamp': record.get('Timestamp'),
+        'relateddelivery': record.get('Related Delivery'),
+        'competency': record.get('Competency'),
+        'of': record.get('Of'),
+        'by': record.get('By'),
+        'endorsement': record.get('Endorsement'),
+        'recommendedtraining': record.get('Recommended Training')
+
+      };
+
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+    if (error) {
+      console.log('error:');
+      console.log(error);
+      callback(error);
+      return;
+    }
+    console.log('successfully loaded endorsements');
+    //console.log(endorsements);
+    callback(null, 'success');
+  });
+}
