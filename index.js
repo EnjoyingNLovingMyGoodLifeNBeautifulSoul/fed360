@@ -453,9 +453,11 @@ app.get('/loadProfiles', function(request, response) {
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
+              var foundMatchingCompetency = false;
               for (var index3 in profilesJSON.profiles[index].competencies) {
-                console.log('searching for id ' + endorsedCompetencyId);
+                console.log('searching if id ' + endorsedCompetencyId + ' = ' + profilesJSON.profiles[index].competencies[index3].id);
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
+                  foundMatchingCompetency = true;
                   profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
                   profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining);
                   console.log('incremented ' + profilesJSON.profiles[index].competencies[index3].name +
@@ -467,6 +469,9 @@ app.get('/loadProfiles', function(request, response) {
                 }
               }
 
+            }
+            if (foundMatchingCompetency == false) {
+              console.log('no matching competency for ' + endorsementId);
             }
           }
           callback5(null, 'success');
