@@ -232,7 +232,7 @@ console.log('done: ' + doneCounter);
             return callback(error);
           }
           console.log('successfully loaded base profiles');
-          return callback();
+          return callback(null,'success');
         });
 
       },
@@ -553,7 +553,7 @@ console.log('done: ' + doneCounter);
 */
     ],
     //optional callback
-    function(err) {
+    function(err, results) {
       console.log('finishing async');
       if (err) {
         console.log('Async Error: ' + err);
