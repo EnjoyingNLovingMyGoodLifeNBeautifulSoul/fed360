@@ -905,7 +905,7 @@ app.post('/saveEndorsements', function(request, response) {
             }
             if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
               var endorsement = {
-                'id': profilesJSON.profiles[index].competencies[index2].endorsementId
+                'id': profilesJSON.profiles[index].competencies[index2].endorsementId,
                 'Of': profilesJSON.profiles[index].id,
                 'Related Delivery': profilesJSON.delivery.id,
                 'By': profilesJSON.submitter.id,
