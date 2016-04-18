@@ -890,6 +890,7 @@ app.post('/saveEndorsements', function(request, response) {
               'Endorsement': profilesJSON.profiles[index].endorsement,
               'Recommended Training': trainingArray
             };
+            endorsements.push(endorsement);
           }
         }
         console.log('endorsement array created ');
