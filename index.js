@@ -869,7 +869,7 @@ app.post('/saveEndorsements', function(request, response) {
     'id': 'recu52h0rS87Ze2Pa'
   };
 
-  var endorsements;
+  var endorsements = {};
 
   async.series([
       function(callback) {
