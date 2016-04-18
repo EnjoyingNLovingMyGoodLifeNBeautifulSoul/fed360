@@ -873,7 +873,7 @@ app.post('/saveEndorsements', function(request, response) {
 
   async.series([
       function(callback) {
-        loadEndorsements(endorsements, callback);
+        loadEndorsements(allEndorsements, callback);
 
       },
       function(callback) {
@@ -981,6 +981,7 @@ app.post('/saveEndorsements', function(request, response) {
 
 function loadEndorsements(endorsementsReference, callback) {
   console.log('loading endorsements');
+  console.log(endorsementsReference);
 
   base('Endorsements').select({
     view: "Main View"
