@@ -873,7 +873,7 @@ app.post('/saveEndorsements', function(request, response) {
 
   async.series([
       function(callback) {
-        endorsements = loadEndorsements(callback);
+        loadEndorsements(endorsements, callback);
 
       },
       function(callback) {
