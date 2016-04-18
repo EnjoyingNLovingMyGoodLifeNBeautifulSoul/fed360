@@ -873,11 +873,11 @@ app.post('/saveEndorsements', function(request, response) {
 
         var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
-        var twoDigitMonth = date.getMonth();
+        var twoDigitMonth = date.getMonth().toString();
         if (twoDigitMonth.length == 1) {
           twoDigitMonth = '0' + twoDigitMonth;
         }
-        var twoDigitDay = date.getDate();
+        var twoDigitDay = date.getDate().toString();
         if (twoDigitDay.length == 1) {
           twoDigitDay = '0' + twoDigitDay;
         }
