@@ -454,16 +454,16 @@ app.get('/loadProfiles', function(request, response) {
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
               for (var index3 in profilesJSON.profiles[index].competencies) {
-
+                console.log('searching for id ' + endorsedCompetencyId);
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
                   profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
                   profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining);
-                  console.log('incremented ' + profilesJSON.profiles[index].competencies[index2].name +
+                  console.log('incremented ' + profilesJSON.profiles[index].competencies[index3].name +
                     ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                     profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
                   console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2] +
                     ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
-                    profilesJSON.profiles[index].competencies[index2].name);
+                    profilesJSON.profiles[index].competencies[index3].name);
                 }
               }
 
