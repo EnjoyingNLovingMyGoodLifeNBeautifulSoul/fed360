@@ -869,7 +869,7 @@ app.post('/saveEndorsements', function(request, response) {
     'id': 'recu52h0rS87Ze2Pa'
   };
 
-  var endorsements = {};
+  var allEndorsements = {};
 
   async.series([
       function(callback) {
@@ -878,7 +878,7 @@ app.post('/saveEndorsements', function(request, response) {
       },
       function(callback) {
         console.log('saving endorsement');
-        console.log(endorsements);
+        console.log(allEndorsements);
 
         var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
