@@ -893,7 +893,7 @@ app.post('/saveEndorsements', function(request, response) {
                 'Recommended Training': trainingArray
               };
               endorsements.push(endorsement);
-              console.log('adding endorsement ' + endorsement['Of'] + ' by ' + endorsement['By']);
+              console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
             }
             
           }
