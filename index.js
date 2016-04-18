@@ -572,7 +572,7 @@ app.get('/loadProfiles', function(request, response) {
         console.log('profiles:');
         //console.log(profilesJSON);
         console.log('full string:');
-        console.log(JSON.stringify(profilesJSON) + '\n');
+        console.log(profilesJSON);
         console.log('returning compiled profiles in response');
         response.send(JSON.stringify(profilesJSON));
       }
