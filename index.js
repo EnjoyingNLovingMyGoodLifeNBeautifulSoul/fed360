@@ -873,11 +873,11 @@ app.post('/saveEndorsements', function(request, response) {
 
         var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
-        var twoDigitDay = date.getDate();
+        /*var twoDigitDay = date.getDate();
         if (twoDigitDay.length == 1) {
           twoDigitDay = '0' + twoDigitDay;
-        }
-        var dateString = date.getFullYear() + '-' + twoDigitDay + '-' + date.getMonth() + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds() + 'Z';
+        }*/
+        var dateString = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + ':' + date.getMilliseconds() + 'Z';
         
         var endorsements = [];
         for (var index in profilesJSON.profiles) {
