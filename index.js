@@ -966,7 +966,9 @@ app.post('/saveEndorsements', function(request, response) {
         // assign ids from previous endorsements
         for (var index in endorsements) {
           for (var recordId in allEndorsements) {
+            console.log('comparing ' + endorsements[index]['Of']  + ' with ' + allEndorsements[recordId].of);
             if (endorsements[index]['Of'] == allEndorsements[recordId].of) {
+              console.log('comparing ' + endorsements[index]['Competency']  + ' with ' + allEndorsements[recordId].competency);
                 if (endorsements[index]['Competency'] == allEndorsements[recordId].competency) {
 
                   endorsements[index]['id'] = recordId;
