@@ -976,7 +976,7 @@ app.post('/saveEndorsements', function(request, response) {
           }
         }
 
-        console.log('endorsement array created ');
+        console.log('endorsement array created : ' + Object.keys(endorsements).length;
         //console.log(endorsements);
 
         async.each(endorsements, function(endorsement, callback2) {
