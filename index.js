@@ -974,6 +974,12 @@ app.post('/saveEndorsements', function(request, response) {
 
             }
           }
+          if (endorsements[index]['Competency'].length == 0) {
+            endorsements[index]['Competency'] = '';
+          }
+          if (endorsements[index]['Recommended Training'].length == 0) {
+            endorsements[index]['Recommended Training'] = '';
+          }
         }
 
         console.log('endorsement array created : ' + endorsements.length);
