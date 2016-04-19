@@ -998,9 +998,7 @@ app.post('/saveEndorsements', function(request, response) {
               "By": [
                 endorsement['By']
               ],
-              "Competency": [
-                endorsement['Competency']
-              ],
+              "Competency": endorsement['Competency'],
               "Timestamp": endorsement['Timestamp'],
               "Endorsement": endorsement['Endorsement'],
               "Recommended Training": endorsement['Recommended Training']
