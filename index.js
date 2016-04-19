@@ -925,7 +925,7 @@ app.post('/saveEndorsements', function(request, response) {
               for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
                 trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
               }
-              if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
+              //if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
                 var endorsement = {
 
                   'Of': profilesJSON.profiles[index].id,
@@ -938,7 +938,7 @@ app.post('/saveEndorsements', function(request, response) {
                 };
                 endorsements.push(endorsement);
                 console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
-              }
+              //}
 
             }
 
