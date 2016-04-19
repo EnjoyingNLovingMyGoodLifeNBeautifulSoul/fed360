@@ -896,13 +896,13 @@ app.post('/saveEndorsements', function(request, response) {
         var twoDigitSecond = ("0" + date.getSeconds().toString()).slice(-2);
         var threeDigitMillisecond = ("00" + date.getMilliseconds().toString()).slice(-3);
 
-        var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + 
-            twoDigitHour + ':' + twoDigitMinute + ':' + twoDigitSecond + '.' + threeDigitMillisecond + 'Z';
+        var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' +
+          twoDigitHour + ':' + twoDigitMinute + ':' + twoDigitSecond + '.' + threeDigitMillisecond + 'Z';
 
         // compile list of all endorsements(including skipped and blank ones)
         var endorsements = [];
         for (var index in profilesJSON.profiles) {
-          
+
           if (profilesJSON.profiles[index].endorsement != 'endorsed') {
             var blankEndorsement = {
 
@@ -930,18 +930,18 @@ app.post('/saveEndorsements', function(request, response) {
                 trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
               }
               //if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
-                var endorsement = {
+              var endorsement = {
 
-                  'Of': profilesJSON.profiles[index].id,
-                  'Related Delivery': profilesJSON.delivery.id,
-                  'By': profilesJSON.submitter.id,
-                  'Competency': profilesJSON.profiles[index].competencies[index2].id,
-                  'Timestamp': dateString,
-                  'Endorsement': profilesJSON.profiles[index].endorsement,
-                  'Recommended Training': trainingArray
-                };
-                endorsements.push(endorsement);
-                console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
+                'Of': profilesJSON.profiles[index].id,
+                'Related Delivery': profilesJSON.delivery.id,
+                'By': profilesJSON.submitter.id,
+                'Competency': profilesJSON.profiles[index].competencies[index2].id,
+                'Timestamp': dateString,
+                'Endorsement': profilesJSON.profiles[index].endorsement,
+                'Recommended Training': trainingArray
+              };
+              endorsements.push(endorsement);
+              console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
               //}
 
             }
@@ -971,14 +971,14 @@ app.post('/saveEndorsements', function(request, response) {
           var endorsementInProject = false;
           var endorsementUpdated = false;
           for (var index in endorsements) {
-            console.log('comparing by ' + endorsements[index]['By']  + ' with ' + allEndorsements[recordId].by);
+            console.log('comparing by ' + endorsements[index]['By'] + ' with ' + allEndorsements[recordId].by);
             if (endorsements[index]['By'] == allEndorsements[recordId].by) {
-              console.log('comparing of ' + endorsements[index]['Of']  + ' with ' + allEndorsements[recordId].of);
+              console.log('comparing of ' + endorsements[index]['Of'] + ' with ' + allEndorsements[recordId].of);
               if (endorsements[index]['Of'] == allEndorsements[recordId].of) {
-                console.log('comparing delivery ' + endorsements[index]['Related Delivery']  + ' with ' + allEndorsements[recordId].relateddelivery);
+                console.log('comparing delivery ' + endorsements[index]['Related Delivery'] + ' with ' + allEndorsements[recordId].relateddelivery);
                 if (endorsements[index]['Related Delivery'] == allEndorsements[recordId].relateddelivery) {
 
-                  console.log('comparing competency ' + endorsements[index]['Competency']  + ' with ' + allEndorsements[recordId].competency);
+                  console.log('comparing competency ' + endorsements[index]['Competency'] + ' with ' + allEndorsements[recordId].competency);
                   if (endorsements[index]['Competency'] == allEndorsements[recordId].competency) {
 
                     endorsements[index]['id'] = recordId;
@@ -989,7 +989,6 @@ app.post('/saveEndorsements', function(request, response) {
                   }
 
                   endorsementInProject = true;
-                  
 
                 }
               }
@@ -1003,15 +1002,12 @@ app.post('/saveEndorsements', function(request, response) {
           }
         }
 
-
-          
-          //if (endorsements[index]['Competency'].length == 0) {
-          //  endorsements[index]['Competency'] = '';
-          //}
-          //if (endorsements[index]['Recommended Training'].length == 0) {
-          //  endorsements[index]['Recommended Training'] = '';
-          //}
-        }
+        //if (endorsements[index]['Competency'].length == 0) {
+        //  endorsements[index]['Competency'] = '';
+        //}
+        //if (endorsements[index]['Recommended Training'].length == 0) {
+        //  endorsements[index]['Recommended Training'] = '';
+        //}
 
         console.log('endorsement array created : ' + endorsements.length);
         //console.log(endorsements);
@@ -1021,51 +1017,50 @@ app.post('/saveEndorsements', function(request, response) {
 
         async.each(endorsements, function(endorsement, callback2) {
 
-
           var endorsementJSON = {
-              "Of": [
-                endorsement['Of']
-              ],
-              "Related Delivery": [
-                endorsement['Related Delivery']
-              ],
-              "By": [
-                endorsement['By']
-              ],
-              "Competency": endorsement['Competency'],
-              "Timestamp": endorsement['Timestamp'],
-              "Endorsement": endorsement['Endorsement'],
-              "Recommended Training": endorsement['Recommended Training']
+            "Of": [
+              endorsement['Of']
+            ],
+            "Related Delivery": [
+              endorsement['Related Delivery']
+            ],
+            "By": [
+              endorsement['By']
+            ],
+            "Competency": endorsement['Competency'],
+            "Timestamp": endorsement['Timestamp'],
+            "Endorsement": endorsement['Endorsement'],
+            "Recommended Training": endorsement['Recommended Training']
           };
 
           console.log(endorsementJSON);
 
           if (typeof endorsement['id'] == 'undefined') {
             console.log('calling Airtable save for table Endorsements');
-            base('Endorsements').create(endorsementJSON, 
+            base('Endorsements').create(endorsementJSON,
               function(err, record) {
-              if (err) {
-                console.log(err);
-                callback2(err);
-                return;
-              }
-              console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
-              callback2(null, 'success');
+                if (err) {
+                  console.log(err);
+                  callback2(err);
+                  return;
+                }
+                console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
+                callback2(null, 'success');
 
-            });
+              });
           } else {
             console.log('calling Airtable update for table Endorsements');
-            base('Endorsements').update(endorsement['id'], endorsementJSON, 
+            base('Endorsements').update(endorsement['id'], endorsementJSON,
               function(err, record) {
-              if (err) {
-                console.log(err);
-                callback2(err);
-                return;
-              }
-              console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
-              callback2(null, 'success');
+                if (err) {
+                  console.log(err);
+                  callback2(err);
+                  return;
+                }
+                console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
+                callback2(null, 'success');
 
-            });
+              });
           }
 
         }, function(error) {
