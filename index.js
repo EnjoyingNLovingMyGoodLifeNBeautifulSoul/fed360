@@ -886,15 +886,15 @@ app.post('/saveEndorsements', function(request, response) {
 
         var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
-        var twoDigitMonth = date.getMonth().toString();
-        if (twoDigitMonth.length == 1) {
-          twoDigitMonth = '0' + twoDigitMonth;
-        }
-        var twoDigitDay = date.getDate().toString();
-        if (twoDigitDay.length == 1) {
-          twoDigitDay = '0' + twoDigitDay;
-        }
-        var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds() + 'Z';
+        var twoDigitMonth = ("0" + date.getMonth().toString()).slice(-2);
+        var twoDigitDay = ("0" + date.getDate().toString()).slice(-2);
+        var twoDigitHour = ("0" + date.getHours().toString()).slice(-2);
+        var twoDigitMinute = ("0" + date.getMinutes().toString()).slice(-2);
+        var twoDigitSecond = ("0" + date.getSeconds().toString()).slice(-2);
+        var threeDigitMillisecond = ("00" + date.getMilliseconds().toString()).slice(-3);
+
+        var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + 
+            twoDigitHour + ':' + twoDigitMinute + ':' + twoDigitSecond + '.' + threeDigitMillisecond + 'Z';
 
         // compile list of all endorsements(including skipped and blank ones)
         var endorsements = [];
