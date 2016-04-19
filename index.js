@@ -1090,10 +1090,10 @@ function loadEndorsements(endorsementsReference, callback) {
       endorsementsReference[record.getId()] = {
         'endorsementid': record.get('Endorsement ID'),
         'timestamp': record.get('Timestamp'),
-        'relateddelivery': record.get('Related Delivery'),
-        'competency': record.get('Competency'),
-        'of': record.get('Of'),
-        'by': record.get('By'),
+        'relateddelivery': record.get('Related Delivery') ? record.get('Related Delivery') : '',
+        'competency': record.get('Competency') ? record.get('Competency') : '',
+        'of': record.get('Of') ? record.get('Of') : '',
+        'by': record.get('By') ? record.get('By') : '',
         'endorsement': record.get('Endorsement'),
         'recommendedtraining': record.get('Recommended Training')
 
