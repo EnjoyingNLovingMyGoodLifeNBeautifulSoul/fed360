@@ -970,10 +970,15 @@ app.post('/saveEndorsements', function(request, response) {
             if (endorsements[index]['Of'] == allEndorsements[recordId].of) {
               console.log('comparing competency ' + endorsements[index]['Competency']  + ' with ' + allEndorsements[recordId].competency);
                 if (endorsements[index]['Competency'] == allEndorsements[recordId].competency) {
+                  console.log('comparing delivery ' + endorsements[index]['Related Delivery']  + ' with ' + allEndorsements[recordId].relateddelivery);
+                  if (endorsements[index]['Related Delivery'] == allEndorsements[recordId].relateddelivery) {
 
-                  endorsements[index]['id'] = recordId;
 
-                  console.log('assigned record id ' + recordId + ' for index ' + index);
+                    endorsements[index]['id'] = recordId;
+
+                    console.log('assigned record id ' + recordId + ' for index ' + index);
+
+                  }
 
                 }
             }
