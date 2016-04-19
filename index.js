@@ -880,6 +880,9 @@ app.post('/saveEndorsements', function(request, response) {
   var allEndorsements = {};
 
   async.series([
+      function(callback) {
+        loadEndorsements(allEndorsements, callback);
+      },
 
       function(callback) {
         console.log('saving endorsement');
@@ -962,18 +965,17 @@ app.post('/saveEndorsements', function(request, response) {
         }
         // assign ids from previous endorsements
         for (var index in endorsements) {
-          for (var index2 in profilesJSON.profiles) {
-            if (endorsements[index]['Of'] == profilesJSON.profiles[index2].id) {
-              for (var index3 in profilesJSON.profiles[index2].endorsements) {
-                if (endorsements[index]['Competency'] == profilesJSON.profiles[index2].endorsements[index3].competency) {
+          for (var recordId in allEndorsements) {
+            if (endorsements[index]['Of'] == allEndorsements[recordId].of) {
+                if (endorsements[index]['Competency'] == allEndorsements[recordId].competency) {
 
-                  endorsements[index]['id'] = profilesJSON.profiles[index2].endorsements[index3].id;
+                  endorsements[index]['id'] = recordId;
 
                 }
-              }
-
             }
+
           }
+          
           //if (endorsements[index]['Competency'].length == 0) {
           //  endorsements[index]['Competency'] = '';
           //}
