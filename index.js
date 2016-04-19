@@ -971,6 +971,8 @@ app.post('/saveEndorsements', function(request, response) {
 
                   endorsements[index]['id'] = recordId;
 
+                  console.log('assigned record id ' + recordId + ' for index ' + index);
+
                 }
             }
 
@@ -986,6 +988,9 @@ app.post('/saveEndorsements', function(request, response) {
 
         console.log('endorsement array created : ' + endorsements.length);
         //console.log(endorsements);
+
+        callback(null, 'success');
+        return;
 
         async.each(endorsements, function(endorsement, callback2) {
 
