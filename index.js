@@ -902,6 +902,7 @@ app.post('/saveEndorsements', function(request, response) {
         // compile list of all endorsements(including skipped and blank ones)
         var endorsements = [];
         for (var index in profilesJSON.profiles) {
+          
           if (profilesJSON.profiles[index].endorsement != 'endorsed') {
             var blankEndorsement = {
 
@@ -963,27 +964,46 @@ app.post('/saveEndorsements', function(request, response) {
 
           }
         }
-        // assign ids from previous endorsements
-        for (var index in endorsements) {
-          for (var recordId in allEndorsements) {
-            console.log('comparing of ' + endorsements[index]['Of']  + ' with ' + allEndorsements[recordId].of);
-            if (endorsements[index]['Of'] == allEndorsements[recordId].of) {
-              console.log('comparing competency ' + endorsements[index]['Competency']  + ' with ' + allEndorsements[recordId].competency);
-                if (endorsements[index]['Competency'] == allEndorsements[recordId].competency) {
-                  console.log('comparing delivery ' + endorsements[index]['Related Delivery']  + ' with ' + allEndorsements[recordId].relateddelivery);
-                  if (endorsements[index]['Related Delivery'] == allEndorsements[recordId].relateddelivery) {
 
+        // assign ids from previous endorsements
+        var removeEndorsements = [];
+        for (var recordId in allEndorsements) {
+          var endorsementInProject = false;
+          var endorsementUpdated = false;
+          for (var index in endorsements) {
+            console.log('comparing by ' + endorsements[index]['By']  + ' with ' + allEndorsements[recordId].by);
+            if (endorsements[index]['By'] == allEndorsements[recordId].by) {
+              console.log('comparing of ' + endorsements[index]['Of']  + ' with ' + allEndorsements[recordId].of);
+              if (endorsements[index]['Of'] == allEndorsements[recordId].of) {
+                console.log('comparing delivery ' + endorsements[index]['Related Delivery']  + ' with ' + allEndorsements[recordId].relateddelivery);
+                if (endorsements[index]['Related Delivery'] == allEndorsements[recordId].relateddelivery) {
+
+                  console.log('comparing competency ' + endorsements[index]['Competency']  + ' with ' + allEndorsements[recordId].competency);
+                  if (endorsements[index]['Competency'] == allEndorsements[recordId].competency) {
 
                     endorsements[index]['id'] = recordId;
 
                     console.log('assigned record id ' + recordId + ' for index ' + index);
 
+                    endorsementUpdated = true;
                   }
 
+                  endorsementInProject = true;
+                  
+
                 }
+              }
             }
 
           }
+
+          // later we remove all assigned ids from this list to see which records are extras and need to be deleted
+          if ((endorsementInProject == true) && (endorsementUpdated == false)) {
+            removeEndorsements.push(recordId);
+          }
+        }
+
+
           
           //if (endorsements[index]['Competency'].length == 0) {
           //  endorsements[index]['Competency'] = '';
