@@ -896,30 +896,71 @@ app.post('/saveEndorsements', function(request, response) {
         }
         var dateString = date.getFullYear() + '-' + twoDigitMonth + '-' + twoDigitDay + 'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds() + 'Z';
 
+        // compile list of all endorsements(including skipped and blank ones)
         var endorsements = [];
         for (var index in profilesJSON.profiles) {
-          for (var index2 in profilesJSON.profiles[index].competencies) {
-            var trainingArray = [];
-            for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
-              trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
-            }
-            if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
-              var endorsement = {
-                'id': profilesJSON.profiles[index].competencies[index2].endorsementId,
+          if ((profilesJSON.profiles[index].endorsement != 'endorsed') {
+              var blankEndorsement = {
+                'id': profilesJSON.profiles[index].competencies[index2].blankEndorsementId,
                 'Of': profilesJSON.profiles[index].id,
                 'Related Delivery': profilesJSON.delivery.id,
                 'By': profilesJSON.submitter.id,
                 'Competency': profilesJSON.profiles[index].competencies[index2].id,
                 'Timestamp': dateString,
                 'Endorsement': profilesJSON.profiles[index].endorsement,
-                'Recommended Training': trainingArray
+                'Recommended Training': []
               };
-              endorsements.push(endorsement);
-              console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
+              endorsements.push(blankEndorsement);
+
+          } else {
+            var endorsementCount = 0;
+            for (var index2 in profilesJSON.profiles[index].competencies) {
+              if (profilesJSON.profiles[index].competencies[index2].endorsedCompetency == false) {
+                continue;
+              }
+
+              endorsementCount++;
+
+              var trainingArray = [];
+              for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
+                trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
+              }
+              if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
+                var endorsement = {
+                  'id': profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].endorsementId,
+                  'Of': profilesJSON.profiles[index].id,
+                  'Related Delivery': profilesJSON.delivery.id,
+                  'By': profilesJSON.submitter.id,
+                  'Competency': profilesJSON.profiles[index].competencies[index2].id,
+                  'Timestamp': dateString,
+                  'Endorsement': profilesJSON.profiles[index].endorsement,
+                  'Recommended Training': trainingArray
+                };
+                endorsements.push(endorsement);
+                console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
+              }
+
+            }
+
+            if (endorsementCount == 0) {
+                var endorsement = {
+                  'id': profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].endorsementId,
+                  'Of': profilesJSON.profiles[index].id,
+                  'Related Delivery': profilesJSON.delivery.id,
+                  'By': profilesJSON.submitter.id,
+                  'Competency': [],
+                  'Timestamp': dateString,
+                  'Endorsement': profilesJSON.profiles[index].endorsement,
+                  'Recommended Training': []
+                };
+                endorsements.push(endorsement);
+                console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By']);
+
             }
 
           }
         }
+
         console.log('endorsement array created ');
         //console.log(endorsements);
 
