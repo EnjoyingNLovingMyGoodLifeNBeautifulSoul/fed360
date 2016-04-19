@@ -905,7 +905,7 @@ app.post('/saveEndorsements', function(request, response) {
               'Of': profilesJSON.profiles[index].id,
               'Related Delivery': profilesJSON.delivery.id,
               'By': profilesJSON.submitter.id,
-              'Competency': profilesJSON.profiles[index].competencies[index2].id,
+              'Competency': [],
               'Timestamp': dateString,
               'Endorsement': profilesJSON.profiles[index].endorsement,
               'Recommended Training': []
