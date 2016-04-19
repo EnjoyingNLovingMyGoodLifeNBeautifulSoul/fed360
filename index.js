@@ -974,23 +974,21 @@ app.post('/saveEndorsements', function(request, response) {
 
             }
           }
-          if (endorsements[index]['Competency'].length == 0) {
-            endorsements[index]['Competency'] = '';
-          }
-          if (endorsements[index]['Recommended Training'].length == 0) {
-            endorsements[index]['Recommended Training'] = '';
-          }
+          //if (endorsements[index]['Competency'].length == 0) {
+          //  endorsements[index]['Competency'] = '';
+          //}
+          //if (endorsements[index]['Recommended Training'].length == 0) {
+          //  endorsements[index]['Recommended Training'] = '';
+          //}
         }
 
         console.log('endorsement array created : ' + endorsements.length);
         //console.log(endorsements);
 
         async.each(endorsements, function(endorsement, callback2) {
-          console.log(endorsement);
 
-          if (typeof endorsement['id'] == 'undefined') {
-            console.log('calling Airtable save for table Endorsements');
-            base('Endorsements').create({
+
+          var endorsementJSON = {
               "Of": [
                 endorsement['Of']
               ],
@@ -1006,7 +1004,14 @@ app.post('/saveEndorsements', function(request, response) {
               "Timestamp": endorsement['Timestamp'],
               "Endorsement": endorsement['Endorsement'],
               "Recommended Training": endorsement['Recommended Training']
-            }, function(err, record) {
+          };
+
+          console.log(endorsementJSON);
+
+          if (typeof endorsement['id'] == 'undefined') {
+            console.log('calling Airtable save for table Endorsements');
+            base('Endorsements').create(endorsementJSON, 
+              function(err, record) {
               if (err) {
                 console.log(err);
                 callback2(err);
@@ -1018,23 +1023,8 @@ app.post('/saveEndorsements', function(request, response) {
             });
           } else {
             console.log('calling Airtable update for table Endorsements');
-            base('Endorsements').update(endorsement['id'], {
-              "Of": [
-                endorsement['Of']
-              ],
-              "Related Delivery": [
-                endorsement['Related Delivery']
-              ],
-              "By": [
-                endorsement['By']
-              ],
-              "Competency": [
-                endorsement['Competency']
-              ],
-              "Timestamp": endorsement['Timestamp'],
-              "Endorsement": endorsement['Endorsement'],
-              "Recommended Training": endorsement['Recommended Training']
-            }, function(err, record) {
+            base('Endorsements').update(endorsement['id'], endorsementJSON, 
+              function(err, record) {
               if (err) {
                 console.log(err);
                 callback2(err);
