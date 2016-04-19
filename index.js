@@ -963,9 +963,9 @@ app.post('/saveEndorsements', function(request, response) {
         // assign ids from previous endorsements
         for (var index in endorsements) {
           for (var index2 in profilesJSON.profiles) {
-            if (endorsement[index]['Of'] == profilesJSON.profiles[index2].id) {
+            if (endorsements[index]['Of'] == profilesJSON.profiles[index2].id) {
               for (var index3 in profilesJSON.profiles[index2].endorsements) {
-                if (endorsement[index]['Competency'] == profilesJSON.profiles[index2].endorsements[index3].competency) {
+                if (endorsements[index]['Competency'] == profilesJSON.profiles[index2].endorsements[index3].competency) {
 
                   endorsements[index]['id'] = profilesJSON.profiles[index2].endorsements[index3].id;
 
