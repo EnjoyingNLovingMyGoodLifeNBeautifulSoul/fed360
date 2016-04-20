@@ -909,7 +909,7 @@ app.post('/saveEndorsements', function(request, response) {
               'Of': profilesJSON.profiles[index].id,
               'Related Delivery': profilesJSON.delivery.id,
               'By': profilesJSON.submitter.id,
-              'Competency': '',
+              'Competency': [],
               'Timestamp': dateString,
               'Endorsement': profilesJSON.profiles[index].endorsement,
               'Recommended Training': []
@@ -935,7 +935,7 @@ app.post('/saveEndorsements', function(request, response) {
                 'Of': profilesJSON.profiles[index].id,
                 'Related Delivery': profilesJSON.delivery.id,
                 'By': profilesJSON.submitter.id,
-                'Competency': profilesJSON.profiles[index].competencies[index2].id,
+                'Competency': [profilesJSON.profiles[index].competencies[index2].id],
                 'Timestamp': dateString,
                 'Endorsement': profilesJSON.profiles[index].endorsement,
                 'Recommended Training': trainingArray
@@ -952,7 +952,7 @@ app.post('/saveEndorsements', function(request, response) {
                 'Of': profilesJSON.profiles[index].id,
                 'Related Delivery': profilesJSON.delivery.id,
                 'By': profilesJSON.submitter.id,
-                'Competency': '',
+                'Competency': [],
                 'Timestamp': dateString,
                 'Endorsement': profilesJSON.profiles[index].endorsement,
                 'Recommended Training': []
@@ -1021,6 +1021,7 @@ app.post('/saveEndorsements', function(request, response) {
 
         async.each(endorsements, function(endorsement, callback2) {
 
+          // blank values [''] are not allowed.  Either user [] or have a value like ['a']
           var endorsementJSON = {
             "Of": [
               endorsement['Of']
@@ -1031,9 +1032,7 @@ app.post('/saveEndorsements', function(request, response) {
             "By": [
               endorsement['By']
             ],
-            "Competency": [
-              endorsement['Competency']
-            ],
+            "Competency": endorsement['Competency'],
             "Timestamp": endorsement['Timestamp'],
             "Endorsement": endorsement['Endorsement'],
             "Recommended Training": endorsement['Recommended Training']
