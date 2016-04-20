@@ -909,7 +909,7 @@ app.post('/saveEndorsements', function(request, response) {
               'Of': profilesJSON.profiles[index].id,
               'Related Delivery': profilesJSON.delivery.id,
               'By': profilesJSON.submitter.id,
-              'Competency': [],
+              'Competency': '',
               'Timestamp': dateString,
               'Endorsement': profilesJSON.profiles[index].endorsement,
               'Recommended Training': []
@@ -952,7 +952,7 @@ app.post('/saveEndorsements', function(request, response) {
                 'Of': profilesJSON.profiles[index].id,
                 'Related Delivery': profilesJSON.delivery.id,
                 'By': profilesJSON.submitter.id,
-                'Competency': [],
+                'Competency': '',
                 'Timestamp': dateString,
                 'Endorsement': profilesJSON.profiles[index].endorsement,
                 'Recommended Training': []
@@ -1031,7 +1031,9 @@ app.post('/saveEndorsements', function(request, response) {
             "By": [
               endorsement['By']
             ],
-            "Competency": endorsement['Competency'],
+            "Competency": [
+              endorsement['Competency']
+            ],
             "Timestamp": endorsement['Timestamp'],
             "Endorsement": endorsement['Endorsement'],
             "Recommended Training": endorsement['Recommended Training']
@@ -1048,7 +1050,7 @@ app.post('/saveEndorsements', function(request, response) {
                   callback2(err);
                   return;
                 }
-                console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
+                console.log('saved created endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
                 callback2(null, 'success');
 
               });
@@ -1061,7 +1063,7 @@ app.post('/saveEndorsements', function(request, response) {
                   callback2(err);
                   return;
                 }
-                console.log('saved endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
+                console.log('saved updated endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
                 callback2(null, 'success');
 
               });
