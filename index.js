@@ -979,7 +979,8 @@ app.post('/saveEndorsements', function(request, response) {
                 if (endorsements[index]['Related Delivery'] == allEndorsements[recordId].relateddelivery) {
 
                   console.log('comparing competency ' + endorsements[index]['Competency'] + ' with ' + allEndorsements[recordId].competency);
-                  if (endorsements[index]['Competency'][0] == allEndorsements[recordId].competency) {
+                  if (((endorsements[index]['Competency'].length == 0) && (allEndorsements[recordId].competency == '')) ||
+                    (endorsements[index]['Competency'][0] == allEndorsements[recordId].competency)) {
 
                     endorsements[index]['id'] = recordId;
 
