@@ -1002,6 +1002,9 @@ app.post('/saveEndorsements', function(request, response) {
           }
         }
 
+        console.log('list of endorsements to remove:');
+        console.log(removeEndorsements);
+
         //if (endorsements[index]['Competency'].length == 0) {
         //  endorsements[index]['Competency'] = '';
         //}
