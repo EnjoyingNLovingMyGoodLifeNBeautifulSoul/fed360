@@ -1015,8 +1015,9 @@ app.post('/saveEndorsements', function(request, response) {
         console.log('endorsement array created : ' + endorsements.length);
         //console.log(endorsements);
 
-        callback(null, 'success');
-        return;
+        // Used for testing without affecting the database
+        //callback(null, 'success');
+        //return;
 
         async.each(endorsements, function(endorsement, callback2) {
 
