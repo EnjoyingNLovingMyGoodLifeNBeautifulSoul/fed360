@@ -470,7 +470,8 @@ app.get('/loadProfiles', function(request, response) {
                   profilesJSON.profiles[index].endorsements[index2] = {
                     'id': endorsementId,
                     'competency': profilesJSON.profiles[index].competencies[index3].name,
-                    'training': endorsements[endorsementId].recommendedtraining
+                    'training': endorsements[endorsementId].recommendedtraining,
+                    'delivery': endorsements[endorsementId].relateddelivery
                   };
                 }
               }
@@ -878,6 +879,7 @@ app.post('/saveEndorsements', function(request, response) {
   };
 
   var allEndorsements = {};
+  var removeEndorsements = [];
 
   async.series([
       function(callback) {
@@ -966,7 +968,7 @@ app.post('/saveEndorsements', function(request, response) {
         }
 
         // assign ids from previous endorsements
-        var removeEndorsements = [];
+        //var removeEndorsements = [];
         for (var recordId in allEndorsements) {
           var endorsementInProject = false;
           var endorsementUpdated = false;
@@ -1083,7 +1085,18 @@ app.post('/saveEndorsements', function(request, response) {
       },
 
       function(callback) {
-        console.log('currently blank function');
+        console.log('deleting extra previous endorsements');
+
+        async.each(removeEndorsements, function(endorsementId, callback2) {
+          base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
+            if (err) { 
+              console.log(err); 
+              return; 
+            }
+              console.log('Deleted record ', deletedRecord.id);
+          });
+        }
+
         callback(null, 'success');
       }
 
