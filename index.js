@@ -1095,7 +1095,7 @@ app.post('/saveEndorsements', function(request, response) {
             }
               console.log('Deleted record ', deletedRecord.id);
           });
-        }
+        });
 
         callback(null, 'success');
       }
