@@ -458,7 +458,8 @@ app.get('/loadProfiles', function(request, response) {
                     'id': endorsementId,
                     'competency': '',
                     'training': endorsements[endorsementId].recommendedtraining,
-                    'delivery': endorsements[endorsementId].relateddelivery
+                    'delivery': endorsements[endorsementId].relateddelivery,
+                    'endorsement': endorsements[endorsementId].endorsement
               };
 
               var foundMatchingCompetency = false;
