@@ -68,8 +68,23 @@ app.post('/sendEndorseLink',
     // This code section parses out the To and CC emails
     // as well as the subject line and emails all recipients (except)
 
+    console.log('JSON string:' + JSONString);
+    var from = request.body.from;
     var to = request.body.To;
     var cc = request.body.Cc;
+
+    var firstPart = to.split('>');
+    var fromEmails = [];
+    for (var index in firstPart) {
+      var secondPart = firstPart[index].split('<');
+      if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
+        fromEmails.push(secondPart[secondPart.length - 1]);
+      }
+
+    }
+    if (fromEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
+      fromEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
+    }
 
     var firstPart = to.split('>');
     var toEmails = [];
@@ -112,41 +127,153 @@ app.post('/sendEndorseLink',
       fed360params = fed360params + ',' + ccEmails.toString();
     }
 
-    var params = {
-      to: toEmails.toString(),
-      from: 'mail@mg.mrrmrr.com',
-      subject: request.body.subject,
-      html: '<html > <head> <meta charset="UTF-8"> <title>Fed360 Simple HTML Email Invitation</title> <style>@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800);.fed360-email{font-family: "Open Sans", sans-serif; font-weight: 300;}.fed360-email .fed360{display: inline-block; width: 200px; height: 60px; padding-top: 0px; font-size: 50px; vertical-align: top; font-weight: 800; color: LightGrey;}</style> </head> <body> <div class="fed360-email"> <div class="welcome">Hi,</div><br><div class="invitation">One or more of your team members has invited you to give anonymous endorsements for your team\'s skills.</div><br><a class="link" href="http://codepen.io/OurDailyBread/debug/vLNGoG' + fed360params + '">Endorse your team\'s skills</a> <br><br><br><div class="signature">Automated Transaction by the Fed360 Team Endorsement Program</div><div class="fed360">Fed360</div><div class "warning">Please do not reply to this email</div><a href="http://fed360.parseapp.com/" class "website">Visit the Fed360 Homepage</div></div></body></html>'
-    };
+    var allDeliveries = [];
+    var deliveryRecord;
+    var deliveryId;
+    var needsNewDelivery = true;
+    var allProfiles = [];
+    var fromIds;
+    var ccIds = [];
 
-    if (ccEmails.length > 0) {
-      params.cc = ccEmails.toString();
-    }
+    async.series([
+      // load deliveries
+      function(callback) {        
+        getAllDeliveries(allDeliveries, callback);
+      },
+      // find related delivery id from name
+      function(callback) {        
+        for (var index in allDeliveries) {
+          if (allDeliveries[index].name == request.body.subject) {
+            needsNewDelivery = false;
+            deliveryId = allDeliveries[index].id;
+          }
+        }
+        callback(null, 'success');        
+      },
+      // load ids from emails
+      function(callback) {
+        if (needsNewDelivery == true) {
+          var deliveryName = request.body.subject;
+          getAllProfiles(allProfiles, callback);
+          //fromId, ccIds, from, to, cc, callback);
+        }
+      },
+      // combine into from and cc sets
+      function(callback) {
+        if (needsNewDelivery == true) {
+          for (var index in allProfiles) {
 
-    // Then we create a cloud function
-    mailgun.messages().send(params, function(err, body) {
-      //If there is an error, render the error page
-      if (err) {
-        res.render('error', {
-          error: err
-        });
-        console.log("got an error: ", err);
+            for (var index2 in fromEmails) {
+              if (allProfiles[index].email == fromEmails[index2]) {
+                fromIds.push(allProfiles[index].id);
+              }
+            }
+            for (var index2 in toEmails) {
+              if (allProfiles[index].email == toEmails[index2]) {
+                ccIds.push(allProfiles[index].id);
+              }
+            }
+            for (var index2 in ccEmails) {
+              if (allProfiles[index].email == ccEmails[index2]) {
+                ccIds.push(allProfiles[index].id);
+              }
+            }
+            
+          }
+        }
+        callback(null,'success');
+      },
+      // create and assign new delivery if needed
+      function(callback) {
+        if (needsNewDelivery == true) {
+          var deliveryName = request.body.subject;
+
+          createDelivery(deliveryRecord, deliveryName, fromIds, ccIds, callback);
+        }
+      },
+      function(callback) {
+        if (needsNewDelivery == true) {
+          deliveryId = deliveryRecord.getId();
+        }
+        callback(null,'success');
       }
-      //Else we can greet    and leave
-      else {
-        console.log('mail submitted');
-        console.log(body);
-      }
-    });
 
+    ],
+      //optional callback
+      function(err, results) {
+      console.log('finishing loading delivery async');
+        if (err) {
+          console.log('Delivery Async Error: ' + err);
+          response.send('Error: ' + err);
+        } else {
+          // results is now equal to ['one', 'two']
+          console.log('delivery id loaded' + deliveryId);
+          fed360params = fed360 + ',' + deliveryId;
+
+
+
+          var params = {
+            to: toEmails.toString(),
+            from: 'mail@mg.mrrmrr.com',
+            subject: request.body.subject,
+            html: '<html > <head> <meta charset="UTF-8">' + 
+                ' <title>Fed360 Simple HTML Email Invitation</title>' +
+                ' <style>@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800);.fed360-email{font-family: "Open Sans", sans-serif; font-weight: 300;}.fed360-email .fed360{display: inline-block; width: 200px; height: 60px; padding-top: 0px; font-size: 50px; vertical-align: top; font-weight: 800; color: LightGrey;}</style>' +
+                ' </head> <body> <div class="fed360-email"> ' + 
+                '<div class="welcome">Hi,</div><br>' + 
+                '<div class="invitation">One or more of your team members has invited you to give anonymous endorsements for your team\'s skills.</div><br>' + 
+                '<a class="link" href="http://codepen.io/OurDailyBread/debug/vLNGoG' + 
+                fed360params + 
+                '">Endorse your team\'s skills</a> <br><br><br><div class="signature">Automated Transaction by the Fed360 Team Endorsement Program</div>' + 
+                '<div class="fed360">Fed360</div><div class "warning">Please do not reply to this email</div>' + 
+                '<a href="http://fed360.parseapp.com/" class "website">Visit the Fed360 Homepage</div></div></body></html>'
+          };
+
+          if (ccEmails.length > 0) {
+            params.cc = ccEmails.toString();
+          }
+
+          // Then we create a cloud function
+          mailgun.messages().send(params, function(err, body) {
+            //If there is an error, render the error page
+            if (err) {
+              res.render('error', {
+                error: err
+              });
+              console.log("got an error: ", err);
+              response.send(err);
+            }
+            //Else we can greet    and leave
+            else {
+              console.log('mail ' + request.body.subject + ' submitted');
+              console.log(toEmails.toString() + ccEmails.toString());
+              console.log(body);
+
+              response.send('done mailing ' + toEmails.toString() + ccEmails.toString());
+            }
+          });
+
+
+
+
+        }
+      });
+
+
+      
+
+      
+    
+
+    
     // This code section saves the incoming email to the Parse cloud database - TODO
 
   },
   function(error) {
     console.log('error receiving email');
     console.log(error);
-    //response.status(500);
-    //response.send('Error');
+    response.status(500);
+    response.send('Error');
   }
 );
 
@@ -157,6 +284,113 @@ Airtable.configure({
   apiKey: 'keyWInwqgSshQe7GV'
 });
 var base = Airtable.base('appYLZr7VvVPKZGvf');
+
+function getAllDeliveries(allDeliveries, callback) {
+  base('Deliveries').select({
+    // Selecting the first 3 records in Main View:
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+      // This function (`page`) will get called for each page of records.
+
+      records.forEach(function(record) {
+          console.log('Retrieved ', record.get('Name'));
+          var loadedDelivery = {
+            'id': record.getId(),
+            'name': record.get('Name'),
+            'title': record.get('Title (Subject Line)'),
+            'number': record.get('Number'),
+            'date': record.get('Date'),
+            'from': record.get('Team (From:)'),
+            'team': record.get('Team (Cc:)'),
+            'customers': record.get('Customers (To:)'),
+            'endorsements': record.get('Endorsements'),
+            'comments': record.get('Comments'),
+            'links': record.get('Links'),
+            'attachments': record.get('Attachments')
+          };
+          allDeliveries.push(loadedDelivery);
+      });
+
+      // To fetch the next page of records, call `fetchNextPage`.
+      // If there are more records, `page` will get called again.
+      // If there are no more records, `done` will get called.
+      fetchNextPage();
+
+  }, function done(error) {
+      if (error) {
+          console.log(error);
+      } else {
+          callback(null, success);
+      }
+  });
+}
+
+function getAllProfiles(allProfiles, callback) {
+  base('People').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      //console.log('processing profile');
+      //console.log(record.get('Profile ID'));
+      console.log('processing profile ' + record.get('Email'));
+      var profile = {
+        'id': record.getId(),
+        'firstname': record.get('Name (First)'),
+        'lastname': record.get('Name (Last)'),
+        'organization': record.get('Organization'), //id
+        'email': record.get('Email'),
+        'supervisoremail': record.get('Direct Supervisor (email)'),
+        'title': record.get('Position'), //id
+        'endorsements': record.get('Endorsements (received)'),
+        'competencies': record.get('Competencies'),
+        'picture': record.get('Profile Picture')
+      };
+
+      allProfiles.push(profile);
+
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+
+    if (error) {
+      console.log('error:');
+      console.log(error);
+      return callback(error);
+    }
+    console.log('successfully loaded base profiles');
+    return callback(null, 'success');
+  });
+}
+
+function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, callback) {
+  base('Deliveries').create({
+    "Name": deliveryName,
+    "Title (Subject Line)": deliveryName,
+    "Customers (To:)": [],
+    "Team (From:)": fromIds,
+    "Endorsements": [],
+    "Comments": [],
+    "Team (Cc:)": ccIds
+  }, function(err, record) {
+      if (err) { 
+        console.log(err);
+        callback(err);
+        return;
+      }
+      createdDeliveryRecord = record;
+      console.log('created new delivery record ' + record.getId() + ' for ' + record.get('Name'));
+      callback(null,'success');
+  });
+}
 
 app.get('/loadProfiles', function(request, response) {
   console.log('GET received')
