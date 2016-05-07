@@ -121,8 +121,8 @@ app.post('/sendEndorseLink',
       domain: domain
     });
 
-    var fed360params = '?project=' + encodeURIComponent(request.body.subject) + 
-                       '&emails=' + toEmails.toString();
+    var fed360params = '?project=' + encodeURIComponent(request.body.subject) +
+      '&emails=' + toEmails.toString();
 
     if (ccEmails.length > 0) {
       fed360params = fed360params + ',' + ccEmails.toString();
@@ -137,72 +137,72 @@ app.post('/sendEndorseLink',
     var ccIds = [];
 
     async.series([
-      // load deliveries
-      function(callback) {        
-        getAllDeliveries(allDeliveries, callback);
-      },
-      // find related delivery id from name
-      function(callback) {        
-        for (var index in allDeliveries) {
-          if (allDeliveries[index].name == request.body.subject) {
-            needsNewDelivery = false;
-            deliveryId = allDeliveries[index].id;
+        // load deliveries
+        function(callback) {
+          getAllDeliveries(allDeliveries, callback);
+        },
+        // find related delivery id from name
+        function(callback) {
+          for (var index in allDeliveries) {
+            if (allDeliveries[index].name == request.body.subject) {
+              needsNewDelivery = false;
+              deliveryId = allDeliveries[index].id;
+            }
           }
-        }
-        callback(null, 'success');        
-      },
-      // load ids from emails
-      function(callback) {
-        if (needsNewDelivery == true) {
-          var deliveryName = request.body.subject;
-          getAllProfiles(allProfiles, callback);
-          //fromId, ccIds, from, to, cc, callback);
-        }
-      },
-      // combine into from and cc sets
-      function(callback) {
-        if (needsNewDelivery == true) {
-          for (var index in allProfiles) {
-
-            for (var index2 in fromEmails) {
-              if (allProfiles[index].email == fromEmails[index2]) {
-                fromIds.push(allProfiles[index].id);
-              }
-            }
-            for (var index2 in toEmails) {
-              if (allProfiles[index].email == toEmails[index2]) {
-                ccIds.push(allProfiles[index].id);
-              }
-            }
-            for (var index2 in ccEmails) {
-              if (allProfiles[index].email == ccEmails[index2]) {
-                ccIds.push(allProfiles[index].id);
-              }
-            }
-            
+          callback(null, 'success');
+        },
+        // load ids from emails
+        function(callback) {
+          if (needsNewDelivery == true) {
+            var deliveryName = request.body.subject;
+            getAllProfiles(allProfiles, callback);
+            //fromId, ccIds, from, to, cc, callback);
           }
-        }
-        callback(null,'success');
-      },
-      // create and assign new delivery if needed
-      function(callback) {
-        if (needsNewDelivery == true) {
-          var deliveryName = request.body.subject;
+        },
+        // combine into from and cc sets
+        function(callback) {
+          if (needsNewDelivery == true) {
+            for (var index in allProfiles) {
 
-          createDelivery(deliveryRecord, deliveryName, fromIds, ccIds, callback);
-        }
-      },
-      function(callback) {
-        if (needsNewDelivery == true) {
-          deliveryId = deliveryRecord.getId();
-        }
-        callback(null,'success');
-      }
+              for (var index2 in fromEmails) {
+                if (allProfiles[index].email == fromEmails[index2]) {
+                  fromIds.push(allProfiles[index].id);
+                }
+              }
+              for (var index2 in toEmails) {
+                if (allProfiles[index].email == toEmails[index2]) {
+                  ccIds.push(allProfiles[index].id);
+                }
+              }
+              for (var index2 in ccEmails) {
+                if (allProfiles[index].email == ccEmails[index2]) {
+                  ccIds.push(allProfiles[index].id);
+                }
+              }
 
-    ],
+            }
+          }
+          callback(null, 'success');
+        },
+        // create and assign new delivery if needed
+        function(callback) {
+          if (needsNewDelivery == true) {
+            var deliveryName = request.body.subject;
+
+            createDelivery(deliveryRecord, deliveryName, fromIds, ccIds, callback);
+          }
+        },
+        function(callback) {
+          if (needsNewDelivery == true) {
+            deliveryId = deliveryRecord.getId();
+          }
+          callback(null, 'success');
+        }
+
+      ],
       //optional callback
       function(err, results) {
-      console.log('finishing loading delivery async');
+        console.log('finishing loading delivery async');
         if (err) {
           console.log('Delivery Async Error: ' + err);
           response.send('Error: ' + err);
@@ -218,22 +218,21 @@ app.post('/sendEndorseLink',
           }
           console.log('fed360params: ' + fed360params);
 
-
           var params = {
             to: toEmails.toString(),
             from: 'mail@mg.mrrmrr.com',
             subject: request.body.subject,
-            html: '<html > <head> <meta charset="UTF-8">' + 
-                ' <title>Fed360 Simple HTML Email Invitation</title>' +
-                ' <style>@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800);.fed360-email{font-family: "Open Sans", sans-serif; font-weight: 300;}.fed360-email .fed360{display: inline-block; width: 200px; height: 60px; padding-top: 0px; font-size: 50px; vertical-align: top; font-weight: 800; color: LightGrey;}</style>' +
-                ' </head> <body> <div class="fed360-email"> ' + 
-                '<div class="welcome">Hi,</div><br>' + 
-                '<div class="invitation">One or more of your team members has invited you to give anonymous endorsements for your team\'s skills.</div><br>' + 
-                '<a class="link" href="http://codepen.io/OurDailyBread/debug/vLNGoG' + 
-                fed360params + 
-                '">Endorse your team\'s skills</a> <br><br><br><div class="signature">Automated Transaction by the Fed360 Team Endorsement Program</div>' + 
-                '<div class="fed360">Fed360</div><div class "warning">Please do not reply to this email</div>' + 
-                '<a href="http://fed360.parseapp.com/" class "website">Visit the Fed360 Homepage</div></div></body></html>'
+            html: '<html > <head> <meta charset="UTF-8">' +
+              ' <title>Fed360 Simple HTML Email Invitation</title>' +
+              ' <style>@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800);.fed360-email{font-family: "Open Sans", sans-serif; font-weight: 300;}.fed360-email .fed360{display: inline-block; width: 200px; height: 60px; padding-top: 0px; font-size: 50px; vertical-align: top; font-weight: 800; color: LightGrey;}</style>' +
+              ' </head> <body> <div class="fed360-email"> ' +
+              '<div class="welcome">Hi,</div><br>' +
+              '<div class="invitation">One or more of your team members has invited you to give anonymous endorsements for your team\'s skills.</div><br>' +
+              '<a class="link" href="http://codepen.io/OurDailyBread/debug/vLNGoG' +
+              fed360params +
+              '">Endorse your team\'s skills</a> <br><br><br><div class="signature">Automated Transaction by the Fed360 Team Endorsement Program</div>' +
+              '<div class="fed360">Fed360</div><div class "warning">Please do not reply to this email</div>' +
+              '<a href="http://fed360.parseapp.com/" class "website">Visit the Fed360 Homepage</div></div></body></html>'
           };
 
           if (ccEmails.length > 0) {
@@ -260,19 +259,9 @@ app.post('/sendEndorseLink',
             }
           });
 
-
-
-
         }
       });
 
-
-      
-
-      
-    
-
-    
     // This code section saves the incoming email to the Parse cloud database - TODO
 
   },
@@ -298,38 +287,38 @@ function getAllDeliveries(allDeliveries, callback) {
     view: "Main View"
   }).eachPage(function page(records, fetchNextPage) {
 
-      // This function (`page`) will get called for each page of records.
+    // This function (`page`) will get called for each page of records.
 
-      records.forEach(function(record) {
-          console.log('Retrieved ', record.get('Name'));
-          allDeliveries[record.getId()] = {
-            'id': record.getId(),
-            'name': record.get('Name'),
-            'title': record.get('Title (Subject Line)'),
-            'number': record.get('Number'),
-            'date': record.get('Date'),
-            'from': record.get('Team (From:)'),
-            'team': record.get('Team (Cc:)'),
-            'customers': record.get('Customers (To:)'),
-            'endorsements': record.get('Endorsements'),
-            'comments': record.get('Comments'),
-            'links': record.get('Links'),
-            'attachments': record.get('Attachments')
-          };
+    records.forEach(function(record) {
+      console.log('Retrieved ', record.get('Name'));
+      allDeliveries[record.getId()] = {
+        'id': record.getId(),
+        'name': record.get('Name'),
+        'title': record.get('Title (Subject Line)'),
+        'number': record.get('Number'),
+        'date': record.get('Date'),
+        'from': record.get('Team (From:)'),
+        'team': record.get('Team (Cc:)'),
+        'customers': record.get('Customers (To:)'),
+        'endorsements': record.get('Endorsements'),
+        'comments': record.get('Comments'),
+        'links': record.get('Links'),
+        'attachments': record.get('Attachments')
+      };
 
-      });
+    });
 
-      // To fetch the next page of records, call `fetchNextPage`.
-      // If there are more records, `page` will get called again.
-      // If there are no more records, `done` will get called.
-      fetchNextPage();
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
 
   }, function done(error) {
-      if (error) {
-          console.log(error);
-      } else {
-          callback(null, 'success');
-      }
+    if (error) {
+      console.log(error);
+    } else {
+      callback(null, 'success');
+    }
   });
 }
 
@@ -356,7 +345,6 @@ function getAllProfiles(allProfiles, callback) {
         'competencies': record.get('Competencies'),
         'picture': record.get('Profile Picture')
       };
-
 
     });
 
@@ -387,14 +375,14 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
     "Comments": [],
     "Team (Cc:)": ccIds
   }, function(err, record) {
-      if (err) { 
-        console.log(err);
-        callback(err);
-        return;
-      }
-      createdDeliveryRecord = record;
-      console.log('created new delivery record ' + record.getId() + ' for ' + record.get('Name'));
-      callback(null,'success');
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+    createdDeliveryRecord = record;
+    console.log('created new delivery record ' + record.getId() + ' for ' + record.get('Name'));
+    callback(null, 'success');
   });
 }
 
@@ -695,16 +683,16 @@ app.get('/loadProfiles', function(request, response) {
           //console.log(endorsements);
           for (var index in profilesJSON.profiles) {
             for (var index2 in profilesJSON.profiles[index].endorsements) {
-              
+
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
               profilesJSON.profiles[index].endorsements[index2] = {
-                    'id': endorsementId,
-                    'competency': '',
-                    'training': endorsements[endorsementId].recommendedtraining,
-                    'delivery': endorsements[endorsementId].relateddelivery,
-                    'endorsement': endorsements[endorsementId].endorsement
+                'id': endorsementId,
+                'competency': '',
+                'training': endorsements[endorsementId].recommendedtraining,
+                'delivery': endorsements[endorsementId].relateddelivery,
+                'endorsement': endorsements[endorsementId].endorsement
               };
 
               var foundMatchingCompetency = false;
@@ -716,16 +704,15 @@ app.get('/loadProfiles', function(request, response) {
                     for (var index4 in endorsements[endorsementId].recommendedtraining) {
                       profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining[index4]);
                       console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2].id +
-                      ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
-                      profilesJSON.profiles[index].competencies[index3].name);
+                        ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
+                        profilesJSON.profiles[index].competencies[index3].name);
                     }
-                    
+
                     profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
-                    
+
                     console.log('incremented ' + profilesJSON.profiles[index].competencies[index3].name +
                       ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                       profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
-                    
 
                     profilesJSON.profiles[index].endorsements[index2].competency = profilesJSON.profiles[index].competencies[index3].name;
                   }
@@ -1353,11 +1340,11 @@ app.post('/saveEndorsements', function(request, response) {
 
         async.each(removeEndorsements, function(endorsementId, callback2) {
           base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
-            if (err) { 
-              console.log(err); 
-              return; 
+            if (err) {
+              console.log(err);
+              return;
             }
-              console.log('Deleted record ', deletedRecord.id);
+            console.log('Deleted record ', deletedRecord.id);
           });
         });
 
