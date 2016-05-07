@@ -468,14 +468,19 @@ app.get('/loadProfiles', function(request, response) {
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
                   if (endorsements[endorsementId].recommendedtraining != null) {
                     foundMatchingCompetency = true;
+                    for (var index4 in endorsements[endorsementId].recommendedtraining) {
+                      profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining[index4]);
+                      console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2].id +
+                      ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
+                      profilesJSON.profiles[index].competencies[index3].name);
+                    }
+                    
                     profilesJSON.profiles[index].competencies[index3].competencyEndorsements++;
-                    profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining);
+                    
                     console.log('incremented ' + profilesJSON.profiles[index].competencies[index3].name +
                       ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                       profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
-                    console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2].id +
-                      ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
-                      profilesJSON.profiles[index].competencies[index3].name);
+                    
 
                     profilesJSON.profiles[index].endorsements[index2].competency = profilesJSON.profiles[index].competencies[index3].name;
                   }
