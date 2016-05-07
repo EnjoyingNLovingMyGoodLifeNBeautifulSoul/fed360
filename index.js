@@ -1125,13 +1125,14 @@ app.post('/saveEndorsements', function(request, response) {
   console.log('profiles received: ' + profilesJSON.profiles.length);
   //console.log('data being processed: ' + JSON.stringify(profilesJSON));
 
-  // TODO
-  profilesJSON.delivery = {
-    'id': 'recXyBASMPAOe7vBX'
-  };
-  profilesJSON.submitter = {
-    'id': 'recu52h0rS87Ze2Pa'
-  };
+  // For testing
+  //profilesJSON.delivery = {
+  //  'id': 'recXyBASMPAOe7vBX'
+  //};
+
+  //profilesJSON.submitter = {
+  //  'id': 'recu52h0rS87Ze2Pa'
+  //};
 
   var allEndorsements = {};
   var removeEndorsements = [];
