@@ -121,17 +121,18 @@ app.post('/sendEndorseLink',
       domain: domain
     });
 
-    var fed360params = '?project=' + encodeURIComponent(request.body.subject) + '&emails=' + toEmails.toString();
+    var fed360params = '?project=' + encodeURIComponent(request.body.subject) + 
+                       '&emails=' + toEmails.toString();
 
     if (ccEmails.length > 0) {
       fed360params = fed360params + ',' + ccEmails.toString();
     }
 
-    var allDeliveries = [];
+    var allDeliveries = {};
     var deliveryRecord;
     var deliveryId;
     var needsNewDelivery = true;
-    var allProfiles = [];
+    var allProfiles = {};
     var fromIds;
     var ccIds = [];
 
@@ -208,7 +209,7 @@ app.post('/sendEndorseLink',
         } else {
           // results is now equal to ['one', 'two']
           console.log('delivery id loaded' + deliveryId);
-          fed360params = fed360 + ',' + deliveryId;
+          fed360params = fed360 + '&deliveryId=' + deliveryId;
 
 
 
@@ -295,7 +296,7 @@ function getAllDeliveries(allDeliveries, callback) {
 
       records.forEach(function(record) {
           console.log('Retrieved ', record.get('Name'));
-          var loadedDelivery = {
+          allDeliveries[record.getId()] = {
             'id': record.getId(),
             'name': record.get('Name'),
             'title': record.get('Title (Subject Line)'),
@@ -309,7 +310,7 @@ function getAllDeliveries(allDeliveries, callback) {
             'links': record.get('Links'),
             'attachments': record.get('Attachments')
           };
-          allDeliveries.push(loadedDelivery);
+
       });
 
       // To fetch the next page of records, call `fetchNextPage`.
@@ -337,7 +338,7 @@ function getAllProfiles(allProfiles, callback) {
       //console.log('processing profile');
       //console.log(record.get('Profile ID'));
       console.log('processing profile ' + record.get('Email'));
-      var profile = {
+      allProfiles[record.getId()] = {
         'id': record.getId(),
         'firstname': record.get('Name (First)'),
         'lastname': record.get('Name (Last)'),
@@ -350,7 +351,6 @@ function getAllProfiles(allProfiles, callback) {
         'picture': record.get('Profile Picture')
       };
 
-      allProfiles.push(profile);
 
     });
 
@@ -401,6 +401,9 @@ app.get('/loadProfiles', function(request, response) {
   var emails = JSON.parse(request.query.emails).emails; // Used for messages in URL
   console.log('searching for emails: ');
   console.log(emails);
+
+  var deliveryId = JSON.parse(request.query.deliveryId).deliveryId;
+  console.log('delivery id recieved: ' + deliveryid);
   /*console.log(request.body);
   if (typeof request.body == 'undefined') {
     response.send(JSON.stringify(profilesJSON));
@@ -412,6 +415,7 @@ app.get('/loadProfiles', function(request, response) {
   var positions = {};
   var competencies = {};
   var endorsements = {};
+  var allDeliveries = {};
   var trainings = {};
   var testCounter = 0;
   var doneCounter = 0;
@@ -806,6 +810,17 @@ app.get('/loadProfiles', function(request, response) {
           callback6(null, 'success');
         });
 
+      },
+      function(callback7) {
+        getAllDeliveries(allDeliveries, callback7);
+      },
+      function(callback8) {
+        for (var indexKey in allDeliveries) {
+          if (indexKey == deliveryId) {
+            profilesJSON.delivery = 
+          }
+        }
+        callback8(null,'success');
       }
 
     ],
@@ -824,7 +839,10 @@ app.get('/loadProfiles', function(request, response) {
         //console.log(trainings);
         profilesJSON.trainings = trainings;
         console.log('profiles:');
-        //console.log(profilesJSON);
+        //console.log(profilesJSON.trainings);
+        profilesJSON.delivery = allDeliveries[deliveryId];
+        console.log('deliveries:');
+        //console.log(profilesJSON.deliveries);
         console.log('full string:');
         //console.log(profilesJSON);
         console.log('returning compiled profiles in response');
