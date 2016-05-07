@@ -1134,7 +1134,7 @@ app.post('/saveEndorsements', function(request, response) {
   //  'id': 'recu52h0rS87Ze2Pa'
   //};
   console.log('submitter: ' + profilesJSON.submitter.id);
-  console.log('delivery id: ' + profilesJSON.delivery.id))
+  console.log('delivery id: ' + profilesJSON.delivery.id);
 
   var allEndorsements = {};
   var removeEndorsements = [];
