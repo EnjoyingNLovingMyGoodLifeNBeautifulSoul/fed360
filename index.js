@@ -209,8 +209,14 @@ app.post('/sendEndorseLink',
         } else {
           // results is now equal to ['one', 'two']
           console.log('delivery id loaded' + deliveryId);
-          fed360params = fed360 + '&deliveryId=' + deliveryId;
-
+          fed360params = fed360 + '&deliveryId=' + deliveryId + '&fromId=';
+          for (var index in fromIds) {
+            fed360params = fed360 + fromIds[index] + ',';
+          }
+          if (fed360params.charAt(fed360params.length - 1) == ',') {
+            fed360params = fed360params.slice(0, fed360params[fed360params.length - 2]);
+          }
+          console.log('fed360params: ' + fed360params);
 
 
           var params = {
