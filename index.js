@@ -322,7 +322,7 @@ function getAllDeliveries(allDeliveries, callback) {
       if (error) {
           console.log(error);
       } else {
-          callback(null, success);
+          callback(null, 'success');
       }
   });
 }
