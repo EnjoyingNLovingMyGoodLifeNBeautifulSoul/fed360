@@ -813,16 +813,7 @@ app.get('/loadProfiles', function(request, response) {
       },
       function(callback7) {
         getAllDeliveries(allDeliveries, callback7);
-      },
-      function(callback8) {
-        for (var indexKey in allDeliveries) {
-          if (indexKey == deliveryId) {
-            profilesJSON.delivery = 
-          }
-        }
-        callback8(null,'success');
       }
-
     ],
     //optional callback
     function(err, results) {
