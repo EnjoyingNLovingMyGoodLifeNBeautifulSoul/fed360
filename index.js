@@ -398,11 +398,12 @@ app.get('/loadProfiles', function(request, response) {
   var profilesJSON = {
     'profiles': []
   };
-  var emails = JSON.parse(request.query.emails).emails; // Used for messages in URL
+  var loadParameters = JSON.parse(request.query.loadParameters);
+  var emails = loadParameters.emails; // Used for messages in URL
   console.log('searching for emails: ');
   console.log(emails);
 
-  var deliveryId = JSON.parse(request.query.deliveryId).deliveryId;
+  var deliveryId = loadParameters.deliveryId;
   console.log('delivery id recieved: ' + deliveryid);
   /*console.log(request.body);
   if (typeof request.body == 'undefined') {
