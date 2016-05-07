@@ -404,7 +404,7 @@ app.get('/loadProfiles', function(request, response) {
   console.log(emails);
 
   var deliveryId = loadParameters.deliveryId;
-  console.log('delivery id recieved: ' + deliveryid);
+  console.log('delivery id recieved: ' + deliveryId);
   /*console.log(request.body);
   if (typeof request.body == 'undefined') {
     response.send(JSON.stringify(profilesJSON));
