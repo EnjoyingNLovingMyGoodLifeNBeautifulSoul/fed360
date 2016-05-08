@@ -130,12 +130,13 @@ app.post('/sendEndorseLink',
       domain: domain
     });
 
-    var fed360params = '?project=' + encodeURIComponent(request.body.subject) +
-      '&emails=' + toEmails.toString();
+    var fed360params = '?project=' + encodeURIComponent(request.body.subject);
+    //var fed360params = '?project=' + encodeURIComponent(request.body.subject) +
+    //  '&emails=' + toEmails.toString();
 
-    if (ccEmails.length > 0) {
-      fed360params = fed360params + ',' + ccEmails.toString();
-    }
+    //if (ccEmails.length > 0) {
+    //  fed360params = fed360params + ',' + ccEmails.toString();
+    //}
 
     var allDeliveries = {};
     var deliveryRecord = [];
@@ -203,6 +204,7 @@ app.post('/sendEndorseLink',
               }
 
             }
+            console.log('allEmails ' + allEmails.toString());
           }
           callback(null, 'success');
         },
@@ -247,6 +249,7 @@ app.post('/sendEndorseLink',
             for (var index in allEmails) {
               if (allEmails[index].email != emailItem.email) {
                 toEmailList = toEmailList + allEmails[index].email + ',';
+                console.log(toEmailList);
               }
             }
             if (toEmailList.charAt(toEmailList.length - 1) == ',') {
