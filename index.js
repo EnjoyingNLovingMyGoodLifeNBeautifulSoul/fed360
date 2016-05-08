@@ -369,9 +369,8 @@ function getAllProfiles(allProfiles, callback) {
 
 function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, callback) {
   base('Deliveries').create({
-    // Name column is computed title + number
+    // Name column is computed title + autonumber
     "Title (Subject Line)": deliveryName,
-    "Number": 1,
     "Customers (To:)": [],
     "Team (From:)": fromIds,
     "Endorsements": [],
