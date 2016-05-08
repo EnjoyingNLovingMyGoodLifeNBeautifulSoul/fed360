@@ -138,11 +138,11 @@ app.post('/sendEndorseLink',
     }
 
     var allDeliveries = {};
-    var deliveryRecord;
-    var deliveryId;
+    var deliveryRecord = '';
+    var deliveryId = '';
     var needsNewDelivery = true;
     var allProfiles = {};
-    var fromIds;
+    var fromIds = '';
     var ccIds = [];
 
     async.series([
