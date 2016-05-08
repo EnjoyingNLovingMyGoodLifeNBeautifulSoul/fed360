@@ -253,9 +253,9 @@ app.post('/sendEndorseLink',
               if (allEmails[index].email != emailItem.email) {
                 toEmailList = toEmailList + allEmails[index].email;
                 //console.log(toEmailList);
-              }
-              if (index != (allEmails.length - 1)) {
-                toEmailList = toEmailList + ',';
+                if (index != (allEmails.length - 1)) {
+                  toEmailList = toEmailList + ',';
+                }
               }
             }
  
