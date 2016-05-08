@@ -40,7 +40,7 @@ app.post('/sendEndorseLink',
 
   //express.basicAuth('username', 'password'),
   function(request, response) {
-    console.log('email received');
+    console.log('email received for mailgun emailing');
 
     // This code section de-circularizes JSON
     // Cases covered are:
@@ -68,7 +68,8 @@ app.post('/sendEndorseLink',
     // This code section parses out the To and CC emails
     // as well as the subject line and emails all recipients (except)
 
-    console.log('JSON string:' + JSONString);
+    //console.log('JSON string:' + JSONString);
+    //console.log(request);
     var from = request.body.from;
     var to = request.body.To;
     var cc = request.body.Cc;
@@ -317,6 +318,7 @@ function getAllDeliveries(allDeliveries, callback) {
     if (error) {
       console.log(error);
     } else {
+      console.log('successfully loaded all deliveries');
       callback(null, 'success');
     }
   });
@@ -367,8 +369,9 @@ function getAllProfiles(allProfiles, callback) {
 
 function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, callback) {
   base('Deliveries').create({
-    "Name": deliveryName,
+    // Name column is computed title + number
     "Title (Subject Line)": deliveryName,
+    "Number": 1,
     "Customers (To:)": [],
     "Team (From:)": fromIds,
     "Endorsements": [],
