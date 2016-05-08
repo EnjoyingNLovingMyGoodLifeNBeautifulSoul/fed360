@@ -144,6 +144,7 @@ app.post('/sendEndorseLink',
     var allProfiles = {};
     var fromIds = [];
     var ccIds = [];
+    var allEmails = [];
 
     async.series([
         // load deliveries
@@ -176,16 +177,28 @@ app.post('/sendEndorseLink',
               for (var index2 in fromEmails) {
                 if (allProfiles[index].email == fromEmails[index2]) {
                   fromIds.push(allProfiles[index].id);
+                  allEmails.push({
+                    'id': allProfiles[index].id,
+                    'email': fromEmails[index2]
+                  });
                 }
               }
               for (var index2 in toEmails) {
                 if (allProfiles[index].email == toEmails[index2]) {
                   ccIds.push(allProfiles[index].id);
+                  allEmails.push({
+                    'id': allProfiles[index].id,
+                    'email': toEmails[index2]
+                  });
                 }
               }
               for (var index2 in ccEmails) {
                 if (allProfiles[index].email == ccEmails[index2]) {
                   ccIds.push(allProfiles[index].id);
+                  allEmails.push({
+                    'id': allProfiles[index].id,
+                    'email': ccEmails[index2]
+                  });
                 }
               }
 
@@ -219,60 +232,77 @@ app.post('/sendEndorseLink',
         } else {
           // results is now equal to ['one', 'two']
           console.log('delivery id loaded' + deliveryId);
-          fed360params = fed360params + '&deliveryId=' + deliveryId + '&fromId=';
-          for (var index in fromIds) {
-            fed360params = fed360params + fromIds[index] + ',';
-          }
-          if (fed360params.charAt(fed360params.length - 1) == ',') {
-            fed360params = fed360params.slice(0, fed360params[fed360params.length - 2]);
-          }
-          console.log('fed360params: ' + fed360params);
 
-          var params = {
-            to: toEmails.toString(),
-            from: 'mail@mg.mrrmrr.com',
-            subject: request.body.subject,
-            html: '<html > <head> <meta charset="UTF-8">' +
-              ' <title>Fed360 Simple HTML Email Invitation</title>' +
-              ' <style>@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800);.fed360-email{font-family: "Open Sans", sans-serif; font-weight: 300;}.fed360-email .fed360{display: inline-block; width: 200px; height: 60px; padding-top: 0px; font-size: 50px; vertical-align: top; font-weight: 800; color: LightGrey;}</style>' +
-              ' </head> <body> <div class="fed360-email"> ' +
-              '<div class="welcome">Hi,</div><br>' +
-              '<div class="invitation">One or more of your team members has invited you to give anonymous endorsements for your team\'s skills.</div><br>' +
-              '<a class="link" href="http://codepen.io/OurDailyBread/debug/vLNGoG' +
-              fed360params +
-              '">Endorse your team\'s skills</a> <br><br><br><div class="signature">Automated Transaction by the Fed360 Team Endorsement Program</div>' +
-              '<div class="fed360">Fed360</div><div class "warning">Please do not reply to this email</div>' +
-              '<a href="http://fed360.parseapp.com/" class "website">Visit the Fed360 Homepage</div></div></body></html>'
-          };
+          async.each(allEmails, function(emailItem, callback) {
 
-          if (ccEmails.length > 0) {
-            params.cc = ccEmails.toString();
-          }
+            // Send email using mailgun
+            console.log('Processing email ' + emailItem.email;
 
-          // Then we create a cloud function
-          mailgun.messages().send(params, function(err, body) {
-            //If there is an error, render the error page
-            if (err) {
-              res.render('error', {
-                error: err
-              });
-              console.log("got an error: ", err);
-              response.send(err);
+            var customFed360params = fed360params + 
+                '&deliveryId=' + deliveryId + 
+                '&fromId=' + emailItem.id + 
+                '&emails=';
+
+            var toEmailList = '';
+            for (var index in allEmails) {
+              if (allEmails[index].email != emailItem.email) {
+                toEmailList = toEmailList + allEmails[index].email + ',';
+              }
             }
-            //Else we can greet    and leave
-            else {
-              console.log('mail ' + request.body.subject + ' submitted');
-              console.log(toEmails.toString() + ',' + ccEmails.toString());
-              console.log(body);
-
-              response.send('done mailing ' + toEmails.toString() + ',' + ccEmails.toString());
+            if (toEmailList.charAt(toEmailList.length - 1) == ',') {
+              toEmailList = toEmailList.slice(0, toEmailList[toEmailList.length - 2]);
             }
+
+            console.log('fed360params: ' + customFed360params + toEmailList);
+
+            var params = {
+              to: emailItem.email,
+              from: 'mail@mg.mrrmrr.com',
+              subject: request.body.subject,
+              html: '<html > <head> <meta charset="UTF-8">' +
+                ' <title>Fed360 Simple HTML Email Invitation</title>' +
+                ' <style>@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,800);.fed360-email{font-family: "Open Sans", sans-serif; font-weight: 300;}.fed360-email .fed360{display: inline-block; width: 200px; height: 60px; padding-top: 0px; font-size: 50px; vertical-align: top; font-weight: 800; color: LightGrey;}</style>' +
+                ' </head> <body> <div class="fed360-email"> ' +
+                '<div class="welcome">Hi,</div><br>' +
+                '<div class="invitation">One or more of your team members has invited you to give anonymous endorsements for your team\'s skills.</div><br>' +
+                '<a class="link" href="http://codepen.io/OurDailyBread/debug/vLNGoG' +
+                customFed360params + toEmailList +
+                '">Endorse your team\'s skills</a> <br><br><br><div class="signature">Automated Transaction by the Fed360 Team Endorsement Program</div>' +
+                '<div class="fed360">Fed360</div><div class "warning">Please do not reply to this email</div>' +
+                '<a href="http://fed360.parseapp.com/" class "website">Visit the Fed360 Homepage</div></div></body></html>'
+            };
+
+            // Then we create a mailgun message
+            mailgun.messages().send(params, function(err, body) {
+              //If there is an error, send error
+              if (err) {
+                console.log("got an error: ", err);
+                callback(err)
+              } else {
+                console.log('mail ' + request.body.subject + ' submitted');
+                console.log(emailItem.email + ',' + toEmailList);
+                //console.log(body);
+
+                callback();
+
+              }
+            });
+
+          }, function(err){
+              if( err ) {
+                // One of the iterations produced an error.
+                // All processing will now stop.
+                console.log(err);
+                response.send(err);
+              } else {
+                console.log('All emails have been processed successfully');
+                response.send('all done sending emails');
+              }
           });
+
 
         }
       });
-
-    // This code section saves the incoming email to the Parse cloud database - TODO
 
   },
   function(error) {
@@ -456,6 +486,7 @@ app.get('/loadProfiles', function(request, response) {
               if (emails[index] == profile.email) {
                 console.log('found ' + emails[index]);
                 profilesJSON.profiles.push(profile);
+
                 //console.log(profile);
               }
             }
