@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(cors());
 
-var corsOptioins = {
+var corsOptions = {
   origin: '*'
 }
 
