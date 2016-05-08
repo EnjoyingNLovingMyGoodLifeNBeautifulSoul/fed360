@@ -450,7 +450,7 @@ app.get('/loadProfiles', function(request, response) {
   console.log('searching for emails: ');
   console.log(emails);
 
-  response.header('Access-Control-Allow-Origin','example.com | *');
+  response.setHeader('Access-Control-Allow-Origin','example.com | *');
 
 
   var deliveryId = loadParameters.deliveryId;
