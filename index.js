@@ -124,7 +124,7 @@ app.post('/sendEndorseLink',
     console.log(fromEmails.length + ' From Emails collected:' + fromEmails.toString());
     console.log(toEmails.length + ' To Emails collected:' + toEmails.toString());
     console.log(ccEmails.length + ' Cc Emails collected:' + ccEmails.toString());
-    console.log('Subject: ' + request.body.subject));
+    console.log('Subject: ' + request.body.subject);
 
     // First we initialize our module
 
