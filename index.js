@@ -89,7 +89,7 @@ app.post('/sendEndorseLink',
       if (fromEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
         fromEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
-  }
+    }
 
     if (typeof to != 'undefined') {
       var firstPart = to.split('>');
@@ -208,7 +208,7 @@ app.post('/sendEndorseLink',
 
             }
             //console.log('allEmails ' + allEmails.toString());
-            console.log('allEmails length '+ allEmails.length);
+            console.log('allEmails length ' + allEmails.length);
           }
           callback(null, 'success');
         },
@@ -244,10 +244,10 @@ app.post('/sendEndorseLink',
             // Send email using mailgun
             console.log('Processing email ' + emailItem.email);
 
-            var customFed360params = fed360params + 
-                '&deliveryId=' + deliveryId + 
-                '&fromId=' + emailItem.id + 
-                '&emails=';
+            var customFed360params = fed360params +
+              '&deliveryId=' + deliveryId +
+              '&fromId=' + emailItem.id +
+              '&emails=';
 
             var toEmailList = '';
             for (var index in allEmails) {
@@ -260,7 +260,7 @@ app.post('/sendEndorseLink',
             if (toEmailList.charAt(toEmailList.length - 1) == ',') {
               toEmailList = toEmailList.slice(0, toEmailList.length - 1);
             }
- 
+
             console.log('project param: ' + fed360params);
             console.log('fromId email param: ' + emailItem.id + ', ' + emailItem.email);
             console.log('to emails param: ' + toEmailList);
@@ -300,18 +300,17 @@ app.post('/sendEndorseLink',
               }
             });
 
-          }, function(err){
-              if( err ) {
-                // One of the iterations produced an error.
-                // All processing will now stop.
-                console.log(err);
-                response.send(err);
-              } else {
-                console.log('All emails have been processed successfully');
-                response.send('all done sending emails');
-              }
+          }, function(err) {
+            if (err) {
+              // One of the iterations produced an error.
+              // All processing will now stop.
+              console.log(err);
+              response.send(err);
+            } else {
+              console.log('All emails have been processed successfully');
+              response.send('all done sending emails');
+            }
           });
-
 
         }
       });
@@ -450,6 +449,9 @@ app.get('/loadProfiles', function(request, response) {
   var emails = loadParameters.emails; // Used for messages in URL
   console.log('searching for emails: ');
   console.log(emails);
+
+  response.header('Access-Control-Allow-Origin','example.com | *');
+
 
   var deliveryId = loadParameters.deliveryId;
   console.log('delivery id recieved: ' + deliveryId);
