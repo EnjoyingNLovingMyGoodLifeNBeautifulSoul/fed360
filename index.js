@@ -74,8 +74,10 @@ app.post('/sendEndorseLink',
     var to = request.body.To;
     var cc = request.body.Cc;
 
+    console.log('from ' + from + ' to ' + to + ' cc ' + cc);
+
     if (typeof from != 'undefined') {
-      var firstPart = to.split('>');
+      var firstPart = from.split('>');
       var fromEmails = [];
       for (var index in firstPart) {
         var secondPart = firstPart[index].split('<');
