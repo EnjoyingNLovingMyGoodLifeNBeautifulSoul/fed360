@@ -219,7 +219,7 @@ app.post('/sendEndorseLink',
         } else {
           // results is now equal to ['one', 'two']
           console.log('delivery id loaded' + deliveryId);
-          fed360params = fed360 + '&deliveryId=' + deliveryId + '&fromId=';
+          fed360params = fed36params + '&deliveryId=' + deliveryId + '&fromId=';
           for (var index in fromIds) {
             fed360params = fed360params + fromIds[index] + ',';
           }
