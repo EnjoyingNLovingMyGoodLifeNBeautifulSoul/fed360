@@ -259,7 +259,7 @@ app.post('/sendEndorseLink',
               toEmailList = toEmailList.slice(0, toEmailList.length - 2);
             }
             console.log('project param: ' + fed360params);
-            console.log('fromId param: ' + emailItem.id);
+            console.log('fromId email param: ' + emailItem.id + ', ' + emailItem.email);
             console.log('to emails param: ' + toEmailList);
 
             //console.log('fed360params: ' + customFed360params + toEmailList);
