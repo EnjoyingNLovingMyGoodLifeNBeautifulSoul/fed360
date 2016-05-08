@@ -142,7 +142,7 @@ app.post('/sendEndorseLink',
     var deliveryId = '';
     var needsNewDelivery = true;
     var allProfiles = {};
-    var fromIds = '';
+    var fromIds = [];
     var ccIds = [];
 
     async.series([
@@ -262,10 +262,10 @@ app.post('/sendEndorseLink',
             //Else we can greet    and leave
             else {
               console.log('mail ' + request.body.subject + ' submitted');
-              console.log(toEmails.toString() + ccEmails.toString());
+              console.log(toEmails.toString() + ',' + ccEmails.toString());
               console.log(body);
 
-              response.send('done mailing ' + toEmails.toString() + ccEmails.toString());
+              response.send('done mailing ' + toEmails.toString() + ',' + ccEmails.toString());
             }
           });
 
