@@ -203,7 +203,7 @@ app.post('/sendEndorseLink',
         },
         function(callback) {
           if (needsNewDelivery == true) {
-            console.log('delivery record ' + deliveryRecord);
+            //console.log('delivery record ' + deliveryRecord);
             deliveryId = deliveryRecord[0].getId();
           }
           callback(null, 'success');
@@ -221,7 +221,7 @@ app.post('/sendEndorseLink',
           console.log('delivery id loaded' + deliveryId);
           fed360params = fed360 + '&deliveryId=' + deliveryId + '&fromId=';
           for (var index in fromIds) {
-            fed360params = fed360 + fromIds[index] + ',';
+            fed360params = fed360params + fromIds[index] + ',';
           }
           if (fed360params.charAt(fed360params.length - 1) == ',') {
             fed360params = fed360params.slice(0, fed360params[fed360params.length - 2]);
@@ -392,7 +392,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
       return;
     }
     createdDeliveryRecord.push(record);
-    console.log('delivery record ' + record);
+    //console.log('delivery record ' + record);
     console.log('created new delivery record ' + record.getId() + ' for ' + record.get('Name'));
     callback(null, 'success');
   });
