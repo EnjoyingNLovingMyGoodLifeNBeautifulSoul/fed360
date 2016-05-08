@@ -252,12 +252,13 @@ app.post('/sendEndorseLink',
             var toEmailList = '';
             for (var index in allEmails) {
               if (allEmails[index].email != emailItem.email) {
-                toEmailList = toEmailList + allEmails[index].email;
+                toEmailList = toEmailList + allEmails[index].email + ',';
                 //console.log(toEmailList);
-                if (index != (allEmails.length - 1)) {
-                  toEmailList = toEmailList + ',';
-                }
+
               }
+            }
+            if (toEmailList.charAt(toEmailList.length - 1) == ',') {
+              toEmailList = toEmailList.slice(0, toEmailList.length - 2);
             }
  
             console.log('project param: ' + fed360params);
