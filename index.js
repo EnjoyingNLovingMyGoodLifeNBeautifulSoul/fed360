@@ -258,7 +258,7 @@ app.post('/sendEndorseLink',
               }
             }
             if (toEmailList.charAt(toEmailList.length - 1) == ',') {
-              toEmailList = toEmailList.slice(0, toEmailList.length - 2);
+              toEmailList = toEmailList.slice(0, toEmailList.length - 1);
             }
  
             console.log('project param: ' + fed360params);
