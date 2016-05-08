@@ -138,7 +138,7 @@ app.post('/sendEndorseLink',
     }
 
     var allDeliveries = {};
-    var deliveryRecord = '';
+    var deliveryRecord = {};
     var deliveryId = '';
     var needsNewDelivery = true;
     var allProfiles = {};
@@ -198,13 +198,13 @@ app.post('/sendEndorseLink',
           if (needsNewDelivery == true) {
             var deliveryName = request.body.subject;
 
-            createDelivery(deliveryName, fromIds, ccIds, callback);
+            createDelivery(deliveryRecord, deliveryName, fromIds, ccIds, callback);
           }
         },
         function(callback) {
           if (needsNewDelivery == true) {
             console.log('delivery record ' + deliveryRecord);
-            deliveryId = deliveryRecord.getId();
+            deliveryId = deliveryRecord[0].getId();
           }
           callback(null, 'success');
         }
@@ -376,7 +376,7 @@ function getAllProfiles(allProfiles, callback) {
   });
 }
 
-function createDelivery(deliveryName, fromIds, ccIds, callback) {
+function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, callback) {
   base('Deliveries').create({
     // Name column is computed title + autonumber
     "Title (Subject Line)": deliveryName,
@@ -391,7 +391,7 @@ function createDelivery(deliveryName, fromIds, ccIds, callback) {
       callback(err);
       return;
     }
-    deliveryRecord = record;
+    createdDeliveryRecord[record.getId()] = record;
     console.log('delivery record ' + record);
     console.log('created new delivery record ' + record.getId() + ' for ' + record.get('Name'));
     callback(null, 'success');
