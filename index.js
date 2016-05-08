@@ -121,7 +121,10 @@ app.post('/sendEndorseLink',
       }
     }
 
-    console.log('Emails collected: To(' + toEmails.length + '):' + toEmails.toString() + ' Cc(' + ccEmails.length + '):' + ccEmails.toString() + ' Subject: ' + request.body.subject);
+    console.log(fromEmails.length + ' From Emails collected:' + fromEmails.toString());
+    console.log(toEmails.length + ' To Emails collected:' + toEmails.toString());
+    console.log(ccEmails.length + ' Cc Emails collected:' + ccEmails.toString());
+    console.log('Subject: ' + request.body.subject));
 
     // First we initialize our module
 
@@ -204,7 +207,7 @@ app.post('/sendEndorseLink',
               }
 
             }
-            console.log('allEmails ' + allEmails.toString());
+            //console.log('allEmails ' + allEmails.toString());
           }
           callback(null, 'success');
         },
@@ -249,14 +252,17 @@ app.post('/sendEndorseLink',
             for (var index in allEmails) {
               if (allEmails[index].email != emailItem.email) {
                 toEmailList = toEmailList + allEmails[index].email + ',';
-                console.log(toEmailList);
+                //console.log(toEmailList);
               }
             }
             if (toEmailList.charAt(toEmailList.length - 1) == ',') {
               toEmailList = toEmailList.slice(0, toEmailList.length - 2);
             }
-            //console.log('toEmailList ' + toEmailList);
-            console.log('fed360params: ' + customFed360params + toEmailList);
+            console.log('project param: ' + fed360params);
+            console.log('fromId param: ' + emailItem.id);
+            console.log('to emails param: ' + toEmailList);
+
+            //console.log('fed360params: ' + customFed360params + toEmailList);
 
             var params = {
               to: emailItem.email,
