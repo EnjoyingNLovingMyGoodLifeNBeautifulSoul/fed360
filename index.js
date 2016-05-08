@@ -208,6 +208,7 @@ app.post('/sendEndorseLink',
 
             }
             //console.log('allEmails ' + allEmails.toString());
+            cosole.log('allEmails length '+ allEmails.length);
           }
           callback(null, 'success');
         },
