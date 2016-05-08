@@ -138,7 +138,7 @@ app.post('/sendEndorseLink',
     }
 
     var allDeliveries = {};
-    var deliveryRecord = {};
+    var deliveryRecord = [];
     var deliveryId = '';
     var needsNewDelivery = true;
     var allProfiles = {};
@@ -391,7 +391,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
       callback(err);
       return;
     }
-    createdDeliveryRecord[record.getId()] = record;
+    createdDeliveryRecord.push(record);
     console.log('delivery record ' + record);
     console.log('created new delivery record ' + record.getId() + ' for ' + record.get('Name'));
     callback(null, 'success');
