@@ -74,43 +74,49 @@ app.post('/sendEndorseLink',
     var to = request.body.To;
     var cc = request.body.Cc;
 
-    var firstPart = to.split('>');
-    var fromEmails = [];
-    for (var index in firstPart) {
-      var secondPart = firstPart[index].split('<');
-      if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
-        fromEmails.push(secondPart[secondPart.length - 1]);
+    if (typeof from != 'undefined') {
+      var firstPart = to.split('>');
+      var fromEmails = [];
+      for (var index in firstPart) {
+        var secondPart = firstPart[index].split('<');
+        if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
+          fromEmails.push(secondPart[secondPart.length - 1]);
+        }
+
       }
-
-    }
-    if (fromEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
-      fromEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
-    }
-
-    var firstPart = to.split('>');
-    var toEmails = [];
-    for (var index in firstPart) {
-      var secondPart = firstPart[index].split('<');
-      if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
-        toEmails.push(secondPart[secondPart.length - 1]);
+      if (fromEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
+        fromEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
+  }
 
-    }
-    if (toEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
-      toEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
-    }
+    if (typeof to != 'undefined') {
+      var firstPart = to.split('>');
+      var toEmails = [];
+      for (var index in firstPart) {
+        var secondPart = firstPart[index].split('<');
+        if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
+          toEmails.push(secondPart[secondPart.length - 1]);
+        }
 
-    firstPart = cc.split('>');
-    var ccEmails = [];
-    for (var index in firstPart) {
-      var secondPart = firstPart[index].split('<');
-      if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
-        ccEmails.push(secondPart[secondPart.length - 1]);
+      }
+      if (toEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
+        toEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
     }
 
-    if (ccEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
-      ccEmails.splice(ccEmails.indexOf('mail@mg.mrrmrr.com'), 1);
+    if (typeof cc != 'undefined') {
+      firstPart = cc.split('>');
+      var ccEmails = [];
+      for (var index in firstPart) {
+        var secondPart = firstPart[index].split('<');
+        if (secondPart[secondPart.length - 1].indexOf('@') != -1) { // Verifies the string has a common email character
+          ccEmails.push(secondPart[secondPart.length - 1]);
+        }
+      }
+
+      if (ccEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
+        ccEmails.splice(ccEmails.indexOf('mail@mg.mrrmrr.com'), 1);
+      }
     }
 
     console.log('Emails collected: To(' + toEmails.length + '):' + toEmails.toString() + ' Cc(' + ccEmails.length + '):' + ccEmails.toString() + ' Subject: ' + request.body.subject);
