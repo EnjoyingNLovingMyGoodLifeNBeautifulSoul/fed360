@@ -236,7 +236,7 @@ app.post('/sendEndorseLink',
           async.each(allEmails, function(emailItem, callback) {
 
             // Send email using mailgun
-            console.log('Processing email ' + emailItem.email;
+            console.log('Processing email ' + emailItem.email);
 
             var customFed360params = fed360params + 
                 '&deliveryId=' + deliveryId + 
