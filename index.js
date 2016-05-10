@@ -773,6 +773,9 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
               for (var index3 in profilesJSON.profiles[index].competencies) {
                 //console.log('searching if id ' + endorsedCompetencyId + ' = ' + profilesJSON.profiles[index].competencies[index3].id);
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
+                  
+                  singleEndorsement.competency = profilesJSON.profiles[index].competencies[index3].name;
+
                   if (endorsements[endorsementId].recommendedtraining != null) {
                     foundMatchingCompetency = true;
                     for (var index4 in endorsements[endorsementId].recommendedtraining) {
@@ -788,7 +791,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                       ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                       profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
 
-                    singleEndorsement.competency = profilesJSON.profiles[index].competencies[index3].name;
+
                   }
                 }
               }
