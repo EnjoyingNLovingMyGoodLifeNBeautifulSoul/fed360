@@ -756,7 +756,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
               if (endorsements[endorsementId].by != submitterId) {
                 continue;
               }
-              
+
               
               // make a copy
               var singleEndorsement = {  
@@ -766,8 +766,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                 'delivery': endorsements[endorsementId].relateddelivery,
                 'endorsement': endorsements[endorsementId].endorsement
               };
-              // add to list of endorsements by this person
-              endorsementsFromSubmitter.push(singleEndorsement);
+              
 
               // update competency trainings from endorsements
               var foundMatchingCompetency = false;
@@ -789,7 +788,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                       ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                       profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
 
-                    profilesJSON.profiles[index].endorsements[index2].competency = profilesJSON.profiles[index].competencies[index3].name;
+                    singleEndorsement.competency = profilesJSON.profiles[index].competencies[index3].name;
                   }
                 }
               }
@@ -797,6 +796,9 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
               if (foundMatchingCompetency == false) {
                 console.log('no matching competency training for ' + endorsementId);
               }
+
+              // add to list of endorsements by this person
+              endorsementsFromSubmitter.push(singleEndorsement);
 
               
             }
