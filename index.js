@@ -467,6 +467,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
   var emails = (JSON.parse(request.body.emails)).emails; */ // Used for messages in body
 
   var submitterId = loadParameters.submitterId;
+  console.log('submitter id recevied: ' + submitterId);
 
   var organizations = {};
   var positions = {};
