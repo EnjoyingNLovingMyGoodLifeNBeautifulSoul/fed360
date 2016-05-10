@@ -748,15 +748,15 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
           for (var index in profilesJSON.profiles) {
             var endorsementsFromSubmitter = [];
             for (var index2 in profilesJSON.profiles[index].endorsements) {
+              
+              var endorsementId = profilesJSON.profiles[index].endorsements[index2];
+              var endorsedCompetencyId = endorsements[endorsementId].competency;
+
               // skip endorsement if submitter isn't this person
               if (endorsements[endorsementId].by != submitterId) {
                 continue;
               }
-
-
-              var endorsementId = profilesJSON.profiles[index].endorsements[index2];
-              var endorsedCompetencyId = endorsements[endorsementId].competency;
-
+              
               
               // make a copy
               var singleEndorsement = {  
