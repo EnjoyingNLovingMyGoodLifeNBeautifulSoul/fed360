@@ -466,6 +466,8 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
   console.log(request.body.emails);
   var emails = (JSON.parse(request.body.emails)).emails; */ // Used for messages in body
 
+  var submitterId = loadParameters.submitterId;
+
   var organizations = {};
   var positions = {};
   var competencies = {};
@@ -743,19 +745,30 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
           console.log('successfully loaded endorsements');
           //console.log(endorsements);
           for (var index in profilesJSON.profiles) {
+            var endorsementsFromSubmitter = [];
             for (var index2 in profilesJSON.profiles[index].endorsements) {
+              // skip endorsement if submitter isn't this person
+              if (endorsements[endorsementId].by != submitterId) {
+                continue;
+              }
+
 
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
-              profilesJSON.profiles[index].endorsements[index2] = {
+              
+              // make a copy
+              var singleEndorsement = {  
                 'id': endorsementId,
                 'competency': '',
                 'training': endorsements[endorsementId].recommendedtraining,
                 'delivery': endorsements[endorsementId].relateddelivery,
                 'endorsement': endorsements[endorsementId].endorsement
               };
+              // add to list of endorsements by this person
+              endorsementsFromSubmitter.push(singleEndorsement);
 
+              // update competency trainings from endorsements
               var foundMatchingCompetency = false;
               for (var index3 in profilesJSON.profiles[index].competencies) {
                 //console.log('searching if id ' + endorsedCompetencyId + ' = ' + profilesJSON.profiles[index].competencies[index3].id);
@@ -764,7 +777,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                     foundMatchingCompetency = true;
                     for (var index4 in endorsements[endorsementId].recommendedtraining) {
                       profilesJSON.profiles[index].competencies[index3].endorsedTraining.push(endorsements[endorsementId].recommendedtraining[index4]);
-                      console.log('assigned endorsement training id ' + profilesJSON.profiles[index].endorsements[index2].id +
+                      console.log('assigned endorsement training id ' + singleEndorsement.id +
                         ' to ' + profilesJSON.profiles[index].firstname + ' competency ' +
                         profilesJSON.profiles[index].competencies[index3].name);
                     }
@@ -784,7 +797,11 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                 console.log('no matching competency training for ' + endorsementId);
               }
 
+              
             }
+
+            // only show endorsements from submitter
+            profilesJSON.profiles[index].endorsements = endorsementsFromSubmitter;
 
           }
           callback5(null, 'success');
