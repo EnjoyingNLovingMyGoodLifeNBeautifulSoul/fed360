@@ -5,6 +5,7 @@ var cors = require('cors');
 var Mailgun = require('mailgun-js');
 var async = require('async');
 var pg = require('pg');
+var bcrypt = require('bcrypt');
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -340,8 +341,8 @@ var base = Airtable.base('appYLZr7VvVPKZGvf');
 app.post('/loginFed360', function(request, response) {
   console.log('/airtableLogin POST received');
   //console.log(JSON.stringify(request.body));
-  console.log(request.body.credentials);
-  console.log(JSON.parse(request.body.credentials));
+  console.log(request.body.result);
+  console.log(JSON.parse(request.body.result));
   var credentials = JSON.parse(request.body.credentials);
 
   console.log('data being processed: ' + credentials);
@@ -370,6 +371,15 @@ app.post('/loginFed360', function(request, response) {
         console.log(JSON.stringify(row));
       });
   });
+
+  //bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+  // Store hash in your password DB.
+  //});
+
+  // Load hash from your password DB.
+  //bcrypt.compare(myPlaintextPassword, hash, function(err, res) {
+      // res == true
+  //});
 
   //response.send('done');
 });
