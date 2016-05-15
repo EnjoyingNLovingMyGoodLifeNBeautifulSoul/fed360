@@ -343,7 +343,7 @@ app.post('/loginFed360', function(request, response) {
   //console.log(JSON.stringify(request.body));
   console.log(request.body.result);
   console.log(JSON.parse(request.body.result));
-  var credentials = JSON.parse(request.body.credentials);
+  var credentials = JSON.parse(request.body.result);
 
   console.log('data being processed: ' + credentials);
 
