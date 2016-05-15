@@ -4,6 +4,7 @@ var app = express();
 var cors = require('cors');
 var Mailgun = require('mailgun-js');
 var async = require('async');
+var pg = require('pg');
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -335,6 +336,46 @@ Airtable.configure({
   apiKey: 'keyWInwqgSshQe7GV'
 });
 var base = Airtable.base('appYLZr7VvVPKZGvf');
+
+app.post('/loginFed360', function(request, response) {
+  console.log('/airtableLogin POST received');
+  //console.log(JSON.stringify(request.body));
+  console.log(request.body.credentials);
+  console.log(JSON.parse(request.body.credentials));
+  var credentials = JSON.parse(request.body.credentials);
+
+  console.log('data being processed: ' + credentials);
+
+  if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
+    if (typeof credentials.email == 'undefined') {
+      console.log('no username or email found');
+      response.send('no username or email found');
+      return;
+    }
+    console.log('email: ' + credentials.email);
+    profileId
+  } else {
+    console.log('username: ' + credentials.username);
+  }
+
+  // write to database
+  pg.defaults.ssl = true;
+  pg.connect(process.env.DATABASE_URL, function(err, client) {
+    if (err) throw err;
+    console.log('Connected to postgres! Getting schemas...');
+
+    client
+      .query('SELECT table_schema,table_name FROM information_schema.tables;')
+      .on('row', function(row) {
+        console.log(JSON.stringify(row));
+      });
+  });
+
+  //response.send('done');
+});
+
+
+
 
 function getAllDeliveries(allDeliveries, callback) {
   base('Deliveries').select({
