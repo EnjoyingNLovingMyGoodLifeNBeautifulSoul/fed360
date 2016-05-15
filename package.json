@@ -9,6 +9,7 @@
   "dependencies": {
     "airtable": "^0.4.0",
     "async": "^1.5.2",
+    "bcrypt": "^0.8.6",
     "body-parser": "^1.15.0",
     "cors": "^2.7.1",
     "ejs": "^2.3.3",
