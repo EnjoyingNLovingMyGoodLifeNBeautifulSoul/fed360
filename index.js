@@ -477,7 +477,7 @@ app.post('/registerFed360', function(request, response) {
           // Store hash in your password DB.
           console.log('created hash ' + hash);
           // write to database
-          var query2 = client.query( 'INSERT INTO user_credentials (email,salted_hash) ' +
+          var query2 = client.query('INSERT INTO user_credentials (email,salted_hash) ' +
                       'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
           query2.on('end', function(){
             console.log('updated Postgresql database with user registration');
@@ -496,6 +496,7 @@ app.post('/registerFed360', function(request, response) {
 
         });
       } else {
+        console.log('previous registration exists for ' + credentials.email);
         //disconnect client when all queries are finished. used as callback
         client.on('drain', client.end.bind(client)); 
 
