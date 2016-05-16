@@ -479,7 +479,7 @@ app.post('/registerFed360', function(request, response) {
 
 
       if (existingLogin == false) {
-        console.log('no previous email registration found');
+        console.log('no previous email registration found for' + credentials.email);
         bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
           // Store hash in your password DB.
           console.log('created hash ' + hash);
@@ -509,7 +509,7 @@ app.post('/registerFed360', function(request, response) {
 
         done();
         console.log("Database client was disconnected.");
-        response.send('regisration complete');
+        response.send('no regisration completed');
 
         // callback when connection is finished
         //client.on('end', function(){
