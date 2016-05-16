@@ -446,6 +446,13 @@ app.post('/registerFed360', function(request, response) {
       return true;
     };
 
+    // callback when connection is finished
+    client.on('end', function(){
+      console.log("Client was disconnected.");
+      done();
+      response.send('regisration complete');
+    }); 
+
 
     console.log('Connected to postgres! Getting schemas...');
 
@@ -502,7 +509,7 @@ app.post('/registerFed360', function(request, response) {
 
         // callback when connection is finished
         client.on('end', function(){
-          console.log("Client was disconnected.")
+          console.log("Client was disconnected.");
           response.send('regisration complete');
         }); 
       }
