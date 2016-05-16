@@ -7,6 +7,8 @@ var async = require('async');
 var pg = require('pg');
 var bcrypt = require('bcrypt');
 
+const saltRounds = 10;
+
 app.use(bodyParser.urlencoded({
   extended: false
 }));
