@@ -372,7 +372,7 @@ app.post('/loginFed360', function(request, response) {
         // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
       //});
     client
-        .query('SELECT * FROM user_credentials');
+        .query('SELECT * FROM user_credentials;');
         .on('row', function(row) {
           console.log(JSON.stringify(row));
           // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
