@@ -471,7 +471,7 @@ app.post('/registerFed360', function(request, response) {
 
       if (existingLogin == false) {
         console.log('no previous email registration found');
-        bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+        bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
           // Store hash in your password DB.
 
           // write to database
