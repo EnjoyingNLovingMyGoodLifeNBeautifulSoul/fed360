@@ -498,7 +498,7 @@ app.post('/registerFed360', function(request, response) {
       } else {
         console.log('previous registration exists for ' + credentials.email);
         //disconnect client when all queries are finished. used as callback
-        client.on('drain', client.end.bind(client)); 
+        //client.on('drain', client.end.bind(client)); 
 
         // callback when connection is finished
         client.on('end', function(){
