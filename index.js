@@ -496,7 +496,7 @@ app.post('/registerFed360', function(request, response) {
 
           // callback when connection is finished
           client.on('end', function(){
-            console.log("Client was disconnected.")
+            console.log("Database client was disconnected.")
             response.send('regisration complete');
           }); 
               
@@ -507,11 +507,14 @@ app.post('/registerFed360', function(request, response) {
         //disconnect client when all queries are finished. used as callback
         //client.on('drain', client.end.bind(client)); 
 
+        done();
+        console.log("Database client was disconnected.");
+        response.send('regisration complete');
+
         // callback when connection is finished
-        client.on('end', function(){
-          console.log("Client was disconnected.");
-          response.send('regisration complete');
-        }); 
+        //client.on('end', function(){
+        //  
+        //}); 
       }
 
     }); //disconnect client manually. no callback
