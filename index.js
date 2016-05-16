@@ -345,7 +345,7 @@ app.post('/loginFed360', function(request, response) {
   console.log(JSON.parse(request.body.result));
   var credentials = JSON.parse(request.body.result);
 
-  console.log('data being processed: ' + credentials);
+  console.log('data being processed: ' + JSON.stringify(credentials));
 
   if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
     if (typeof credentials.email == 'undefined') {
@@ -358,6 +358,8 @@ app.post('/loginFed360', function(request, response) {
   } else {
     console.log('username: ' + credentials.username);
   }
+
+  var correctLogin = false;
 
   // write to database
   pg.defaults.ssl = true;
@@ -375,18 +377,24 @@ app.post('/loginFed360', function(request, response) {
         .query('SELECT * FROM user_credentials;')
         .on('row', function(row) {
           console.log(JSON.stringify(row));
-          // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+
+          // Load hash from your password DB.
+          bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+            if (res == true) {
+              correctLogin = true;
+            }
+          });
+           //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
       });
   });
+
+  console.log('correctLogin: ' + correctLogin);
 
   //bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
   // Store hash in your password DB.
   //});
 
-  // Load hash from your password DB.
-  //bcrypt.compare(myPlaintextPassword, hash, function(err, res) {
-      // res == true
-  //});
+
 
   //response.send('done');
 });
