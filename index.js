@@ -339,7 +339,7 @@ Airtable.configure({
 var base = Airtable.base('appYLZr7VvVPKZGvf');
 
 app.post('/loginFed360', function(request, response) {
-  console.log('/airtableLogin POST received');
+  console.log('/loginFed360 POST received');
   //console.log(JSON.stringify(request.body));
   console.log(request.body.result);
   console.log(JSON.parse(request.body.result));
@@ -361,7 +361,7 @@ app.post('/loginFed360', function(request, response) {
 
   var correctLogin = false;
 
-  // write to database
+  // read from database
   pg.defaults.ssl = true;
   pg.connect(process.env.DATABASE_URL, function(err, client) {
     if (err) throw err;
@@ -393,6 +393,120 @@ app.post('/loginFed360', function(request, response) {
   //bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
   // Store hash in your password DB.
   //});
+
+
+
+  //response.send('done');
+});
+
+app.post('/registerFed360', function(request, response) {
+  console.log('/registerFed360 POST received');
+  //console.log(JSON.stringify(request.body));
+  console.log(request.body.result);
+  console.log(JSON.parse(request.body.result));
+  var credentials = JSON.parse(request.body.result);
+
+  console.log('data being processed: ' + JSON.stringify(credentials));
+
+  if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
+    if (typeof credentials.email == 'undefined') {
+      console.log('no username or email found');
+      response.send('no username or email found');
+      return;
+    }
+    console.log('email: ' + credentials.email);
+    profileId
+  } else {
+    console.log('username: ' + credentials.username);
+  }
+
+  var existingLogin = false;
+
+  // read from database
+  pg.defaults.ssl = true;
+  pg.connect(process.env.DATABASE_URL, function(err, client, done) {
+    //if (err) throw err;
+
+    var handleError = function(err) {
+      // no error occurred, continue with the request
+      if(!err) return false;
+
+      // An error occurred, remove the client from the connection pool.
+      // A truthy value passed to done will remove the connection from the pool
+      // instead of simply returning it to be reused.
+      // In this case, if we have successfully received a client (truthy)
+      // then it will be removed from the pool.
+      if(client){
+        done(client);
+      }
+      res.writeHead(500, {'content-type': 'text/plain'});
+      res.end('An error occurred');
+      return true;
+    };
+
+
+    console.log('Connected to postgres! Getting schemas...');
+
+
+
+
+    //client
+      //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+      //.on('row', function(row) {
+      //  console.log(JSON.stringify(row));
+        // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+      //});
+    var query = client.query('SELECT * FROM user_credentials;');
+    query.on('row', function(row) {
+          console.log(JSON.stringify(row));
+
+          if (row.email == credentials.email) {
+            existingLogin = true;
+          }
+      });
+
+    query.on('end', function(){
+
+
+      if (existingLogin == true) {
+        bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
+          // Store hash in your password DB.
+
+          // write to database
+          var query2 = client.query( 'INSERT INTO user_credentials (email,salted_hash) ' +
+                      'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
+          query2.on('end', function(){
+            client.end.bind(client);
+          });
+
+          //disconnect client when all queries are finished. used as callback
+          client.on('drain', client.end.bind(client)); 
+
+          // callback when connection is finished
+          client.on('end', function(){
+            console.log("Client was disconnected.")
+            response.send('regisration complete');
+          }); 
+              
+
+        });
+      } else {
+        //disconnect client when all queries are finished. used as callback
+        client.on('drain', client.end.bind(client)); 
+
+        // callback when connection is finished
+        client.on('end', function(){
+          console.log("Client was disconnected.")
+          response.send('regisration complete');
+        }); 
+      }
+
+    }); //disconnect client manually. no callback
+  });
+
+  
+
+  
 
 
 
