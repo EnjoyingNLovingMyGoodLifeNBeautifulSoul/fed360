@@ -466,9 +466,11 @@ app.post('/registerFed360', function(request, response) {
       });
 
     query.on('end', function(){
+      console.log('registration query completed');
 
 
-      if (existingLogin == true) {
+      if (existingLogin == false) {
+        console.log('no previous email registration found');
         bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
           // Store hash in your password DB.
 
@@ -476,6 +478,7 @@ app.post('/registerFed360', function(request, response) {
           var query2 = client.query( 'INSERT INTO user_credentials (email,salted_hash) ' +
                       'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
           query2.on('end', function(){
+            console.log('updated Postgresql database with user registration');
             client.end.bind(client);
           });
 
