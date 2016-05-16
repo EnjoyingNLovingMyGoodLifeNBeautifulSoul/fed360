@@ -365,10 +365,17 @@ app.post('/loginFed360', function(request, response) {
     if (err) throw err;
     console.log('Connected to postgres! Getting schemas...');
 
+    //client
+      //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+      //.on('row', function(row) {
+      //  console.log(JSON.stringify(row));
+        // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+      //});
     client
-      .query('SELECT table_schema,table_name FROM information_schema.tables;')
-      .on('row', function(row) {
-        console.log(JSON.stringify(row));
+        .query('SELECT * FROM user_credentials');
+        .on('row', function(row) {
+          console.log(JSON.stringify(row));
+          // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
       });
   });
 
