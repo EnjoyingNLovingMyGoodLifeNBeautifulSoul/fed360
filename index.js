@@ -499,7 +499,7 @@ app.post('/registerFed360', function(request, response) {
             console.log("Database client was disconnected.")
             response.send('regisration complete');
           }); 
-              
+
 
         });
       } else {
@@ -509,7 +509,7 @@ app.post('/registerFed360', function(request, response) {
 
         done();
         console.log("Database client was disconnected.");
-        response.send('no regisration completed');
+        response.send('no registration completed');
 
         // callback when connection is finished
         //client.on('end', function(){
