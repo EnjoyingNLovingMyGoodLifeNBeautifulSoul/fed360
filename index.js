@@ -450,7 +450,7 @@ app.post('/registerFed360', function(request, response) {
     client.on('end', function(){
       console.log("Client was disconnected.");
       done();
-      response.send('regisration complete');
+      response.send('client end - registration complete');
     }); 
 
 
@@ -488,17 +488,18 @@ app.post('/registerFed360', function(request, response) {
                       'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
           query2.on('end', function(){
             console.log('updated Postgresql database with user registration');
-            //client.end.bind(client);
+            response.send('registration completed');
+            client.end.bind(client);
           });
 
           //disconnect client when all queries are finished. used as callback
           //client.on('drain', client.end.bind(client)); 
 
           // callback when connection is finished
-          client.on('end', function(){
-            console.log("Database client was disconnected.")
-            response.send('regisration complete');
-          }); 
+          //client.on('end', function(){
+          //  console.log("Database client was disconnected.")
+          //  response.send('regisration complete');
+          //}); 
 
 
         });
