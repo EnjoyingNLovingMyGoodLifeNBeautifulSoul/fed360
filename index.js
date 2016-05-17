@@ -408,18 +408,17 @@ app.post('/registerFed360', function(request, response) {
   console.log(JSON.parse(request.body.result));
   var credentials = JSON.parse(request.body.result);
 
-  console.log('data being processed: ' + JSON.stringify(credentials));
-
+  //console.log('data being processed: ' + JSON.stringify(credentials));
+  console.log(credentials.email + ': processing data');
   if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
     if (typeof credentials.email == 'undefined') {
       console.log('no username or email found');
       response.send('no username or email found');
       return;
     }
-    console.log('email: ' + credentials.email);
-    profileId
+    //console.log('email: ' + credentials.email);
   } else {
-    console.log('username: ' + credentials.username);
+    //console.log('username: ' + credentials.username);
   }
 
   var existingLogin = false;
@@ -448,13 +447,13 @@ app.post('/registerFed360', function(request, response) {
 
     // callback when connection is finished
     client.on('end', function(){
-      console.log("Client was disconnected.");
+      console.log(credentials.email + 'Client was disconnected.');
       done();
       response.send('client end - registration complete');
     }); 
 
 
-    console.log('Connected to postgres! Getting schemas...');
+    console.log(credentials.email + ': Connected to postgres! Getting schemas...');
 
 
 
@@ -475,21 +474,23 @@ app.post('/registerFed360', function(request, response) {
       });
 
     query.on('end', function(){
-      console.log('registration query completed');
+      console.log(credentials.email + ': registration query completed');
 
 
       if (existingLogin == false) {
-        console.log('no previous email registration found for' + credentials.email);
+        console.log(credentials.email + ': no previous email registration found for' + credentials.email);
         bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
           // Store hash in your password DB.
-          console.log('created hash ' + hash);
+          //console.log('created hash ' + hash);
+          console.log(credentials.email + ':  created new hash');
           // write to database
           var query2 = client.query('INSERT INTO user_credentials (email,salted_hash) ' +
                       'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
           query2.on('end', function(){
-            console.log('updated Postgresql database with user registration');
+            console.log(credentials.email + ': updated Postgresql database with user registration');
             response.send('registration completed');
             client.end.bind(client);
+            console.log(credentials.email + ": Database client was disconnected after registration.");
           });
 
           //disconnect client when all queries are finished. used as callback
@@ -504,19 +505,20 @@ app.post('/registerFed360', function(request, response) {
 
         });
       } else {
-        console.log('previous registration exists for ' + credentials.email);
+        console.log(credentials.email + ': previous registration exists for ' + credentials.email);
         //disconnect client when all queries are finished. used as callback
         //client.on('drain', client.end.bind(client)); 
 
         done();
-        console.log("Database client was disconnected.");
+        console.log(credentials.email + ": Database client was disconnected without registering.");
         response.send('Email already registered. No registration completed.');
         client.end.bind(client);
 
         // callback when connection is finished
         //client.on('end', function(){
         //  
-        //}); 
+
+        //});
       }
 
     }); //disconnect client manually. no callback
