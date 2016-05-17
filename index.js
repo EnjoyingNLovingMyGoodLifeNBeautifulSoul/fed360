@@ -511,6 +511,7 @@ app.post('/registerFed360', function(request, response) {
         done();
         console.log("Database client was disconnected.");
         response.send('no registration completed');
+        client.end.bind(client);
 
         // callback when connection is finished
         //client.on('end', function(){
