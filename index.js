@@ -370,23 +370,23 @@ app.post('/loginFed360', function(request, response) {
     console.log('Connected to postgres! Getting schemas...');
 
     //client
-      //.query('SELECT table_schema,table_name FROM information_schema.tables;')
-      //.on('row', function(row) {
-      //  console.log(JSON.stringify(row));
-        // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
-      //});
+    //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+    //.on('row', function(row) {
+    //  console.log(JSON.stringify(row));
+    // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+    //});
     client
-        .query('SELECT * FROM user_credentials;')
-        .on('row', function(row) {
-          console.log(JSON.stringify(row));
+      .query('SELECT * FROM user_credentials;')
+      .on('row', function(row) {
+        console.log(JSON.stringify(row));
 
-          // Load hash from your password DB.
-          bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
-            if (res == true) {
-              correctLogin = true;
-            }
-          });
-           //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+        // Load hash from your password DB.
+        bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+          if (res == true) {
+            correctLogin = true;
+          }
+        });
+        //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
       });
   });
 
@@ -395,8 +395,6 @@ app.post('/loginFed360', function(request, response) {
   //bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
   // Store hash in your password DB.
   //});
-
-
 
   //response.send('done');
 });
@@ -430,52 +428,49 @@ app.post('/registerFed360', function(request, response) {
 
     var handleError = function(err) {
       // no error occurred, continue with the request
-      if(!err) return false;
+      if (!err) return false;
 
       // An error occurred, remove the client from the connection pool.
       // A truthy value passed to done will remove the connection from the pool
       // instead of simply returning it to be reused.
       // In this case, if we have successfully received a client (truthy)
       // then it will be removed from the pool.
-      if(client){
+      if (client) {
         done(client);
       }
-      res.writeHead(500, {'content-type': 'text/plain'});
+      res.writeHead(500, {
+        'content-type': 'text/plain'
+      });
       res.end('An error occurred');
       return true;
     };
 
     // callback when connection is finished
-    client.on('end', function(){
+    client.on('end', function() {
       console.log(credentials.email + 'Client was disconnected.');
       done();
       response.send('client end - registration complete');
-    }); 
-
+    });
 
     console.log(credentials.email + ': Connected to postgres! Getting schemas...');
 
-
-
-
     //client
-      //.query('SELECT table_schema,table_name FROM information_schema.tables;')
-      //.on('row', function(row) {
-      //  console.log(JSON.stringify(row));
-        // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
-      //});
+    //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+    //.on('row', function(row) {
+    //  console.log(JSON.stringify(row));
+    // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+    //});
     var query = client.query('SELECT * FROM user_credentials;');
     query.on('row', function(row) {
-          console.log(JSON.stringify(row));
+      //console.log(JSON.stringify(row));
 
-          if (row.email == credentials.email) {
-            existingLogin = true;
-          }
-      });
+      if (row.email == credentials.email) {
+        existingLogin = true;
+      }
+    });
 
-    query.on('end', function(){
+    query.on('end', function() {
       console.log(credentials.email + ': registration query completed');
-
 
       if (existingLogin == false) {
         console.log(credentials.email + ': no previous email registration found for' + credentials.email);
@@ -485,8 +480,8 @@ app.post('/registerFed360', function(request, response) {
           console.log(credentials.email + ':  created new hash');
           // write to database
           var query2 = client.query('INSERT INTO user_credentials (email,salted_hash) ' +
-                      'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
-          query2.on('end', function(){
+            'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
+          query2.on('end', function() {
             console.log(credentials.email + ': updated Postgresql database with user registration');
             response.send('registration completed');
             client.end.bind(client);
@@ -501,7 +496,6 @@ app.post('/registerFed360', function(request, response) {
           //  console.log("Database client was disconnected.")
           //  response.send('regisration complete');
           //}); 
-
 
         });
       } else {
@@ -524,17 +518,8 @@ app.post('/registerFed360', function(request, response) {
     }); //disconnect client manually. no callback
   });
 
-  
-
-  
-
-
-
   //response.send('done');
 });
-
-
-
 
 function getAllDeliveries(allDeliveries, callback) {
   base('Deliveries').select({
@@ -655,7 +640,6 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
   console.log(emails);
 
   //response.setHeader('Access-Control-Allow-Origin','example.com | *');
-
 
   var deliveryId = loadParameters.deliveryId;
   console.log('delivery id recieved: ' + deliveryId);
@@ -948,7 +932,7 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
           for (var index in profilesJSON.profiles) {
             var endorsementsFromSubmitter = [];
             for (var index2 in profilesJSON.profiles[index].endorsements) {
-              
+
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
@@ -957,23 +941,21 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                 continue;
               }
 
-              
               // make a copy
-              var singleEndorsement = {  
+              var singleEndorsement = {
                 'id': endorsementId,
                 'competency': '',
                 'training': endorsements[endorsementId].recommendedtraining,
                 'delivery': endorsements[endorsementId].relateddelivery,
                 'endorsement': endorsements[endorsementId].endorsement
               };
-              
 
               // update competency trainings from endorsements
               var foundMatchingCompetency = false;
               for (var index3 in profilesJSON.profiles[index].competencies) {
                 //console.log('searching if id ' + endorsedCompetencyId + ' = ' + profilesJSON.profiles[index].competencies[index3].id);
                 if (endorsedCompetencyId == profilesJSON.profiles[index].competencies[index3].id) {
-                  
+
                   singleEndorsement.competency = profilesJSON.profiles[index].competencies[index3].name;
 
                   if (endorsements[endorsementId].recommendedtraining != null) {
@@ -991,7 +973,6 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
                       ' for ' + profilesJSON.profiles[index].firstname + ' profile to ' +
                       profilesJSON.profiles[index].competencies[index3].competencyEndorsements);
 
-
                   }
                 }
               }
@@ -1003,7 +984,6 @@ app.get('/loadProfiles', cors(corsOptions), function(request, response) {
               // add to list of endorsements by this person
               endorsementsFromSubmitter.push(singleEndorsement);
 
-              
             }
 
             // only show endorsements from submitter
