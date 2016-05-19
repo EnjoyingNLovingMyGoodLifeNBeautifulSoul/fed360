@@ -398,7 +398,7 @@ app.post('/loginFed360', function(request, response) {
             response.send('download completed');
           } else {
             console.log(credentials.email + ': password or email does not match');
-            response.send('verification completed');
+            response.send('Email or password does not match.');
           }
             
           client.end.bind(client);
