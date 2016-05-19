@@ -363,34 +363,51 @@ app.post('/loginFed360', function(request, response) {
 
   var correctLogin = false;
 
-  // read from database
-  pg.defaults.ssl = true;
-  pg.connect(process.env.DATABASE_URL, function(err, client) {
-    if (err) throw err;
-    console.log('Connected to postgres! Getting schemas...');
 
-    //client
-    //.query('SELECT table_schema,table_name FROM information_schema.tables;')
-    //.on('row', function(row) {
-    //  console.log(JSON.stringify(row));
-    // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
-    //});
-    client
-      .query('SELECT * FROM user_credentials;')
-      .on('row', function(row) {
-        console.log(JSON.stringify(row));
+  //async.series([
+    //function(callback) {
+      // read from database
+      pg.defaults.ssl = true;
+      pg.connect(process.env.DATABASE_URL, function(err, client) {
+        if (err) throw err;
+        console.log('Connected to postgres! Getting schemas...');
 
-        // Load hash from your password DB.
-        bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
-          if (res == true) {
-            correctLogin = true;
+        //client
+        //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+        //.on('row', function(row) {
+        //  console.log(JSON.stringify(row));
+        // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+        //});
+        var query = client.query('SELECT * FROM user_credentials;');
+        query.on('row', function(row) {
+            console.log(JSON.stringify(row));
+
+            // Load hash from your password DB.
+            bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+              if (res == true) {
+                correctLogin = true;
+                callback(null,'success');
+              }
+            });
+            //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+          });
+        query.on('end', function() {
+          console.log('correctLogin: ' + correctLogin);
+          if (correctLongin == true) {
+            console.log(credentials.email + ': verified password');
+            response.send('download completed');
+          } else {
+            console.log(credentials.email + ': password or email does not match');
+            response.send('verification completed');
           }
-        });
-        //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
-      });
-  });
+            
+          client.end.bind(client);
+          console.log(credentials.email + ": login database disconnected");
 
-  console.log('correctLogin: ' + correctLogin);
+        });
+      });
+
+  
 
   //bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
   // Store hash in your password DB.
@@ -402,8 +419,8 @@ app.post('/loginFed360', function(request, response) {
 app.post('/registerFed360', function(request, response) {
   console.log('/registerFed360 POST received');
   //console.log(JSON.stringify(request.body));
-  console.log(request.body.result);
-  console.log(JSON.parse(request.body.result));
+  //console.log(request.body.result);
+  //console.log(JSON.parse(request.body.result));
   var credentials = JSON.parse(request.body.result);
 
   //console.log('data being processed: ' + JSON.stringify(credentials));
