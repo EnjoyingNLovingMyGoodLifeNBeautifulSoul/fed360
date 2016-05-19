@@ -393,7 +393,7 @@ app.post('/loginFed360', function(request, response) {
           });
         query.on('end', function() {
           console.log('correctLogin: ' + correctLogin);
-          if (correctLongin == true) {
+          if (correctLogin == true) {
             console.log(credentials.email + ': verified password');
             response.send('download completed');
           } else {
