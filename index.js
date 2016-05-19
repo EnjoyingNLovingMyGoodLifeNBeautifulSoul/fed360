@@ -462,6 +462,8 @@ app.post('/registerFed360', function(request, response) {
       return true;
     };
 
+    if (err) handleError;
+
     // callback when connection is finished
     client.on('end', function() {
       console.log(credentials.email + 'Client was disconnected.');
