@@ -386,7 +386,7 @@ app.post('/loginFed360', function(request, response) {
             bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
               if (res == true) {
                 correctLogin = true;
-                callback(null,'success');
+                //callback(null,'success');
               }
             });
             //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
