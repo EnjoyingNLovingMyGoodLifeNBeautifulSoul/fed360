@@ -350,15 +350,9 @@ app.post('/loginFed360', function(request, response) {
   console.log('data being processed: ' + JSON.stringify(credentials));
 
   if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
-    if (typeof credentials.email == 'undefined') {
       console.log('no username or email found');
       response.send('no username or email found');
       return;
-    }
-    console.log('email: ' + credentials.email);
-    profileId
-  } else {
-    console.log('username: ' + credentials.username);
   }
 
   var correctLogin = false;
@@ -382,27 +376,32 @@ app.post('/loginFed360', function(request, response) {
         query.on('row', function(row) {
             console.log(JSON.stringify(row));
 
-            // Load hash from your password DB.
-            bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
-              if (res == true) {
-                correctLogin = true;
-                //callback(null,'success');
-              }
-            });
-            //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+            if ((credentials.username == row.username) || (credentials.username == row.email)) {
+
+              // Load hash from your password DB.
+              bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+                if (res == true) {
+                  correctLogin = true;
+                  //callback(null,'success');
+                }
+              });
+              //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+
+            }
+            
           });
         query.on('end', function() {
           console.log('correctLogin: ' + correctLogin);
           if (correctLogin == true) {
-            console.log(credentials.email + ': verified password');
+            console.log(credentials.username + ': verified username and password');
             response.send('download completed');
           } else {
-            console.log(credentials.email + ': password or email does not match');
-            response.send('Email or password does not match.');
+            console.log(credentials.username + ': username password does not match');
+            response.send('Username or password does not match.');
           }
             
           client.end.bind(client);
-          console.log(credentials.email + ": login database disconnected");
+          console.log(credentials.username + ": login database disconnected");
 
         });
       });
@@ -436,7 +435,8 @@ app.post('/registerFed360', function(request, response) {
     //console.log('username: ' + credentials.username);
   }
 
-  var existingLogin = false;
+  var existingEmail = false;
+  var existingUsername = false;
 
   // read from database
   pg.defaults.ssl = true;
@@ -484,14 +484,17 @@ app.post('/registerFed360', function(request, response) {
       //console.log(JSON.stringify(row));
 
       if (row.email == credentials.email) {
-        existingLogin = true;
+        existingEmail = true;
+      }
+      if (row.username == credentials.username) {
+        existingUsername = true;
       }
     });
 
     query.on('end', function() {
       console.log(credentials.email + ': registration query completed');
 
-      if (existingLogin == false) {
+      if ((existingEmail == false) && (existingUsername == false)) {
         console.log(credentials.email + ': no previous email registration found for' + credentials.email);
         bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
           // Store hash in your password DB.
