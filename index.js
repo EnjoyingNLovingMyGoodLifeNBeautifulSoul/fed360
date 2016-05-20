@@ -495,14 +495,15 @@ app.post('/registerFed360', function(request, response) {
       console.log(credentials.email + ': registration query completed');
 
       if ((existingEmail == false) && (existingUsername == false)) {
-        console.log(credentials.email + ': no previous email registration found for' + credentials.email);
+        console.log(credentials.email + ': no previous email registration found for ' + credentials.email);
         bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
           // Store hash in your password DB.
           //console.log('created hash ' + hash);
-          console.log(credentials.email + ':  created new hash');
+          console.log(credentials.email + ': created new hash');
           // write to database
-          var query2 = client.query('INSERT INTO user_credentials (email,salted_hash) ' +
-            'VALUES (\'' + credentials.email + '\',\'' + hash + '\');');
+          var query2 = client.query('INSERT INTO user_credentials (email,username,salted_hash) ' +
+            'VALUES (\'' + credentials.email + '\',\'' + 
+              credentials.username + '\',\'' + hash + '\');');
           query2.on('end', function() {
             console.log(credentials.email + ': updated Postgresql database with user registration');
             response.send('registration completed');
