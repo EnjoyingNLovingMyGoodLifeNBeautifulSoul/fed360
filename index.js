@@ -355,8 +355,6 @@ app.post('/loginFed360', function(request, response) {
       return;
   }
 
-  var correctLogin = false;
-
 
   //async.series([
     //function(callback) {
@@ -382,13 +380,19 @@ app.post('/loginFed360', function(request, response) {
               console.log('hash length ' + row.salted_hash.length);
               // Load hash from your password DB.
               bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+
+                console.log('correctLogin: ' + res);
                 if (res == true) {
-                  console.log(credentials.username + ': password matches');
-                  correctLogin = true;
-                  //callback(null,'success');
+                  console.log(credentials.username + ': verified username and password');
+                  response.send('download completed');
                 } else {
-                  console.log(credentials.password + ': incorrect password');
+                  console.log(credentials.username + ': username password does not match');
+                  response.send('Username or password does not match.');
                 }
+                  
+                client.end.bind(client);
+                console.log(credentials.username + ": login database disconnected");
+
               });
               //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
 
@@ -396,17 +400,7 @@ app.post('/loginFed360', function(request, response) {
             
           });
         query.on('end', function() {
-          console.log('correctLogin: ' + correctLogin);
-          if (correctLogin == true) {
-            console.log(credentials.username + ': verified username and password');
-            response.send('download completed');
-          } else {
-            console.log(credentials.username + ': username password does not match');
-            response.send('Username or password does not match.');
-          }
-            
-          client.end.bind(client);
-          console.log(credentials.username + ": login database disconnected");
+          
 
         });
       });
