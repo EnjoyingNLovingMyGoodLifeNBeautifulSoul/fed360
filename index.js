@@ -377,7 +377,7 @@ app.post('/loginFed360', function(request, response) {
             console.log(JSON.stringify(row));
 
             if ((credentials.username == row.username) || (credentials.username == row.email)) {
-
+              console.log(credentials.username + ': username match, checking password');
               // Load hash from your password DB.
               bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
                 if (res == true) {
