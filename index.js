@@ -383,8 +383,11 @@ app.post('/loginFed360', function(request, response) {
               // Load hash from your password DB.
               bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
                 if (res == true) {
+                  console.log(crendtials.username + ': password matches');
                   correctLogin = true;
                   //callback(null,'success');
+                } else {
+                  console.log(crendtials.password + ': incorrect password');
                 }
               });
               //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
