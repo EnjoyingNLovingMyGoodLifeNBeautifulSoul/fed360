@@ -505,9 +505,10 @@ app.post('/registerFed360', function(request, response) {
               credentials.username + '\',\'' + hash + '\');');
           query2.on('end', function() {
             console.log(credentials.email + ': updated Postgresql database with user registration');
-            response.send('registration completed');
+            //response.send('registration completed');
             client.end.bind(client);
             console.log(credentials.email + ": Database client was disconnected after registration.");
+            loadProfile(credentials.username, response);
           });
 
           //disconnect client when all queries are finished. used as callback
@@ -543,7 +544,7 @@ app.post('/registerFed360', function(request, response) {
   //response.send('done');
 });
 
-function loadProfile(username) {
+function loadProfile(username, response) {
   var profileData = {};
   var allProfiles = {};
   var profileOrganizations = {};
