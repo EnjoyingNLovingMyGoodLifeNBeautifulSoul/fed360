@@ -177,7 +177,7 @@ app.post('/sendEndorseLink',
         function(callback) {
           if (needsNewDelivery == true) {
             var deliveryName = request.body.subject;
-            getAllProfiles(allProfiles, callback);
+            getEndorsedProfiles(allProfiles, callback);
             //fromId, ccIds, from, to, cc, callback);
           }
         },
@@ -543,6 +543,298 @@ app.post('/registerFed360', function(request, response) {
   //response.send('done');
 });
 
+function loadProfile(username) {
+  var profileData = {};
+  var allProfiles = {};
+  var profileOrganizations = {};
+  var profileCompetencies = {};
+  var profileEndorsements = {};
+  var profilePositions = {};
+  var profileTrainings = {};
+
+  async.series([
+      function(callback) {
+        console.log('loading all profiles');
+        getAllProfiles(allProfiles, callback);
+      },
+      function(callback) {
+        for (var index in allProfiles) {
+          if ((allProfiles[index].username == username) ||
+              (allProfiles[index].email == username)) {
+            profileData = {
+              'id': record.getId(),
+              'firstname': record.get('Name (First)'),
+              'lastname': record.get('Name (Last)'),
+              'linkedin': record.get('LinkedIn'),
+              'supervisoremail': record.get('Direct Supervisor (email)'),
+              'organization': record.get('Organization'), //id
+              'competencies': record.get('Competencies'),
+              'endorsements': record.get('Endorsements (received)'),
+              'title': record.get('Position'), //id
+              'position': record.get('Position'),
+              'profilepicture': record.get('Profile Picture')
+            };
+          }
+        }
+        callback(null,'sucess');
+      },
+      function(callback) {
+        async.forEachOf(profileData.organization, function(organizationId, key, callback2) {
+          getOrganizationData(organizationId, profileOrganizations, callback2);
+          callback2(null,'success');
+        });
+      },
+      function(callback) {
+        profileData.organization = profileOrganizations;
+      },
+      function(callback) {
+        async.forEachOf(profileData.competencies, function(competencyId, key, callback2) {
+          getCompetencyData(organizationId, profileCompetencies, callback2);
+        });
+      },
+      function(callback) {
+        profileData.competencies = profileCompetencies;
+      },
+      function(callback) {
+        async.forEachOf(profileData.endorsements, function(endorsementId, key, callback2) {
+          getEndorsementData(endorsementId, profileEndorsements, callback2);
+        });
+      },
+      function(callback) {
+        profileData.endorsements = profileEndorsements;
+      },
+      function(callback) {
+        async.forEachOf(profileData.position, function(positionId, key, callback2) {
+          getPositionData(positionId, profilePositions, callback2);
+        });
+      },
+      function(callback) {
+        profileData.position = profilePositions;
+      },
+      function(callback) {
+        var trainingIdList = [];
+        for (var index in profile.competencies) {
+          for (var index2 in profiles.competenecies[index].recommendedtraining) {
+            var trainingId = profiles.competenecies[index].recommendedtraining[index2];
+            if (trainingIdList.indexOf(trainingId) != -1) {
+              trainingIdList.push(trainingId);
+            }            
+          }
+        }
+        async.forEachOf(trainingIdList, function(trainingId, key, callback2) {
+          getPositionData(trainingId, profileTrainings, callback2);
+        });
+      },
+      function(callback) {
+        profileData.training = profileTrainings;
+      }
+      ],
+      function(err, results) {
+      console.log('finishing async');
+      if (err) {
+        console.log('Async Error: ' + err);
+        response.send('Error: ' + err);
+      } else {
+        console.log(username + ': Profile data loaded');
+        response.send(profileData);
+      }
+  });
+
+}
+
+function getAllProfiles(allProfiles, callback) {
+  base('People').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      //console.log('processing profile');
+      //console.log(record.get('Profile ID'));
+      console.log('processing profile ' + record.get('Email'));
+      allProfiles[record.getId()] = {
+        'id': record.getId(),
+        'username': record.get('Username'),
+        'email': record.get('Email'),
+        'firstname': record.get('Name (First)'),
+        'lastname': record.get('Name (Last)'),
+        'linkedin': record.get('LinkedIn'),
+        'supervisoremail': record.get('Direct Supervisor (email)'),
+        'organization': record.get('Organization'), //id
+        'competencies': record.get('Competencies'),
+        'endorsements': record.get('Endorsements (received)'),
+        'endorsements': record.get('Endorsements (given)'),
+        'roles': record.get('Roles'),
+        'memberships': record.get('Deliveries'),
+        'title': record.get('Position'), //id
+        'jobchanges': record.get('Job Changes'),
+        'position': record.get('Position'),
+        'positionchanges': record.get('Position Changes'),
+        'deliveries': record.get('Deliveries'),
+        'comments': record.get('Comments'),
+        'links': record.get('Links'),
+        'attachments': record.get('Attachments'),
+        'trainingratings': record.get('Training Ratings'),
+        'deliveriescopy': record.get('Deliveries copy'),
+        'profilepicture': record.get('Profile Picture')
+      };
+
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+
+    if (error) {
+      console.log('error:');
+      console.log(error);
+      return callback(error);
+    }
+    console.log('successfully loaded base profiles');
+    return callback(null, 'success');
+  });
+}
+
+function getOrganizationData(organizationId, profileOrganizations, callback) {
+  base('Organizations').find(organizationId, function(err, record) {
+    if (err) { 
+      console.log(err); 
+      callback(err);
+      return; 
+    }
+
+    console.log('processing organization ' + record.get('Name'));
+    profileOrganizations[record.getId()] = {
+      'id': record.getId(),
+      'name': record.get('Name'),
+      'people': record.get('People'),
+      'number': record.get('Number'),
+      'positions': record.get('Positions'),
+      'positionfrom': record.get('Position Changes (from)'),
+      'positionto': record.get('Position Changes (to)')
+    };
+
+    callback(null,'sucess');
+
+  });
+}
+
+function getCompetencyData(competencyId, profileCompetencies, callback) {
+  base('Competencies').find(competencyId, function(err, record) {
+    if (err) { 
+      console.log(err);
+      callback(err);
+      return; 
+    }
+
+    console.log('processing competency ' + record.get('Name'));
+    profileCompetencies[record.getId()] = {
+      'id': record.getId(),
+      'name': record.get('Name'),
+      'shortdescription': record.get('Short Description'),
+      'type': record.get('Type'),
+      'link': record.get('Link'),
+      'endorsements': record.get('Endorsements'),
+      'relatedtrainings': record.get('Related Trainings'),
+      'people': record.get('People')
+
+    };
+
+    callback(null,'success');
+
+  });
+}
+
+function getEndorsementData(endorsementId, profileEndorsements, callback) {
+  base('Endorsements').find(endorsementId, function(err, record) {
+    if (err) { 
+      console.log(err);
+      callback(err);
+      return; 
+    }
+
+    console.log('processing endorsement ' + record.get('Endorsement ID'));
+    profileEndorsements[record.getId()] = {
+      'endorsementid': record.get('Endorsement ID'),
+      'timestamp': record.get('Timestamp'),
+      'relateddelivery': record.get('Related Delivery'),
+      'competency': record.get('Competency'),
+      'of': record.get('Of'),
+      'by': record.get('By'),
+      'endorsement': record.get('Endorsement'), // endorsed, blank, skipped
+      'recommendedtraining': record.get('Recommended Training')
+
+    };
+
+    callback(null,'success');
+
+  });
+}
+
+function getPositionData(positionId, profilePositions, callback) {
+  base('Positioins').find(endorsementId, function(err, record) {
+    if (err) { 
+      console.log(err);
+      callback(err);
+      return; 
+    }
+
+    console.log('processing position ' + record.get('Title'));
+    profilePositions[record.getId()] = {
+      'title': record.get('Title'),
+      'series': record.get('Series (if applicable)'),
+      'grade': record.get('Grade (if applicable)'),
+      'officialtitle': record.get('Official Title'),
+      'shortdescription': record.get('Short Description'),
+      'longdescription': record.get('Long Description'),
+      'movesfrom': record.get('Moves from'),
+      'movesto': record.get('Moves to'),
+      'organizations': record.get('Organizations'),
+      'minpay': record.get('Pay (min)'),
+      'maxpay': record.get('Pay (max)'),
+      'payperiod': record.get('Pay Period'),
+      'people': record.get('People')
+
+    };
+
+    callback(null,'success');
+
+  });
+}
+
+function getTrainingData(trainingId, profileTrainings, callback) {
+  base('Positioins').find(endorsementId, function(err, record) {
+    if (err) { 
+      console.log(err);
+      callback(err);
+      return; 
+    }
+
+    console.log('processing training ' + record.get('Title'));
+    profileTrainings[record.getId()] = {
+      'title': record.get('Title'),
+      'subtitle': record.get('Subtitle'),
+      'abstract': record.get('Abstract'),
+      'description': record.get('Description (markdown compatible?)'),
+      'link': record.get('Link'),
+      'related': record.get('Related Competencies'),
+      'associated': record.get('Associated Endorsements'),
+      'recommendations': record.get('Recommendations')
+
+    };
+
+    callback(null,'success');
+
+  });
+}
+
+
+
+
 function getAllDeliveries(allDeliveries, callback) {
   base('Deliveries').select({
     // Selecting the first 3 records in Main View:
@@ -585,7 +877,7 @@ function getAllDeliveries(allDeliveries, callback) {
   });
 }
 
-function getAllProfiles(allProfiles, callback) {
+function getEndorsedProfiles(allProfiles, callback) {
   base('People').select({
     view: "Main View"
   }).eachPage(function page(records, fetchNextPage) {
