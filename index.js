@@ -384,7 +384,7 @@ app.post('/loginFed360', function(request, response) {
                 console.log('correctLogin: ' + res);
                 if (res == true) {
                   console.log(credentials.username + ': verified username and password');
-                  response.send('download completed');
+                  //response.send('download completed');
                   loadProfile(credentials.username, response);
                 } else {
                   console.log(credentials.username + ': username password does not match');
@@ -682,7 +682,7 @@ function loadProfile(username, response) {
       }
       ],
       function(err, results) {
-      console.log('finishing async');
+      console.log(username + ': finishing series async');
       if (err) {
         console.log(username + ': Async Error: ' + err);
         response.send('Error: ' + err);
