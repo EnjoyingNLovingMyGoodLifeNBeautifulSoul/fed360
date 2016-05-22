@@ -1289,7 +1289,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
               'of': record.get('Of'),
               'by': record.get('By'),
               'endorsement': record.get('Endorsement'),
-              'recommendedtraining': record.get('Recommended Training')
+              'recommendedtraining': record.get('Recommended Training') == 'True'? true : false
 
             };
 
