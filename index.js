@@ -575,7 +575,7 @@ function loadProfile(username, response) {
             profileData['competencies'] = allProfiles[index].competencies;
             profileData['endorsements'] = allProfiles[index].endorsements;
             profileData['position'] = allProfiles[index].position;
-            profileData['profilepicture'] = allProfiles[index].position;
+            profileData['profilepicture'] = allProfiles[index].profilepicture;
           }
         }
         callback(null,'success');
@@ -829,7 +829,7 @@ function getEndorsementData(endorsementId, profileEndorsements, callback) {
 }
 
 function getPositionData(positionId, profilePositions, callback) {
-  base('Positioins').find(endorsementId, function(err, record) {
+  base('Positions').find(endorsementId, function(err, record) {
     if (err) { 
       console.log(err);
       callback(err);
