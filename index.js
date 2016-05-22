@@ -584,7 +584,7 @@ function loadProfile(username, response) {
             profileData['supervisoremail'] = allProfiles[index].supervisoremail;
             profileData['organization'] = allProfiles[index].organization; //id
             profileData['competencies'] = allProfiles[index].competencies;
-            profileData['endorsements'] = allProfiles[index].endorsements;
+            profileData['endorsementsreceived'] = allProfiles[index].endorsementsreceived;
             profileData['position'] = allProfiles[index].position;
             profileData['profilepicture'] = allProfiles[index].profilepicture;
           }
@@ -630,7 +630,7 @@ function loadProfile(username, response) {
       },
       function(callback) {
         console.log(username + ': loading profile endorsements');
-        async.forEachOf(profileData.endorsements, function(endorsementId, key, callback2) {
+        async.forEachOf(profileData.endorsementsreceived, function(endorsementId, key, callback2) {
           getEndorsementData(endorsementId, profileEndorsements, callback2);
         }, function (err) {
           if (err) {
@@ -667,12 +667,10 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': loading profile trainings');
         var trainingIdList = [];
-        for (var index in profileData.competencies) {
-          for (var index2 in profileData.competencies[index].recommendedtrainings) {
-            var trainingId = profileData.competencies[index].recommendedtrainings[index2];
-            if (trainingIdList.indexOf(trainingId) != -1) {
-              trainingIdList.push(trainingId);
-            }            
+        for (var index in profileData.endorsements) {
+          var recommendedtrainings = profileData.endorsements[index].recommendedtraining;
+          for (var index2 in recommendedtrainings) {
+            trainingIdList.push(recommendedtrainings[index2]);
           }
         }
         console.log(trainingIdList);
@@ -729,8 +727,8 @@ function getAllProfiles(username, allProfiles, callback) {
         'supervisoremail': record.get('Direct Supervisor (email)'),
         'organization': record.get('Organization'), //id
         'competencies': record.get('Competencies'),
-        'endorsements': record.get('Endorsements (received)'),
-        'endorsements': record.get('Endorsements (given)'),
+        'endorsementsreceived': record.get('Endorsements (received)'),
+        'endorsementsgiven': record.get('Endorsements (given)'),
         'roles': record.get('Roles'),
         'memberships': record.get('Deliveries'),
         'jobchanges': record.get('Job Changes'),
