@@ -829,7 +829,8 @@ function getEndorsementData(username, endorsementId, profileEndorsements, callba
       'of': record.get('Of'),
       'by': record.get('By'),
       'endorsement': record.get('Endorsement'), // endorsed, blank, skipped
-      'recommendedtraining': record.get('Recommended Training')
+      'recommendedtraining': record.get('Recommended Training'),
+      'viewedbyendorsee': record.get('Viewed by Endorsee')
 
     };
 
