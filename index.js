@@ -871,7 +871,7 @@ function getPositionData(positionId, profilePositions, callback) {
 }
 
 function getTrainingData(trainingId, profileTrainings, callback) {
-  base('Positioins').find(trainingId, function(err, record) {
+  base('Trainings').find(trainingId, function(err, record) {
     if (err) { 
       console.log(err);
       callback(err);
