@@ -557,7 +557,7 @@ function loadProfile(username, response) {
   async.series([
       function(callback) {
         console.log(username + ': loading all profiles');
-        getAllProfiles(allProfiles, callback);
+        getAllProfiles(username, allProfiles, callback);
       },
       function(callback) {
         console.log(username + ': selecting data for profile');
@@ -597,6 +597,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile organizations');
         profileData.organization = profileOrganizations;
+        callback(null,'success');
       },
       function(callback) {
         console.log(username + ': loading profile competencies');
@@ -614,6 +615,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile competencies');
         profileData.competencies = profileCompetencies;
+        callback(null,'success');
       },
       function(callback) {
         console.log(username + ': loading profile endorsements');
@@ -631,6 +633,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile endorsements');
         profileData.endorsements = profileEndorsements;
+        callback(null,'success');
       },
       function(callback) {
         console.log(username + ': loading profile positions');
@@ -648,6 +651,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile positions');
         profileData.position = profilePositions;
+        callback(null,'success');
       },
       function(callback) {
         console.log(username + ': loading profile trainings');
@@ -674,6 +678,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile trainings');
         profileData.training = profileTrainings;
+        callback(null,'success');
       }
       ],
       function(err, results) {
@@ -689,7 +694,7 @@ function loadProfile(username, response) {
 
 }
 
-function getAllProfiles(allProfiles, callback) {
+function getAllProfiles(username, llProfiles, callback) {
   base('People').select({
     view: "Main View"
   }).eachPage(function page(records, fetchNextPage) {
@@ -699,7 +704,7 @@ function getAllProfiles(allProfiles, callback) {
     records.forEach(function(record) {
       //console.log('processing profile');
       //console.log(record.get('Profile ID'));
-      console.log('processing profile ' + record.get('Email'));
+      console.log(username + ': processing profile ' + record.get('Email'));
       allProfiles[record.getId()] = {
         'id': record.getId(),
         'username': record.get('Username'),
@@ -741,7 +746,7 @@ function getAllProfiles(allProfiles, callback) {
       console.log(error);
       return callback(error);
     }
-    console.log('successfully loaded base profiles');
+    console.log(username + ': successfully loaded all base profiles');
     return callback(null, 'success');
   });
 }
