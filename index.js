@@ -614,6 +614,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile competencies');
         profileData.competencies = profileCompetencies;
+        console.log(profileData.competencies);
         callback(null,'success');
       },
       function(callback) {
