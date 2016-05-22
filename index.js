@@ -562,6 +562,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': selecting data for profile');
         for (var index in allProfiles) {
+          console.log(username + ': comparing username ' + allProfiles[index].username + ' or email ' + allProfiles[index].email);
           if ((allProfiles[index].username == username) ||
               (allProfiles[index].email == username)) {
             console.log(username + ': located profile');
