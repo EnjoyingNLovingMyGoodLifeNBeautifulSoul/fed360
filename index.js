@@ -564,18 +564,17 @@ function loadProfile(username, response) {
         for (var index in allProfiles) {
           if ((allProfiles[index].username == username) ||
               (allProfiles[index].email == username)) {
-            profileData = {
-              'id': record.getId(),
-              'firstname': record.get('Name (First)'),
-              'lastname': record.get('Name (Last)'),
-              'linkedin': record.get('LinkedIn'),
-              'supervisoremail': record.get('Direct Supervisor (email)'),
-              'organization': record.get('Organization'), //id
-              'competencies': record.get('Competencies'),
-              'endorsements': record.get('Endorsements (received)'),
-              'title': record.get('Position'), //id
-              'position': record.get('Position'),
-              'profilepicture': record.get('Profile Picture')
+            profileData['id'] = record.getId();
+            profileData['firstname'] = record.get('Name (First)');
+            profileData['lastname'] = record.get('Name (Last)');
+            profileData['linkedin'] = record.get('LinkedIn');
+            profileData['supervisoremail'] = record.get('Direct Supervisor (email)');
+            profileData['organization'] = record.get('Organization'); //id
+            profileData['competencies'] = record.get('Competencies');
+            profileData['endorsements'] = record.get('Endorsements (received)');
+            profileData['title'] = record.get('Position'); //id
+            profileData['position'] = record.get('Position');
+            profileData['profilepicture'] = record.get('Profile Picture');
             };
           }
         }
