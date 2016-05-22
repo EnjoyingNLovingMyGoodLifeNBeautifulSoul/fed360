@@ -576,7 +576,6 @@ function loadProfile(username, response) {
             profileData['title'] = record.get('Position'); //id
             profileData['position'] = record.get('Position');
             profileData['profilepicture'] = record.get('Profile Picture');
-            };
           }
         }
         callback(null,'success');
