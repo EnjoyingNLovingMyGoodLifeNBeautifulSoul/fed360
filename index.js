@@ -564,6 +564,7 @@ function loadProfile(username, response) {
         for (var index in allProfiles) {
           if ((allProfiles[index].username == username) ||
               (allProfiles[index].email == username)) {
+            console.log(username + ': located profile');
             profileData['id'] = record.getId();
             profileData['firstname'] = record.get('Name (First)');
             profileData['lastname'] = record.get('Name (Last)');
