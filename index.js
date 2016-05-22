@@ -506,7 +506,7 @@ app.post('/registerFed360', function(request, response) {
               credentials.username + '\',\'' + hash + '\');');
           query2.on('end', function() {
             console.log(credentials.email + ': updated Postgresql database with user registration');
-            //response.send('registration completed');
+            response.send('registration completed');
             client.end.bind(client);
             console.log(credentials.email + ": Database client was disconnected after registration.");
           });
@@ -566,17 +566,16 @@ function loadProfile(username, response) {
           if ((allProfiles[index].username == username) ||
               (allProfiles[index].email == username)) {
             console.log(username + ': located profile');
-            profileData['id'] = record.getId();
-            profileData['firstname'] = record.get('Name (First)');
-            profileData['lastname'] = record.get('Name (Last)');
-            profileData['linkedin'] = record.get('LinkedIn');
-            profileData['supervisoremail'] = record.get('Direct Supervisor (email)');
-            profileData['organization'] = record.get('Organization'); //id
-            profileData['competencies'] = record.get('Competencies');
-            profileData['endorsements'] = record.get('Endorsements (received)');
-            profileData['title'] = record.get('Position'); //id
-            profileData['position'] = record.get('Position');
-            profileData['profilepicture'] = record.get('Profile Picture');
+            profileData['id'] = allProfiles[index].id;
+            profileData['firstname'] = allProfiles[index].firstname;
+            profileData['lastname'] = allProfiles[index].lastname;
+            profileData['linkedin'] = allProfiles[index].linkedin;
+            profileData['supervisoremail'] = allProfiles[index].supervisoremail;
+            profileData['organization'] = allProfiles[index].organization; //id
+            profileData['competencies'] = allProfiles[index].competencies;
+            profileData['endorsements'] = allProfiles[index].endorsements;
+            profileData['position'] = allProfiles[index].position;
+            profileData['profilepicture'] = allProfiles[index].position;
           }
         }
         callback(null,'success');
@@ -688,6 +687,7 @@ function loadProfile(username, response) {
         response.send('Error: ' + err);
       } else {
         console.log(username + ': Profile data loaded');
+        profileData['title'] = profileData['position'];
         console.log(profileData);
         response.send(profileData);
       }
@@ -720,7 +720,6 @@ function getAllProfiles(username, allProfiles, callback) {
         'endorsements': record.get('Endorsements (given)'),
         'roles': record.get('Roles'),
         'memberships': record.get('Deliveries'),
-        'title': record.get('Position'), //id
         'jobchanges': record.get('Job Changes'),
         'position': record.get('Position'),
         'positionchanges': record.get('Position Changes'),
