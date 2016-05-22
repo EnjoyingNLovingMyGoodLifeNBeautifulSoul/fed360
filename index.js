@@ -585,7 +585,13 @@ function loadProfile(username, response) {
         console.log(username + ': loading profile organizations');
         async.forEachOf(profileData.organization, function(organizationId, key, callback2) {
           getOrganizationData(organizationId, profileOrganizations, callback2);
-          callback2(null,'success');
+        }, function (err) {
+          if (err) {
+            console.error(err.message);
+            callback(err);
+            return;
+          };
+          callback(null,'success');          
         });
       },
       function(callback) {
@@ -596,6 +602,13 @@ function loadProfile(username, response) {
         console.log(username + ': loading profile competencies');
         async.forEachOf(profileData.competencies, function(competencyId, key, callback2) {
           getCompetencyData(organizationId, profileCompetencies, callback2);
+        }, function (err) {
+          if (err) {
+            console.error(err.message);
+            callback(err);
+            return;
+          };
+          callback(null,'success');          
         });
       },
       function(callback) {
@@ -606,6 +619,13 @@ function loadProfile(username, response) {
         console.log(username + ': loading profile endorsements');
         async.forEachOf(profileData.endorsements, function(endorsementId, key, callback2) {
           getEndorsementData(endorsementId, profileEndorsements, callback2);
+        }, function (err) {
+          if (err) {
+            console.error(err.message);
+            callback(err);
+            return;
+          };
+          callback(null,'success');          
         });
       },
       function(callback) {
@@ -616,6 +636,13 @@ function loadProfile(username, response) {
         console.log(username + ': loading profile positions');
         async.forEachOf(profileData.position, function(positionId, key, callback2) {
           getPositionData(positionId, profilePositions, callback2);
+        }, function (err) {
+          if (err) {
+            console.error(err.message);
+            callback(err);
+            return;
+          };
+          callback(null,'success');          
         });
       },
       function(callback) {
@@ -635,6 +662,13 @@ function loadProfile(username, response) {
         }
         async.forEachOf(trainingIdList, function(trainingId, key, callback2) {
           getPositionData(trainingId, profileTrainings, callback2);
+        }, function (err) {
+          if (err) {
+            console.error(err.message);
+            callback(err);
+            return;
+          };
+          callback(null,'success');          
         });
       },
       function(callback) {
