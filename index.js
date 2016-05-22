@@ -829,7 +829,7 @@ function getEndorsementData(endorsementId, profileEndorsements, callback) {
 }
 
 function getPositionData(positionId, profilePositions, callback) {
-  base('Position').find(endorsementId, function(err, record) {
+  base('Position').find(positionId, function(err, record) {
     if (err) { 
       console.log(err);
       callback(err);
@@ -860,7 +860,7 @@ function getPositionData(positionId, profilePositions, callback) {
 }
 
 function getTrainingData(trainingId, profileTrainings, callback) {
-  base('Positioins').find(endorsementId, function(err, record) {
+  base('Positioins').find(trainingId, function(err, record) {
     if (err) { 
       console.log(err);
       callback(err);
