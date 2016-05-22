@@ -668,8 +668,8 @@ function loadProfile(username, response) {
         console.log(username + ': loading profile trainings');
         var trainingIdList = [];
         for (var index in profileData.competencies) {
-          for (var index2 in profileData.competencies[index].recommendedtraining) {
-            var trainingId = profileData.competencies[index].recommendedtraining[index2];
+          for (var index2 in profileData.competencies[index].recommendedtrainings) {
+            var trainingId = profileData.competencies[index].recommendedtrainings[index2];
             if (trainingIdList.indexOf(trainingId) != -1) {
               trainingIdList.push(trainingId);
             }            
