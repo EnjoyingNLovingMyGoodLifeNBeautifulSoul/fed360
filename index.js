@@ -614,7 +614,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile competencies');
         profileData.competencies = profileCompetencies;
-        console.log(profileData.competencies);
+        //console.log(profileData.competencies);
         callback(null,'success');
       },
       function(callback) {
@@ -657,8 +657,8 @@ function loadProfile(username, response) {
         console.log(username + ': loading profile trainings');
         var trainingIdList = [];
         for (var index in profileData.competencies) {
-          for (var index2 in profileData.competenecies[index].recommendedtraining) {
-            var trainingId = profileData.competenecies[index].recommendedtraining[index2];
+          for (var index2 in profileData.competencies[index].recommendedtraining) {
+            var trainingId = profileData.competencies[index].recommendedtraining[index2];
             if (trainingIdList.indexOf(trainingId) != -1) {
               trainingIdList.push(trainingId);
             }            
