@@ -675,8 +675,9 @@ function loadProfile(username, response) {
             }            
           }
         }
+        console.log(trainingIdList);
         async.forEachOf(trainingIdList, function(trainingId, key, callback2) {
-          getPositionData(trainingId, profileTrainings, callback2);
+          getTrainingData(trainingId, profileTrainings, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
@@ -700,7 +701,7 @@ function loadProfile(username, response) {
       } else {
         console.log(username + ': Profile data loaded');
         profileData['title'] = profileData['position'];
-        console.log(profileData);
+        //console.log(profileData);
         response.send(profileData);
       }
   });
