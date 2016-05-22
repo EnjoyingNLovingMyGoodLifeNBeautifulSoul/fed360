@@ -578,7 +578,7 @@ function loadProfile(username, response) {
             };
           }
         }
-        callback(null,'sucess');
+        callback(null,'success');
       },
       function(callback) {
         console.log(username + ': loading profile organizations');
