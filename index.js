@@ -594,7 +594,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': loading profile organizations');
         async.forEachOf(profileData.organization, function(organizationId, key, callback2) {
-          getOrganizationData(organizationId, profileOrganizations, callback2);
+          getOrganizationData(username, organizationId, profileOrganizations, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
@@ -612,7 +612,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': loading profile competencies');
         async.forEachOf(profileData.competencies, function(competencyId, key, callback2) {
-          getCompetencyData(competencyId, profileCompetencies, callback2);
+          getCompetencyData(username, competencyId, profileCompetencies, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
@@ -631,7 +631,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': loading profile endorsements');
         async.forEachOf(profileData.endorsementsreceived, function(endorsementId, key, callback2) {
-          getEndorsementData(endorsementId, profileEndorsements, callback2);
+          getEndorsementData(username, endorsementId, profileEndorsements, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
@@ -649,7 +649,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': loading profile positions');
         async.forEachOf(profileData.position, function(positionId, key, callback2) {
-          getPositionData(positionId, profilePositions, callback2);
+          getPositionData(username, positionId, profilePositions, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
@@ -673,9 +673,9 @@ function loadProfile(username, response) {
             trainingIdList.push(recommendedtrainings[index2]);
           }
         }
-        console.log(trainingIdList);
+        //console.log(trainingIdList);
         async.forEachOf(trainingIdList, function(trainingId, key, callback2) {
-          getTrainingData(trainingId, profileTrainings, callback2);
+          getTrainingData(username, trainingId, profileTrainings, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
@@ -762,7 +762,7 @@ function getAllProfiles(username, allProfiles, callback) {
   });
 }
 
-function getOrganizationData(organizationId, profileOrganizations, callback) {
+function getOrganizationData(username, organizationId, profileOrganizations, callback) {
   base('Organizations').find(organizationId, function(err, record) {
     if (err) { 
       console.log(err); 
@@ -770,7 +770,7 @@ function getOrganizationData(organizationId, profileOrganizations, callback) {
       return; 
     }
 
-    console.log('processing organization ' + record.get('Name'));
+    console.log(username + ': processing organization ' + record.get('Name'));
     profileOrganizations[record.getId()] = {
       'id': record.getId(),
       'name': record.get('Name'),
@@ -786,7 +786,7 @@ function getOrganizationData(organizationId, profileOrganizations, callback) {
   });
 }
 
-function getCompetencyData(competencyId, profileCompetencies, callback) {
+function getCompetencyData(username, competencyId, profileCompetencies, callback) {
   base('Competencies').find(competencyId, function(err, record) {
     if (err) { 
       console.log(err);
@@ -794,7 +794,7 @@ function getCompetencyData(competencyId, profileCompetencies, callback) {
       return; 
     }
 
-    console.log('processing competency ' + record.get('Name'));
+    console.log(username + ': processing competency ' + record.get('Name'));
     profileCompetencies[record.getId()] = {
       'id': record.getId(),
       'name': record.get('Name'),
@@ -812,7 +812,7 @@ function getCompetencyData(competencyId, profileCompetencies, callback) {
   });
 }
 
-function getEndorsementData(endorsementId, profileEndorsements, callback) {
+function getEndorsementData(username, endorsementId, profileEndorsements, callback) {
   base('Endorsements').find(endorsementId, function(err, record) {
     if (err) { 
       console.log(err);
@@ -820,7 +820,7 @@ function getEndorsementData(endorsementId, profileEndorsements, callback) {
       return; 
     }
 
-    console.log('processing endorsement ' + record.get('Endorsement ID'));
+    console.log(username + ': processing endorsement ' + record.get('Endorsement ID'));
     profileEndorsements[record.getId()] = {
       'endorsementid': record.get('Endorsement ID'),
       'timestamp': record.get('Timestamp'),
@@ -838,7 +838,7 @@ function getEndorsementData(endorsementId, profileEndorsements, callback) {
   });
 }
 
-function getPositionData(positionId, profilePositions, callback) {
+function getPositionData(username, positionId, profilePositions, callback) {
   base('Positions').find(positionId, function(err, record) {
     if (err) { 
       console.log(err);
@@ -846,7 +846,7 @@ function getPositionData(positionId, profilePositions, callback) {
       return; 
     }
 
-    console.log('processing position ' + record.get('Title'));
+    console.log(username + ': processing position ' + record.get('Title'));
     profilePositions[record.getId()] = {
       'title': record.get('Title'),
       'series': record.get('Series (if applicable)'),
@@ -869,7 +869,7 @@ function getPositionData(positionId, profilePositions, callback) {
   });
 }
 
-function getTrainingData(trainingId, profileTrainings, callback) {
+function getTrainingData(username, trainingId, profileTrainings, callback) {
   base('Trainings').find(trainingId, function(err, record) {
     if (err) { 
       console.log(err);
@@ -877,7 +877,7 @@ function getTrainingData(trainingId, profileTrainings, callback) {
       return; 
     }
 
-    console.log('processing training ' + record.get('Title'));
+    console.log(username + ': processing training ' + record.get('Title'));
     profileTrainings[record.getId()] = {
       'title': record.get('Title'),
       'subtitle': record.get('Subtitle'),
