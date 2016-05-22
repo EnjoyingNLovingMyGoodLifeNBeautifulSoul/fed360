@@ -601,7 +601,7 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': loading profile competencies');
         async.forEachOf(profileData.competencies, function(competencyId, key, callback2) {
-          getCompetencyData(organizationId, profileCompetencies, callback2);
+          getCompetencyData(competencyId, profileCompetencies, callback2);
         }, function (err) {
           if (err) {
             console.error(err.message);
