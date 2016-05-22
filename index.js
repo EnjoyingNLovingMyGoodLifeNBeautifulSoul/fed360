@@ -645,7 +645,7 @@ function loadProfile(username, response) {
       function(err, results) {
       console.log('finishing async');
       if (err) {
-        console.log(username: + 'Async Error: ' + err);
+        console.log(username + ': Async Error: ' + err);
         response.send('Error: ' + err);
       } else {
         console.log(username + ': Profile data loaded');
