@@ -556,7 +556,7 @@ function loadProfile(username, response) {
 
   async.series([
       function(callback) {
-        onsole.log(username + ': loading all profiles');c
+        console.log(username + ': loading all profiles');c
         getAllProfiles(allProfiles, callback);
       },
       function(callback) {
