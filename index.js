@@ -694,7 +694,7 @@ function loadProfile(username, response) {
 
 }
 
-function getAllProfiles(username, llProfiles, callback) {
+function getAllProfiles(username, allProfiles, callback) {
   base('People').select({
     view: "Main View"
   }).eachPage(function page(records, fetchNextPage) {
