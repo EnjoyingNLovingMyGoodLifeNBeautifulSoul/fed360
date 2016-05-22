@@ -385,6 +385,7 @@ app.post('/loginFed360', function(request, response) {
                 if (res == true) {
                   console.log(credentials.username + ': verified username and password');
                   response.send('download completed');
+                  loadProfile(credentials.username, response);
                 } else {
                   console.log(credentials.username + ': username password does not match');
                   response.send('Username or password does not match.');
@@ -400,7 +401,7 @@ app.post('/loginFed360', function(request, response) {
             
           });
         query.on('end', function() {
-          
+          // not used.  triggers after query is over and does wait until bcrypt function is complete
 
         });
       });
@@ -508,7 +509,6 @@ app.post('/registerFed360', function(request, response) {
             //response.send('registration completed');
             client.end.bind(client);
             console.log(credentials.email + ": Database client was disconnected after registration.");
-            loadProfile(credentials.username, response);
           });
 
           //disconnect client when all queries are finished. used as callback
@@ -545,6 +545,7 @@ app.post('/registerFed360', function(request, response) {
 });
 
 function loadProfile(username, response) {
+  console.log(username + ': loading profile');
   var profileData = {};
   var allProfiles = {};
   var profileOrganizations = {};
@@ -555,10 +556,11 @@ function loadProfile(username, response) {
 
   async.series([
       function(callback) {
-        console.log('loading all profiles');
+        onsole.log(username + ': loading all profiles');c
         getAllProfiles(allProfiles, callback);
       },
       function(callback) {
+        console.log(username + ': selecting data for profile');
         for (var index in allProfiles) {
           if ((allProfiles[index].username == username) ||
               (allProfiles[index].email == username)) {
@@ -580,39 +582,48 @@ function loadProfile(username, response) {
         callback(null,'sucess');
       },
       function(callback) {
+        console.log(username + ': loading profile organizations');
         async.forEachOf(profileData.organization, function(organizationId, key, callback2) {
           getOrganizationData(organizationId, profileOrganizations, callback2);
           callback2(null,'success');
         });
       },
       function(callback) {
+        console.log(username + ': assigning profile organizations');
         profileData.organization = profileOrganizations;
       },
       function(callback) {
+        console.log(username + ': loading profile competencies');
         async.forEachOf(profileData.competencies, function(competencyId, key, callback2) {
           getCompetencyData(organizationId, profileCompetencies, callback2);
         });
       },
       function(callback) {
+        console.log(username + ': assigning profile competencies');
         profileData.competencies = profileCompetencies;
       },
       function(callback) {
+        console.log(username + ': loading profile endorsements');
         async.forEachOf(profileData.endorsements, function(endorsementId, key, callback2) {
           getEndorsementData(endorsementId, profileEndorsements, callback2);
         });
       },
       function(callback) {
+        console.log(username + ': assigning profile endorsements');
         profileData.endorsements = profileEndorsements;
       },
       function(callback) {
+        console.log(username + ': loading profile positions');
         async.forEachOf(profileData.position, function(positionId, key, callback2) {
           getPositionData(positionId, profilePositions, callback2);
         });
       },
       function(callback) {
+        console.log(username + ': assigning profile positions');
         profileData.position = profilePositions;
       },
       function(callback) {
+        console.log(username + ': loading profile trainings');
         var trainingIdList = [];
         for (var index in profile.competencies) {
           for (var index2 in profiles.competenecies[index].recommendedtraining) {
@@ -627,13 +638,14 @@ function loadProfile(username, response) {
         });
       },
       function(callback) {
+        console.log(username + ': assigning profile trainings');
         profileData.training = profileTrainings;
       }
       ],
       function(err, results) {
       console.log('finishing async');
       if (err) {
-        console.log('Async Error: ' + err);
+        console.log(username: + 'Async Error: ' + err);
         response.send('Error: ' + err);
       } else {
         console.log(username + ': Profile data loaded');
