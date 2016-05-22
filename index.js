@@ -546,7 +546,18 @@ app.post('/registerFed360', function(request, response) {
 
 function loadProfile(username, response) {
   console.log(username + ': loading profile');
-  var profileData = {};
+  var profileData = {
+    'id': '',
+    'firstname': '',
+    'lastname': '',
+    'linkedin': '',
+    'supervisoremail': '',
+    'organization': [],
+    'competencies': [],
+    'endorsements': [],
+    'position': [],
+    'profilepicture': ''
+  };
   var allProfiles = {};
   var profileOrganizations = {};
   var profileCompetencies = {};
