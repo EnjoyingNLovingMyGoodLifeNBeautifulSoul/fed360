@@ -15,9 +15,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(cors());
 
-var corsOptions = {
+/*var corsOptions = {
   origin: '*'
-}
+}*/
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -994,7 +994,8 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
   });
 }
 
-app.get('/loadProfiles', cors(corsOptions), function(request, response) {
+//app.get('/loadProfiles', cors(corsOptions), function(request, response) {
+  app.get('/loadProfiles', function(request, response) {
   console.log('GET received')
   console.log('loadProfiles called');
   var profilesJSON = {
