@@ -688,6 +688,7 @@ function loadProfile(username, response) {
         response.send('Error: ' + err);
       } else {
         console.log(username + ': Profile data loaded');
+        console.log(profileData);
         response.send(profileData);
       }
   });
