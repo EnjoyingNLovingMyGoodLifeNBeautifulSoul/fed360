@@ -605,7 +605,7 @@ function loadProfile(username, response) {
         console.log(username + ': assigning profile organizations');
         delete profileOrganizations['people'];
         delete profileOrganizations['positions'];
-        delete profileOrganizaitons['positionfrom'];
+        delete profileOrganizations['positionfrom'];
         delete profileOrganizations['positionto'];
 
         profileData.organization = profileOrganizations;
