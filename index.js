@@ -704,8 +704,8 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile trainings');
         profileData.training = profileTrainings;
-        delete profileTraining.training['associated'];
-        delete profileTraining.training['recommendations'];
+        delete profileData.training['associated'];
+        delete profileData.training['recommendations'];
 
         callback(null, 'success');
       }
