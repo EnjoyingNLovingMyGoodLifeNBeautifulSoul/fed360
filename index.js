@@ -350,63 +350,60 @@ app.post('/loginFed360', function(request, response) {
   console.log('data being processed: ' + JSON.stringify(credentials));
 
   if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
-      console.log('no username or email found');
-      response.send('no username or email found');
-      return;
+    console.log('no username or email found');
+    response.send('no username or email found');
+    return;
   }
 
-
   //async.series([
-    //function(callback) {
-      // read from database
-      pg.defaults.ssl = true;
-      pg.connect(process.env.DATABASE_URL, function(err, client) {
-        if (err) throw err;
-        console.log('Connected to postgres! Getting schemas...');
+  //function(callback) {
+  // read from database
+  pg.defaults.ssl = true;
+  pg.connect(process.env.DATABASE_URL, function(err, client) {
+    if (err) throw err;
+    console.log('Connected to postgres! Getting schemas...');
 
-        //client
-        //.query('SELECT table_schema,table_name FROM information_schema.tables;')
-        //.on('row', function(row) {
-        //  console.log(JSON.stringify(row));
-        // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
-        //});
-        var query = client.query('SELECT * FROM user_credentials;');
-        query.on('row', function(row) {
-            console.log(JSON.stringify(row));
+    //client
+    //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+    //.on('row', function(row) {
+    //  console.log(JSON.stringify(row));
+    // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+    //});
+    var query = client.query('SELECT * FROM user_credentials;');
+    query.on('row', function(row) {
+      console.log(JSON.stringify(row));
 
-            if ((credentials.username == row.username) || (credentials.username == row.email)) {
-              console.log(credentials.username + ': username match, checking password');
-              
-              console.log('hash length ' + row.salted_hash.length);
-              // Load hash from your password DB.
-              bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+      if ((credentials.username == row.username) || (credentials.username == row.email)) {
+        console.log(credentials.username + ': username match, checking password');
 
-                console.log('correctLogin: ' + res);
-                if (res == true) {
-                  console.log(credentials.username + ': verified username and password');
-                  //response.send('download completed');
-                  loadProfile(credentials.username, response);
-                } else {
-                  console.log(credentials.username + ': username password does not match');
-                  response.send('Username or password does not match.');
-                }
-                  
-                client.end.bind(client);
-                console.log(credentials.username + ": login database disconnected");
+        console.log('hash length ' + row.salted_hash.length);
+        // Load hash from your password DB.
+        bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
 
-              });
-              //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+          console.log('correctLogin: ' + res);
+          if (res == true) {
+            console.log(credentials.username + ': verified username and password');
+            //response.send('download completed');
+            loadProfile(credentials.username, response);
+          } else {
+            console.log(credentials.username + ': username password does not match');
+            response.send('Username or password does not match.');
+          }
 
-            }
-            
-          });
-        query.on('end', function() {
-          // not used.  triggers after query is over and does wait until bcrypt function is complete
+          client.end.bind(client);
+          console.log(credentials.username + ": login database disconnected");
 
         });
-      });
+        //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
 
-  
+      }
+
+    });
+    query.on('end', function() {
+      // not used.  triggers after query is over and does wait until bcrypt function is complete
+
+    });
+  });
 
   //bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
   // Store hash in your password DB.
@@ -502,8 +499,8 @@ app.post('/registerFed360', function(request, response) {
           console.log(credentials.email + ': created new hash');
           // write to database
           var query2 = client.query('INSERT INTO user_credentials (email,username,salted_hash) ' +
-            'VALUES (\'' + credentials.email + '\',\'' + 
-              credentials.username + '\',\'' + hash + '\');');
+            'VALUES (\'' + credentials.email + '\',\'' +
+            credentials.username + '\',\'' + hash + '\');');
           query2.on('end', function() {
             console.log(credentials.email + ': updated Postgresql database with user registration');
             response.send('registration completed');
@@ -575,7 +572,7 @@ function loadProfile(username, response) {
         for (var index in allProfiles) {
           console.log(username + ': comparing username ' + allProfiles[index].username + ' or email ' + allProfiles[index].email);
           if ((allProfiles[index].username == username) ||
-              (allProfiles[index].email == username)) {
+            (allProfiles[index].email == username)) {
             console.log(username + ': located profile');
             profileData['id'] = allProfiles[index].id;
             profileData['firstname'] = allProfiles[index].firstname;
@@ -589,80 +586,99 @@ function loadProfile(username, response) {
             profileData['profilepicture'] = allProfiles[index].profilepicture;
           }
         }
-        callback(null,'success');
+        callback(null, 'success');
       },
       function(callback) {
         console.log(username + ': loading profile organizations');
         async.forEachOf(profileData.organization, function(organizationId, key, callback2) {
           getOrganizationData(username, organizationId, profileOrganizations, callback2);
-        }, function (err) {
+        }, function(err) {
           if (err) {
             console.error(err.message);
             callback(err);
             return;
           };
-          callback(null,'success');          
+          callback(null, 'success');
         });
       },
       function(callback) {
         console.log(username + ': assigning profile organizations');
+        delete profileOrganizations.people;
+        delete profileOrganizations.positions;
+        delete profileOrganizaitons.positionfrom;
+        delete profileOrganizations.positionto;
+
         profileData.organization = profileOrganizations;
-        callback(null,'success');
+        callback(null, 'success');
       },
       function(callback) {
         console.log(username + ': loading profile competencies');
         async.forEachOf(profileData.competencies, function(competencyId, key, callback2) {
           getCompetencyData(username, competencyId, profileCompetencies, callback2);
-        }, function (err) {
+        }, function(err) {
           if (err) {
             console.error(err.message);
             callback(err);
             return;
           };
-          callback(null,'success');          
+          callback(null, 'success');
         });
       },
       function(callback) {
         console.log(username + ': assigning profile competencies');
         profileData.competencies = profileCompetencies;
+        delete profileData.competencies['type'];
         //console.log(profileData.competencies);
-        callback(null,'success');
+        callback(null, 'success');
       },
       function(callback) {
         console.log(username + ': loading profile endorsements');
         async.forEachOf(profileData.endorsementsreceived, function(endorsementId, key, callback2) {
           getEndorsementData(username, endorsementId, profileEndorsements, callback2);
-        }, function (err) {
+        }, function(err) {
           if (err) {
             console.error(err.message);
             callback(err);
             return;
           };
-          callback(null,'success');          
+          callback(null, 'success');
         });
       },
       function(callback) {
         console.log(username + ': assigning profile endorsements');
         profileData.endorsements = profileEndorsements;
-        callback(null,'success');
+        delete profileData.competencies['timestamp'];
+        delete profileData.competencies['of'];
+        delete profileData.competencies['by'];
+
+        callback(null, 'success');
       },
       function(callback) {
         console.log(username + ': loading profile positions');
         async.forEachOf(profileData.position, function(positionId, key, callback2) {
           getPositionData(username, positionId, profilePositions, callback2);
-        }, function (err) {
+        }, function(err) {
           if (err) {
             console.error(err.message);
             callback(err);
             return;
           };
-          callback(null,'success');          
+          callback(null, 'success');
         });
       },
       function(callback) {
         console.log(username + ': assigning profile positions');
         profileData.position = profilePositions;
-        callback(null,'success');
+        delete profileData.position['series'];
+        delete profileData.position['grade'];
+        delete profileData.position['movesfrom'];
+        delete profileData.position['movesto'];
+        delete profileData.position['minpay'];
+        delete profileData.position['maxpay'];
+        delete profileData.position['payperiod'];
+        delete profileData.position['people'];
+
+        callback(null, 'success');
       },
       function(callback) {
         console.log(username + ': loading profile trainings');
@@ -676,22 +692,25 @@ function loadProfile(username, response) {
         //console.log(trainingIdList);
         async.forEachOf(trainingIdList, function(trainingId, key, callback2) {
           getTrainingData(username, trainingId, profileTrainings, callback2);
-        }, function (err) {
+        }, function(err) {
           if (err) {
             console.error(err.message);
             callback(err);
             return;
           };
-          callback(null,'success');          
+          callback(null, 'success');
         });
       },
       function(callback) {
         console.log(username + ': assigning profile trainings');
-        profileData.training = profileTrainings;
-        callback(null,'success');
+        delete profileData.training = profileTrainings;
+        delete profileTraining.training['associated'];
+        delete profileTraining.training['recommendations'];
+
+        callback(null, 'success');
       }
-      ],
-      function(err, results) {
+    ],
+    function(err, results) {
       console.log(username + ': finishing series async');
       if (err) {
         console.log(username + ': Async Error: ' + err);
@@ -701,8 +720,9 @@ function loadProfile(username, response) {
         profileData['title'] = profileData['position'];
         //console.log(profileData);
         response.send(profileData);
+        // End of loadProfile series
       }
-  });
+    });
 
 }
 
@@ -764,10 +784,10 @@ function getAllProfiles(username, allProfiles, callback) {
 
 function getOrganizationData(username, organizationId, profileOrganizations, callback) {
   base('Organizations').find(organizationId, function(err, record) {
-    if (err) { 
-      console.log(err); 
+    if (err) {
+      console.log(err);
       callback(err);
-      return; 
+      return;
     }
 
     console.log(username + ': processing organization ' + record.get('Name'));
@@ -781,17 +801,17 @@ function getOrganizationData(username, organizationId, profileOrganizations, cal
       'positionto': record.get('Position Changes (to)')
     };
 
-    callback(null,'sucess');
+    callback(null, 'sucess');
 
   });
 }
 
 function getCompetencyData(username, competencyId, profileCompetencies, callback) {
   base('Competencies').find(competencyId, function(err, record) {
-    if (err) { 
+    if (err) {
       console.log(err);
       callback(err);
-      return; 
+      return;
     }
 
     console.log(username + ': processing competency ' + record.get('Name'));
@@ -807,17 +827,17 @@ function getCompetencyData(username, competencyId, profileCompetencies, callback
 
     };
 
-    callback(null,'success');
+    callback(null, 'success');
 
   });
 }
 
 function getEndorsementData(username, endorsementId, profileEndorsements, callback) {
   base('Endorsements').find(endorsementId, function(err, record) {
-    if (err) { 
+    if (err) {
       console.log(err);
       callback(err);
-      return; 
+      return;
     }
 
     console.log(username + ': processing endorsement ' + record.get('Endorsement ID'));
@@ -834,17 +854,17 @@ function getEndorsementData(username, endorsementId, profileEndorsements, callba
 
     };
 
-    callback(null,'success');
+    callback(null, 'success');
 
   });
 }
 
 function getPositionData(username, positionId, profilePositions, callback) {
   base('Positions').find(positionId, function(err, record) {
-    if (err) { 
+    if (err) {
       console.log(err);
       callback(err);
-      return; 
+      return;
     }
 
     console.log(username + ': processing position ' + record.get('Title'));
@@ -865,17 +885,17 @@ function getPositionData(username, positionId, profilePositions, callback) {
 
     };
 
-    callback(null,'success');
+    callback(null, 'success');
 
   });
 }
 
 function getTrainingData(username, trainingId, profileTrainings, callback) {
   base('Trainings').find(trainingId, function(err, record) {
-    if (err) { 
+    if (err) {
       console.log(err);
       callback(err);
-      return; 
+      return;
     }
 
     console.log(username + ': processing training ' + record.get('Title'));
@@ -891,13 +911,10 @@ function getTrainingData(username, trainingId, profileTrainings, callback) {
 
     };
 
-    callback(null,'success');
+    callback(null, 'success');
 
   });
 }
-
-
-
 
 function getAllDeliveries(allDeliveries, callback) {
   base('Deliveries').select({
@@ -1007,7 +1024,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
 }
 
 //app.get('/loadProfiles', cors(corsOptions), function(request, response) {
-  app.get('/loadProfiles', function(request, response) {
+app.get('/loadProfiles', function(request, response) {
   console.log('GET received')
   console.log('loadProfiles called');
   var profilesJSON = {
@@ -1289,7 +1306,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
               'of': record.get('Of'),
               'by': record.get('By'),
               'endorsement': record.get('Endorsement'),
-              'recommendedtraining': record.get('Recommended Training') == 'True'? true : false
+              'recommendedtraining': record.get('Recommended Training') == 'True' ? true : false
 
             };
 
