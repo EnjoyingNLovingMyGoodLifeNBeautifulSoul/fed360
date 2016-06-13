@@ -628,6 +628,8 @@ function loadProfile(username, response) {
         console.log(username + ': assigning profile competencies');
         profileData.competencies = profileCompetencies;
         delete profileData.competencies['type'];
+        delete profileData.competencies['endorsements'];
+        delete profileData.competencies['people'];
         //console.log(profileData.competencies);
         callback(null, 'success');
       },
