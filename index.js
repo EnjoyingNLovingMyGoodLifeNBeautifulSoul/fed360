@@ -2072,7 +2072,7 @@ app.post('/updateCompetencies', function(request, response) {
   //console.log(JSON.parse(request.body.results));
   var profileJSON = JSON.parse(request.body.result);
 
-  console.log('profile received: ' + profileJSON;
+  console.log('profile received: ' + profileJSON);
   async.series([
       function(callback) {
         console.log('creating new competencies');
