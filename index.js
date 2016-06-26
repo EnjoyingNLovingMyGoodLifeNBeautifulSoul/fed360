@@ -2108,7 +2108,6 @@ app.post('/updateCompetencies', function(request, response) {
             'Type': 'Team',
             'people': newCompetency.
           };
-          
 
           console.log(competencyJSON);
 
