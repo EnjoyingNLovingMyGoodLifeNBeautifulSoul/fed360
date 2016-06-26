@@ -43,7 +43,7 @@ var domain = 'mg.mrrmrr.com';
 
 //Your sending email address
 var from_who = 'mail@mg.mrrmrr.com';
-
+/*
 app.post('/sendEndorseLink',
 
   //express.basicAuth('username', 'password'),
@@ -1041,13 +1041,7 @@ app.get('/loadProfiles', function(request, response) {
 
   var deliveryId = loadParameters.deliveryId;
   console.log('delivery id recieved: ' + deliveryId);
-  /*console.log(request.body);
-  if (typeof request.body == 'undefined') {
-    response.send(JSON.stringify(profilesJSON));
-  }
-  console.log(request.body.emails);
-  var emails = (JSON.parse(request.body.emails)).emails; */ // Used for messages in body
-
+  
   var submitterId = loadParameters.submitterId;
   console.log('submitter id recevied: ' + submitterId);
 
@@ -1497,24 +1491,7 @@ app.get('/loadProfiles', function(request, response) {
       }
     });
 
-  /*
-  profileData.endorsements = 0;
-  profileData.competencies = [
-    {
-      name: 'User Design Experience',
-      description: 'A category of digital design in which user needs are are identified through research methods such as interviews, shadowing and prototyping then translated into design requirements for product teams.',
-      readMoreURL: '#',
-      checked: true,
-      competencyEndorsements: 0,
-      endorsedTraining: [],
-      updatedScore: true
-    }];
-  profileData.competencies[0].endorsedTraining[0] = 
-    {
-       endorsedName: 'Innovation Facilitation 101',
-       endorsedDescription, 'Innovation facilitation concerns itself with all the tasks needed to run a productive and impartial problem solving collaboration, serving the needs of any group who are meeting with a common purpose',
-       endorsedReadMoreURL: '#'
-    }*/
+
 });
 
 app.post('/saveProfile', function(request, response) {
@@ -1619,7 +1596,7 @@ function getProfile(ID, profileJSON, callback) {
   });
 
 }
-/*
+
 function addProfile(profileJSON, callback) {
   console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
@@ -1763,7 +1740,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
       response.send('Successfully added/updated record: ' + record.getId() + '\n');
     }
   });
-} */
+}
 
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
@@ -1880,6 +1857,7 @@ app.post('/saveEndorsements', function(request, response) {
           }
         }
 
+
         // assign ids from previous endorsements
         //var removeEndorsements = [];
         for (var recordId in allEndorsements) {
@@ -1917,6 +1895,8 @@ app.post('/saveEndorsements', function(request, response) {
             removeEndorsements.push(recordId);
           }
         }
+
+
 
         console.log('list of endorsements to remove:');
         console.log(removeEndorsements);
@@ -2079,7 +2059,7 @@ function loadEndorsements(endorsementsReference, callback) {
     callback(null, 'success');
   });
 }
-/*
+
 app.post('/updateCompetencies', function(request, response) {
   console.log('');
   console.log('POST received: starting updateCompetencies');
@@ -2175,4 +2155,3 @@ app.post('/updateCompetencies', function(request, response) {
       }
     });
 });*/
-
