@@ -1619,7 +1619,7 @@ function getProfile(ID, profileJSON, callback) {
   });
 
 }
-
+/*
 function addProfile(profileJSON, callback) {
   console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
@@ -1763,7 +1763,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
       response.send('Successfully added/updated record: ' + record.getId() + '\n');
     }
   });
-}
+} */
 
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
@@ -2004,13 +2004,22 @@ app.post('/saveEndorsements', function(request, response) {
           base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
             if (err) {
               console.log(err);
+              callback2(err);
               return;
             }
             console.log('Deleted record ', deletedRecord.id);
+            callback2(null, 'success');
           });
+        }, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+            callback(error);
+            return;
+          } else {
+            console.log('done replacing all entries');
+            callback(null, 'success');
+          }
         });
-
-        callback(null, 'success');
       }
 
     ],
@@ -2069,4 +2078,103 @@ function loadEndorsements(endorsementsReference, callback) {
     //console.log(endorsements);
     callback(null, 'success');
   });
+}
+
+app.post('/updateCompetencies', function(request, response) {
+  console.log('');
+  console.log('POST received: starting updateCompetencies');
+  if (typeof request.body == 'undefined') {
+    console.log('request body is undefined');
+    response.send('undefined body');
+  }
+
+  //console.log(request.body.results);
+  //console.log(JSON.parse(request.body.results));
+  var profileJSON = JSON.parse(request.body.results);
+
+  console.log('profile received: ' + profileJSON.profile);
+  async.series([
+      function(callback) {
+        console.log('creating new competencies');
+      
+
+        async.each(profileJSON.newCompetencies, function(newCompetency, callback2) {
+
+          // blank values [''] are not allowed.  Either user [] or have a value like ['a']
+          var competencyJSON = {
+            'Name': newCompetency.name,
+            'Short Description': newCompetecy.description,
+            'Link': newCompetency.readMoreURL,
+            'Type': 'Team',
+            'people': newCompetency.
+          };
+          
+
+          console.log(competencyJSON);
+
+          console.log('calling Airtable save for table Endorsements');
+          base('Competencies').create(competencyJSON,
+            function(err, record) {
+              if (err) {
+                console.log(err);
+                callback2(err);
+                return;
+              }
+              console.log('saved created competency of ' + competencyJSON.Name);
+              callback2(null, 'success');
+
+            });
+
+        }, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+            callback(error);
+            return;
+          } else {
+            console.log('done adding all new competencies');
+            callback(null, 'success');
+          }
+        });
+
+      },
+
+      function(callback) {
+        console.log('deleting extra previous competencies');
+
+        async.each(profileData.deletedCompetencies, function(deletedCompetency, callback2) {
+          base('Competencies').destroy(deletedCompetency.id, function(err, deletedRecord) {
+            if (err) {
+              console.log(err);
+              callback2(error);
+              return;
+            }
+            console.log('Deleted record ' +  deletedCompetency.name);
+            callback2(null, 'success');
+          });
+        }, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+            callback(error);
+            return;
+          } else {
+            console.log('done deleting all new competencies');
+            callback(null, 'success');
+          }
+        });
+
+      }
+
+    ],
+    // series callback
+    function(err, results) {
+      console.log('finishing async');
+      if (err) {
+        console.log('Error: ' + err);
+        response.send('Error: ' + err);
+      } else {
+        response.send('Done');
+      }
+    });
+
+
 }
