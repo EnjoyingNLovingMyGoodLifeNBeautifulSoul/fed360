@@ -2070,7 +2070,7 @@ app.post('/updateCompetencies', function(request, response) {
 
   //console.log(request.body.results);
   //console.log(JSON.parse(request.body.results));
-  var profileJSON = JSON.parse(request.body.results);
+  var profileJSON = JSON.parse(request.body.result);
 
   console.log('profile received: ' + profileJSON;
   async.series([
