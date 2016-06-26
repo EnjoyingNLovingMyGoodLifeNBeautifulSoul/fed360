@@ -1024,7 +1024,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
     callback(null, 'success');
   });
 }
-/*
+
 //app.get('/loadProfiles', cors(corsOptions), function(request, response) {
 app.get('/loadProfiles', function(request, response) {
   console.log('GET received')
@@ -1741,7 +1741,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
     }
   });
 }
-
+/*
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
   console.log('starting save Endorsements');
