@@ -2106,7 +2106,7 @@ app.post('/updateCompetencies', function(request, response) {
             'Short Description': newCompetecy.description,
             'Link': newCompetency.readMoreURL,
             'Type': 'Team',
-            'people': newCompetency.
+            'people': [profileJSON.id]
           };
 
           console.log(competencyJSON);
