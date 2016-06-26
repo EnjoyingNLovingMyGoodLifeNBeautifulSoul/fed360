@@ -2083,7 +2083,7 @@ app.post('/updateCompetencies', function(request, response) {
           // blank values [''] are not allowed.  Either user [] or have a value like ['a']
           var competencyJSON = {
             'Name': newCompetency.name,
-            'Short Description': newCompetecy.description,
+            'Short Description': newCompetency.description,
             'Link': newCompetency.readMoreURL,
             'Type': 'Team',
             'people': [profileJSON.id]
