@@ -2079,7 +2079,7 @@ function loadEndorsements(endorsementsReference, callback) {
     callback(null, 'success');
   });
 }
-
+/*
 app.post('/updateCompetencies', function(request, response) {
   console.log('');
   console.log('POST received: starting updateCompetencies');
@@ -2174,5 +2174,5 @@ app.post('/updateCompetencies', function(request, response) {
         response.send('Done');
       }
     });
-});
+});*/
 
