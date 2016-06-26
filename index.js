@@ -1741,7 +1741,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecord, resp
     }
   });
 }
-/*
+
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
   console.log('starting save Endorsements');
@@ -2059,7 +2059,7 @@ function loadEndorsements(endorsementsReference, callback) {
     callback(null, 'success');
   });
 }
-
+/*
 app.post('/updateCompetencies', function(request, response) {
   console.log('');
   console.log('POST received: starting updateCompetencies');
