@@ -2120,7 +2120,7 @@ app.post('/updateCompetencies', function(request, response) {
       function(callback) {
         console.log('deleting extra previous competencies');
 
-        async.each(profileData.deletedCompetencies, function(deletedCompetency, callback2) {
+        async.each(profileJSON.deletedCompetencies, function(deletedCompetency, callback2) {
           base('Competencies').destroy(deletedCompetency.id, function(err, deletedRecord) {
             if (err) {
               console.log(err);
