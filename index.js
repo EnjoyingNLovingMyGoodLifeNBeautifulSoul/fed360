@@ -43,7 +43,7 @@ var domain = 'mg.mrrmrr.com';
 
 //Your sending email address
 var from_who = 'mail@mg.mrrmrr.com';
-/*
+
 app.post('/sendEndorseLink',
 
   //express.basicAuth('username', 'password'),
@@ -1024,7 +1024,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
     callback(null, 'success');
   });
 }
-
+/*
 //app.get('/loadProfiles', cors(corsOptions), function(request, response) {
 app.get('/loadProfiles', function(request, response) {
   console.log('GET received')
