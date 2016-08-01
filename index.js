@@ -577,6 +577,7 @@ function loadProfile(username, response) {
             profileData['id'] = allProfiles[index].id;
             profileData['firstname'] = allProfiles[index].firstname;
             profileData['lastname'] = allProfiles[index].lastname;
+			profileData['email'] = allProfiles[index].email;
             profileData['linkedin'] = allProfiles[index].linkedin;
             profileData['supervisoremail'] = allProfiles[index].supervisoremail;
             profileData['organization'] = allProfiles[index].organization; //id
