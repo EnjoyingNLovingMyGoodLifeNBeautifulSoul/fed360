@@ -1734,7 +1734,7 @@ function addOrganization(profileJSON, callback) {
 }
 
 function updateOrganization(profileJSON, profileRecord, organizationRecords, response) {
-  console.log('preparing to update organizations: ' + organizationRecords.length));
+  console.log('preparing to update organizations: ' + organizationRecords.length);
   
   
   async.each(organizationsRecords, function(organization, callback2) {
