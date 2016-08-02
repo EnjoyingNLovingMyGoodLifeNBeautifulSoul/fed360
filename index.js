@@ -1535,7 +1535,6 @@ function saveProfile(request, response) {
 		var organizations = profileJSON.organizationIds.split(',');
 		async.each(organizations, function(organization, callback2) {
 			getOrganization(organization, profileJSON, callback2);
-          });
         }, function(error, organizationRecords) {
           if (error) {
             console.log('Error: ' + error);
