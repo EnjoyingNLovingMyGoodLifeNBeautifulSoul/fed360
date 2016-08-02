@@ -1734,10 +1734,10 @@ function addOrganization(profileJSON, callback) {
 }
 
 function updateOrganization(profileJSON, profileRecord, organizationRecords, response) {
-  console.log('preparing to update organizations: ' + organizationRecords.length);
+	console.log('preparing to update organizations: ' + organizationRecords.length);
   
   
-  async.each(organizationsRecords, function(organization, callback2) {
+	async.each(organizationsRecords, function(organization, callback2) {
 			console.log('preparing to update organization: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID'));
 			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
 			console.log('People array: ' + people.toString());
@@ -1760,10 +1760,8 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 				  callback2(null, 'success');
 				}
 			});
-			
-			
-          });
-        }, function(error, organizationRecords) {
+       
+	}, function(error, organizationRecords) {
           if (error) {
             console.log('Error: ' + error);
 			response.send('updateOrganization error:' + err + '\n');
@@ -1772,7 +1770,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
             console.log('done adding or updating organizations, positions, and Position Changes.');
 			response.send('Successfully added/updated record: ' + record.getId() + '\n');
           }
-  });
+	});
 		
 
   
