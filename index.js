@@ -1543,9 +1543,9 @@ function saveProfile(request, response) {
         response.send('Error: ' + err);
       } else {
         // results is now equal to ['one', 'two']
-        var profileRecord = results[0];
+        var profileRecord = results[0]; // first parameter returns profile record
         console.log('profile record id: ' + profileRecord.getId());
-        var organizationRecord = results[1];
+        var organizationRecord = results[1]; // second parameter returns organization record
         console.log('organization record id: ' + organizationRecord.getId());
         console.log('temporarily done');
         updateProfile(profileJSON, profileRecord, organizationRecord, response);
@@ -1721,7 +1721,7 @@ function addOrganization(profileJSON, callback) {
 
 function updateOrganization(profileJSON, profileRecord, organizationRecord, response) {
   console.log('preparing to update organization: ' + organizationRecord.get('Name') + ' for ' + profileRecord.get('Profile ID'));
-  var people = organizationRecord.get('People');
+  var people = typeof organizationRecord.get('People') == 'undefined' ? organizationRecord.get('People') : [];
   console.log('People array: ' + people.toString());
   if (people.indexOf(profileRecord.getId()) == -1) {
     people.push(profileRecord.getId());
