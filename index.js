@@ -1721,7 +1721,7 @@ function addOrganization(profileJSON, callback) {
 
 function updateOrganization(profileJSON, profileRecord, organizationRecord, response) {
   console.log('preparing to update organization: ' + organizationRecord.get('Name') + ' for ' + profileRecord.get('Profile ID'));
-  var people = typeof organizationRecord.get('People') == 'undefined' ? organizationRecord.get('People') : [];
+  var people = typeof organizationRecord.get('People') == 'undefined' ? [] : organizationRecord.get('People');
   console.log('People array: ' + people.toString());
   if (people.indexOf(profileRecord.getId()) == -1) {
     people.push(profileRecord.getId());
