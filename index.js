@@ -1543,6 +1543,7 @@ function saveProfile(request, response) {
             return;
           } else {
             console.log('done adding or updating organizations, positions, and Position Changes.');
+			console.log('number of organizations being updated: ' + organizationRecords.length);
             callback(null, organizationRecords);
           }
         });
