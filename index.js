@@ -1524,6 +1524,8 @@ function saveProfile(request, response) {
     profileId = profileJSON.username;
     //getProfileJSON = getProfile(profileId, getProfileJSON);
   }
+  
+  var organizationRecords = [];
 
   async.series([
       function(callback) {
@@ -1534,9 +1536,9 @@ function saveProfile(request, response) {
         console.log('processing organization');
 		console.log('organizations: ' + profileJSON.organization);
 		var organizations = profileJSON.organization.split(',');
-		async.each(organizations, function(organization, callback2) {
-			getOrganization(organization, profileJSON, callback2);
-        }, function(error, organizationRecords) {
+		async.each(organizations, function(organization, callback2, organizationRecords) {
+			getOrganization(organization, profileJSON, callback2, organizationRecords);
+        }, function(error) {
 		  console.log('organizationRecords: ' + organizationRecords);
           if (error) {
             console.log('Error: ' + error);
@@ -1678,7 +1680,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 
 }
 
-function getOrganization(organization, profileJSON, callback) {
+function getOrganization(organization, profileJSON, callback, organizationRecords) {
   console.log('getting organization ID: ' + organization);
   var foundRecord;
   base('Organizations').select({
@@ -1708,9 +1710,10 @@ function getOrganization(organization, profileJSON, callback) {
     } else {
       if (typeof foundRecord == 'undefined') {
         console.log('no organization found for ' + organization);
-        addOrganization(profileJSON, callback);
+        addOrganization(profileJSON, callback, organizationRecords);
       } else {
         console.log('completed organization search');
+		organizationRecords.push(foundRecord);
         callback(null, foundRecord);
       }
 
@@ -1719,7 +1722,7 @@ function getOrganization(organization, profileJSON, callback) {
 
 }
 
-function addOrganization(profileJSON, callback) {
+function addOrganization(profileJSON, callback, organizationRecords) {
   console.log('adding organization: ' + profileJSON.organization);
   // add organziation to organziation table
   base('Organizations').create({
@@ -1734,6 +1737,7 @@ function addOrganization(profileJSON, callback) {
       callback('addOrganization error: ' + err, null);
     } else {
       console.log('organization added: ' + profileJSON.organization);
+	  organizationRecords.push(record);
       callback(null, record);
     }
   });
