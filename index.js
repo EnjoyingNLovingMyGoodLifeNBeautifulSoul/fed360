@@ -1776,14 +1776,14 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 				}
 			});
        
-	}, function(error, record) {
+	}, function(error) {
           if (error) {
             console.log('Error: ' + error);
 			response.send('updateOrganization error:' + err + '\n');
             return;
           } else {
             console.log('done adding or updating organizations, positions, and Position Changes.');
-			response.send('Successfully added/updated record: ' + record.getId() + '\n');
+			response.send('Successfully added/updated record: ' + profileData.username + ' name: ' + profileData.firstname+ ' ' + profileData.secondname + '\n');
           }
 	});
 		
