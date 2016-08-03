@@ -1685,7 +1685,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 
 function getOrganization(organization, profileJSON, callback, organizationRecords) {
   console.log('getting organization ID: ' + organization);
-  console.log('organization records: ' + organizationRecords);
+  
   var foundRecord;
   base('Organizations').select({
     view: "Main View"
@@ -1718,6 +1718,7 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
       } else {
         console.log('completed organization search');
 		organizationRecords.push(foundRecord);
+		console.log('organization records length: ' + organizationRecords.length);
         callback(null, foundRecord);
       }
 
@@ -1751,7 +1752,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 	console.log('preparing to update organizations: ' + organizationRecords.length);
   
   
-	async.each(organizationsRecords, function(organization, callback2) {
+	async.each(organizationRecords, function(organization, callback2) {
 			console.log('preparing to update organization: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID'));
 			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
 			console.log('People array: ' + people.toString());
