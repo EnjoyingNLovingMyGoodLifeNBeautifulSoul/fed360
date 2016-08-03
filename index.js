@@ -1527,7 +1527,7 @@ function saveProfile(request, response) {
   
   var organizationRecords = [];
   
-  console.log('initial console logs: ' + organizationRecords);
+  console.log('initial organizationRecord size: ' + organizationRecords.length);
 
   async.series([
       function(callback) {
@@ -1539,7 +1539,7 @@ function saveProfile(request, response) {
 		console.log('organizations: ' + profileJSON.organization);
 		var organizations = profileJSON.organization.split(',');
 		async.each(organizations, function(organization, callback2, organizationRecords) {
-			console.log('organization records in async: ' + organizationRecords);
+			console.log('async organizationRecord size: ' + organizationRecords.length);
 			getOrganization(organization, profileJSON, callback2, organizationRecords);
         }, function(error) {
 		  console.log('organizationRecords: ' + organizationRecords);
