@@ -1648,7 +1648,7 @@ function addProfile(profileJSON, callback) {
 }
 
 function updateProfile(profileJSON, profileRecord, organizationRecord, response) {
-  console.log('updating profile: ' + profileRecord.get('Profile ID') + ' for ' + organizationRecord.get('Name'));
+  console.log('updating profile: ' + profileRecord.get('Profile ID') + ' for ' + profileRecord.organization);
 
   base('People').update(profileRecord.getId(), {
     //"Name (First)": profileJSON.firstname,
