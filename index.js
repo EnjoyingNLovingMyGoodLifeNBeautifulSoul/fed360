@@ -1561,7 +1561,10 @@ function saveProfile(request, response) {
         var profileRecord = results[0]; // first parameter returns profile record
         console.log('profile record id: ' + profileRecord.getId());
         var organizationRecord = results[1]; // second parameter returns organization record
-        console.log('organization record id: ' + organizationRecord.getId());
+		for (var index in organizationRecord) {
+			console.log('organization record id: ' + organizationRecord[index].getId());
+		}
+        
         console.log('temporarily done');
         updateProfile(profileJSON, profileRecord, organizationRecord, response);
         updateOrganization(profileJSON, profileRecord, organizationRecord, response);
