@@ -1526,6 +1526,8 @@ function saveProfile(request, response) {
   }
   
   var organizationRecords = [];
+  
+  console.log('initial console logs: ' + organizationRecords);
 
   async.series([
       function(callback) {
