@@ -1776,7 +1776,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 				}
 			});
        
-	}, function(error, organizationRecords) {
+	}, function(error, record) {
           if (error) {
             console.log('Error: ' + error);
 			response.send('updateOrganization error:' + err + '\n');
