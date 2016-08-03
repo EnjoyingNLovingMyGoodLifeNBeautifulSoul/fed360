@@ -1783,7 +1783,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
             return;
           } else {
             console.log('done adding or updating organizations, positions, and Position Changes.');
-			response.send('Successfully added/updated record: ' + profileData.username + ' name: ' + profileData.firstname+ ' ' + profileData.secondname + '\n');
+			response.send('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname+ ' ' + profileJSON.lastname + '\n');
           }
 	});
 		
