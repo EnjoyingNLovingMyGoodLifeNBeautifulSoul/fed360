@@ -1682,6 +1682,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 
 function getOrganization(organization, profileJSON, callback, organizationRecords) {
   console.log('getting organization ID: ' + organization);
+  console.log('organization records: ' + organizationRecords);
   var foundRecord;
   base('Organizations').select({
     view: "Main View"
