@@ -1537,6 +1537,7 @@ function saveProfile(request, response) {
 		async.each(organizations, function(organization, callback2) {
 			getOrganization(organization, profileJSON, callback2);
         }, function(error, organizationRecords) {
+		  console.log('organizationRecords: ' + organizationRecords);
           if (error) {
             console.log('Error: ' + error);
             callback(error);
