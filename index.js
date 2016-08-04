@@ -1537,8 +1537,7 @@ function saveProfile(request, response) {
       function(callback) {
         console.log('processing organization');
 		console.log('organizations: ' + profileJSON.organization);
-		//var organizations = profileJSON.organization.split(',');
-		var organizations = [profileJSON.organization[0]];
+		var organizations = profileJSON.organization.split(',');
 		async.each(organizations, function(organization, callback2) {
 			console.log('async organizationRecord size: ' + organizationRecords.length);
 			getOrganization(organization, profileJSON, callback2, organizationRecords);
@@ -1594,7 +1593,7 @@ function getProfile(ID, profileJSON, callback) {
       console.log('received profile record: ' + record.get('Profile ID'));
       //console.log(JSON.stringify(record));
       if (record.get('Profile ID') == ID) {
-        console.log('found ID' + ID);
+        console.log('found ID: ' + ID);
         console.log('Located existing profile ' + record.getId());
         foundRecord = record;
 
@@ -1685,7 +1684,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 }
 
 function getOrganization(organization, profileJSON, callback, organizationRecords) {
-  console.log('getting organization ID: ' + organization);
+  console.log('getting organization ID: ' + organization.name);
   
   var foundRecord;
   base('Organizations').select({
@@ -1696,7 +1695,7 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
 
     records.forEach(function(record) {
       console.log('recieved organization record ' + record.get('Name'));
-      if (record.get('Name') == organization) {
+      if (record.get('Name') == organization.name) {
         console.log('Located existing organization ' + record.get('Name'));
         foundRecord = record;
       }
@@ -1715,7 +1714,7 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
     } else {
       if (typeof foundRecord == 'undefined') {
         console.log('no organization found for ' + organization);
-        addOrganization(profileJSON, callback, organizationRecords);
+        addOrganization(profileJSON, callback, organizationRecords, organization);
       } else {
         console.log('completed organization search');
 		organizationRecords.push(foundRecord);
@@ -1728,11 +1727,11 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
 
 }
 
-function addOrganization(profileJSON, callback, organizationRecords) {
-  console.log('adding organization: ' + profileJSON.organization);
+function addOrganization(profileJSON, callback, organizationRecords, organization) {
+  console.log('adding organization: ' + organization);
   // add organziation to organziation table
   base('Organizations').create({
-    "Name": profileJSON.organization,
+    "Name": organization.name,
     "People": [],
     "Positions": [],
     "Position Changes (from)": [],
@@ -1742,7 +1741,7 @@ function addOrganization(profileJSON, callback, organizationRecords) {
       console.log('addOrganization error: ' + err);
       callback('addOrganization error: ' + err, null);
     } else {
-      console.log('organization added: ' + profileJSON.organization);
+      console.log('organization added: ' + organization.name);
 	  organizationRecords.push(record);
       callback(null, record);
     }
@@ -1760,9 +1759,15 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 			if (people.indexOf(profileRecord.getId()) == -1) {
 				people.push(profileRecord.getId());
 			}
+			var newOrganizationName = '';
+			for (var key in profileJSON.organization) {
+				if (profileJSON.organization[key].id == organization.getId()) {
+					newOrganizationName = profileJSON.organization[key].name;
+				}
+			}
 			
 			base('Organizations').update(organization.getId(), {
-			"Name": profileJSON.organization,
+			"Name": newOrganizationName,
 			"People": people,
 			"Positions": organization.get('Positions'),
 			//"Position Changes (from)": organizationRecord.get('Position Changes (from)'),
