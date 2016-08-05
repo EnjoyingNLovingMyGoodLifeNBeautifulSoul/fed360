@@ -1713,7 +1713,7 @@ function getOrganization(organizationName, profileJSON, callback, organizationRe
       callback('Error: ' + error, null);
     } else {
       if (typeof foundRecord == 'undefined') {
-        console.log('no organization found for ' + organization);
+        console.log('no organization found for ' + organizationName);
         addOrganization(profileJSON, callback, organizationRecords, organizationName);
       } else {
         console.log('completed organization search');
