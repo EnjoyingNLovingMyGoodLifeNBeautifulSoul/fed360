@@ -1537,10 +1537,10 @@ function saveProfile(request, response) {
       function(callback) {
         console.log('processing organization');
 		console.log('organizations: ' + profileJSON.organization);
-		var organizations = profileJSON.organization.split(',');
-		async.each(organizations, function(organization, callback2) {
+		var organizationNames = profileJSON.organizationNames.split(',');
+		async.each(organizationNames, function(organizationName, callback2) {
 			console.log('async organizationRecord size: ' + organizationRecords.length);
-			getOrganization(organization, profileJSON, callback2, organizationRecords);
+			getOrganization(organizationName, profileJSON, callback2, organizationRecords);
         }, function(error) {
 		  console.log('organizationRecords: ' + organizationRecords);
           if (error) {
@@ -1683,7 +1683,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 
 }
 
-function getOrganization(organization, profileJSON, callback, organizationRecords) {
+function getOrganization(organizationName, profileJSON, callback, organizationRecords) {
   console.log('getting organization ID: ' + organization.name);
   
   var foundRecord;
@@ -1695,7 +1695,7 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
 
     records.forEach(function(record) {
       console.log('recieved organization record ' + record.get('Name'));
-      if (record.get('Name') == organization.name) {
+      if (record.get('Name') == organizationName) {
         console.log('Located existing organization ' + record.get('Name'));
         foundRecord = record;
       }
@@ -1714,7 +1714,7 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
     } else {
       if (typeof foundRecord == 'undefined') {
         console.log('no organization found for ' + organization);
-        addOrganization(profileJSON, callback, organizationRecords, organization);
+        addOrganization(profileJSON, callback, organizationRecords, organizationName);
       } else {
         console.log('completed organization search');
 		organizationRecords.push(foundRecord);
@@ -1727,11 +1727,11 @@ function getOrganization(organization, profileJSON, callback, organizationRecord
 
 }
 
-function addOrganization(profileJSON, callback, organizationRecords, organization) {
-  console.log('adding organization: ' + organization);
+function addOrganization(profileJSON, callback, organizationRecords, organizationName) {
+  console.log('adding organization: ' + organizationName);
   // add organziation to organziation table
   base('Organizations').create({
-    "Name": organization.name,
+    "Name": organizationName,
     "People": [],
     "Positions": [],
     "Position Changes (from)": [],
@@ -1741,7 +1741,7 @@ function addOrganization(profileJSON, callback, organizationRecords, organizatio
       console.log('addOrganization error: ' + err);
       callback('addOrganization error: ' + err, null);
     } else {
-      console.log('organization added: ' + organization.name);
+      console.log('organization added: ' + organizationName);
 	  organizationRecords.push(record);
       callback(null, record);
     }
@@ -1764,6 +1764,9 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 				if (profileJSON.organization[key].id == organization.getId()) {
 					newOrganizationName = profileJSON.organization[key].name;
 				}
+			}
+			// new organization needs people column updated
+			if (newOrganizationName == '') {
 			}
 			
 			base('Organizations').update(organization.getId(), {
