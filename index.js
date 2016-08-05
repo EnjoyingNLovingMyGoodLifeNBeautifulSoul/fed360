@@ -1762,6 +1762,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 			var newOrganizationName = '';
 			for (var key in profileJSON.organization) {
 				if (profileJSON.organization[key].id == organization.getId()) {
+					console.log('updating organization id ' + profileJSON.organization[key].id + ' to ' + profileJSON.organization[key].name);
 					newOrganizationName = profileJSON.organization[key].name;
 				}
 			}
