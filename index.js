@@ -1768,6 +1768,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, res
 			}
 			// new organization needs people column updated
 			if (newOrganizationName == '') {
+				newOrganizationName = organization.get('Name');
 			}
 			
 			base('Organizations').update(organization.getId(), {
