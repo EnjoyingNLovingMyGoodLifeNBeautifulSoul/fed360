@@ -1684,7 +1684,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecord, response)
 }
 
 function getOrganization(organizationName, profileJSON, callback, organizationRecords) {
-  console.log('getting organization ID: ' + organization.name);
+  console.log('getting organization ID: ' + organizationName);
   
   var foundRecord;
   base('Organizations').select({
