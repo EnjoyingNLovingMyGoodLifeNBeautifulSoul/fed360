@@ -1537,7 +1537,7 @@ function saveProfile(request, response) {
       },
       function(callback) {
         console.log('processing organization');
-		console.log('organizations: ' + profileJSON.organization);
+		console.log('organizations: ' + JSON.stringify(profileJSON.organization));
 		var organizationNames = profileJSON.organizationNames.split(',');
 		async.each(organizationNames, function(organizationName, callback2) {
 			console.log('async organizationRecord size: ' + organizationRecords.length);
