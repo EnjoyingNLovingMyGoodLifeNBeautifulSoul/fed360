@@ -1539,7 +1539,7 @@ function saveProfile(request, response) {
         console.log('processing organization');
 		var listOfUploadedOrganizations = [];
 		for (var key in profileJSON.organization) {
-			listOfUploadedOrganizations.push(profileJSON.organization[key]);
+			listOfUploadedOrganizations.push(profileJSON.organization[key].name);
 		}
 		console.log('organizations: ' + listOfUploadedOrganizations.toString());
 		var organizationNames = profileJSON.organizationNames.split(',');
