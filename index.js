@@ -1821,7 +1821,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 					  console.log('updateOrganization error:' + err);
 					  callback2(error);
 					} else {
-					  console.log('organization updated: ' + record.getId() + ' ' + record.get('Name');
+					  console.log('organization updated: ' + record.getId() + ' ' + record.get('Name'));
 					  callback2(null, 'success');
 					}
 				});
