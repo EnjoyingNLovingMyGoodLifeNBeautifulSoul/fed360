@@ -1836,7 +1836,7 @@ function deleteUnusedOrganization(profileJSON, callback, organizationRecords, al
   console.log('delete organizations: ' + listOfOrganizationsToDelete.length);
   
   async.each(listOfOrganizationsToDelete, function(organization, callback2) {
-			console.log('preparing to delete organization: ' + organization.get('Name') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname));
+			console.log('preparing to delete organization: ' + organization.get('Name') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			
 		// delete organziation from organziation table
 		  base('Organizations').destroy(''
