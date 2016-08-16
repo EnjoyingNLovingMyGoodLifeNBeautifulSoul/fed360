@@ -1803,7 +1803,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 					  console.log('remove name from organization error:' + err);
 					  callback2(error);
 					} else {
-					  console.log('removed name from organization: ' + record.getId() + ' ' + record.get('Name');
+					  console.log('removed name from organization: ' + record.getId() + ' ' + record.get('Name'));
 					  callback2(null, 'success');
 					}
 				});
