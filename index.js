@@ -1525,6 +1525,7 @@ function saveProfile(request, response) {
     //getProfileJSON = getProfile(profileId, getProfileJSON);
   }
   
+  var profileRecord = [];
   var organizationRecords = [];
   var allOrganizationRecords = [];
   
@@ -1533,7 +1534,7 @@ function saveProfile(request, response) {
   async.series([
       function(callback) {
         console.log('processing profile');
-        getProfile(profileId, profileJSON, callback);
+        getProfile(profileId, profileJSON, profileRecord, callback);
       },
       function(callback) {
         console.log('processing organization');
@@ -1560,15 +1561,31 @@ function saveProfile(request, response) {
         });
 		
         // getOrganization(profileJSON.organization, profileJSON, callback);
-      }
+    },
+	function(callback) {
+		updateOrganization(profileJSON, profileRecord, organizationRecords, allOrganizationRecords, callback);
+	},
+	function(callback) {
+		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
+	},
+	function(callback) {
+		deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords) {
+	},
+	function(callback) {
+		updateProfile(profileJSON, profileRecord, organizationRecords, callback);
+	}
+	  
     ],
     //optional callback
     function(err, results) {
-      console.log('finishing async');
-      if (err) {
-        console.log('Error: ' + err);
-        response.send('Error: ' + err);
-      } else {
+		console.log('finishing async');
+		if (err) {
+			console.log('Error: ' + err);
+        	response.send('Error: ' + err);
+		} else {
+			console.log('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname+ ' ' + profileJSON.lastname + '\n');
+			response.send('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname+ ' ' + profileJSON.lastname + '\n');
+		/*
         // results is now equal to ['one', 'two']
         var profileRecord = results[0]; // first parameter returns profile record
         console.log('profile record id: ' + profileRecord.getId());
@@ -1578,14 +1595,14 @@ function saveProfile(request, response) {
 		}
         
         console.log('temporarily done');
-        updateProfile(profileJSON, profileRecord, organizationRecord, response);
-        updateOrganization(profileJSON, profileRecord, organizationRecord, allOrganizationRecords, response);
+        //updateProfile(profileJSON, profileRecord, organizationRecord, response);
+        //updateOrganization(profileJSON, profileRecord, organizationRecord, allOrganizationRecords, response);*/
       }
     });
 
 }
 
-function getProfile(ID, profileJSON, callback) {
+function getProfile(ID, profileJSON, profileRecord, callback) {
   console.log('getting profile for ' + ID);
   var foundRecord;
   base('People').select({
@@ -1620,6 +1637,7 @@ function getProfile(ID, profileJSON, callback) {
         addProfile(profileJSON, callback);
       } else {
         console.log('completed profile search: ' + foundRecord.get('Profile ID'));
+		profileRecord.push(foundRecord);
         callback(null, foundRecord);
       }
 
@@ -1754,9 +1772,8 @@ function addOrganization(profileJSON, callback, organizationRecords, organizatio
   });
 }
 
-function updateOrganization(profileJSON, profileRecord, organizationRecords, allOrganizationRecords, response) {
+function updateOrganization(profileJSON, profileRecord, organizationRecords, allOrganizationRecords, callback) {
 	console.log('preparing to update organizations: ' + organizationRecords.length);
-  
   
 	async.each(organizationRecords, function(organization, callback2) {
 			console.log('preparing to update organization: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID'));
@@ -1779,37 +1796,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 				newOrganizationName = organization.get('Name');
 			}
 			
-			// removed person from organization
-			var removePersonFromOrganization = true;
-			for (var key in organizationRecords) {
-				for (var index in profileJSON.organization) {
-					if (profileJSON.organization[index].id == organizationRecords[key].getId()) {  
-						removePersonFromOrganization = false;
-					}
-				}
-			}
-			if (removePersonFromOrganization == true) {
-				var reducedPeopleList = [];
-				for (var index in people) {
-					if (people[index] != profileJSON.id) {
-						reducedPeopleList.push(people[index]);
-					}
-				}
-				
-				base('Organizations').update(organization.getId(), {
-					"People": reducedPeopleList
-				}, function(err, record) {
-					if (err) {
-					  console.log('remove name from organization error:' + err);
-					  callback2(error);
-					} else {
-					  console.log('removed name from organization: ' + record.getId() + ' ' + record.get('Name'));
-					  callback2(null, 'success');
-					}
-				});
-				
-				return;
-			} else {
+			
 				base('Organizations').update(organization.getId(), {
 				"Name": newOrganizationName,
 				"People": people,
@@ -1825,7 +1812,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 					  callback2(null, 'success');
 					}
 				});
-			}
+			
 			
 			
 			
@@ -1833,12 +1820,11 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 	}, function(error) {
           if (error) {
             console.log('Error: ' + error);
-			response.send('updateOrganization error:' + err + '\n');
+			callback(error);
             return;
           } else {
             console.log('done adding or updating organizations, positions, and Position Changes.');
-			deleteUnusedOrganization(profileJSON, response, organizationRecords, allOrganizationRecords);
-			
+			callback(null, 'success');
           }
 	});
 		
@@ -1846,29 +1832,96 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
   
 }
 
-function deleteUnusedOrganization(profileJSON, response, organizationRecords, allOrganizationRecords) {
+function removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords) {
+	// add profile id to the list of people in the organization if it has not been added before
+	var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
+	console.log('People array: ' + people.toString());
+	if (people.indexOf(profileRecord.getId()) == -1) {
+		people.push(profileRecord.getId());
+	}
 	
-  var listOfOrganizationsToDelete = [];
-  for (var index in allOrganizationRecords) {
-	var duplicateId = false;
-	for (var key in organizationRecords) {
-	  if (allOrganizationRecords[index].getId() == organizationRecords[key].getId()) {
-		duplicateId = true;
-	  }
+	var listOfOrganizationsToUpdate = [];
+	for (var key in allOrganizationRecords) {
+		// remove person from organization
+		var removePersonFromOrganization = true;
+		var updatedOrganization = {
+			'reducedPeopleList': [],
+			'organization' : ''
+		};
+		for (var key in organizationRecords) {
+			for (var index in profileJSON.organization) {
+				if (profileJSON.organization[index].id == organizationRecords[key].getId()) {  
+					removePersonFromOrganization = false;
+				}
+			}
+		}
+		if (removePersonFromOrganization == true) {
+			var reducedPeopleList = [];
+			for (var index in people) {
+				if (people[index] != profileJSON.id) {
+					reducedPeopleList.push(people[index]);
+				}
+			}
+			updatedOrganization.reducedPeopleList = reducedPeopleList;
+			updatedOrganization.organization = allOrganizationRecords[index];
+			listOfOrganizationsToUpdate.push(updatedOrganization);
+		}
 	}
-	if (duplicateId == false) {
-		var lastPersonInOrganization = false;
-		if ((allOrganizationRecords[index].length == 0) ||
-		   ((allOrganizationRecords[index].length == 1) && 
-		    (allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
-			listOfOrganizationsToDelete.push(allOrganizationRecords[index].getId());
-		}	
+	
+	console.log('number of organizations to clear name: ' + listOfOrganizationsToUpdate.length);
+  
+	async.each(listOfOrganizationsToUpdate, function(organizationJSON, callback2) {
+		console.log('preparing to clear name in organization: ' + profileJSON.firstname + ' ' + profileJSON.lastname + 'for' + organizationJSON.organization.get('Name'));
+		
+		base('Organizations').update(organizationJSON.organization.getId(), {
+				"People": organizationJSON.reducedPeopleList
+			}, function(err, record) {
+				if (err) {
+				  console.log('remove name from organization error:' + err);
+				  callback2(error);
+				} else {
+				  console.log('removed name from organization: ' + record.getId() + ' ' + record.get('Name'));
+				  callback2(null, 'success');
+				}
+		});
+       
+	}, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+			callback(error);
+            return;
+          } else {
+            console.log('done removing names from organizations.');
+			callback(null, 'success');
+          }
+	});
+}
+
+
+// removes name from removed organizations and deletes the organization if there is no name left
+function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords) {
+
+	var listOfOrganizationsToDelete = [];
+	for (var index in allOrganizationRecords) {
+	
+		// compare organization list to all new organization updates
+		var duplicateId = false;
+		for (var key in organizationRecords) {
+		  if (allOrganizationRecords[index].getId() == organizationRecords[key].getId()) {
+			duplicateId = true;
+		  }
+		}
+		if (duplicateId == false) {
+			var lastPersonInOrganization = false;
+			if ((allOrganizationRecords[index].length == 0) ||
+			   ((allOrganizationRecords[index].length == 1) && 
+				(allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
+				listOfOrganizationsToDelete.push(allOrganizationRecords[index].getId());
+			}
+		}
 	}
-  }
-  
-  console.log('number of organizations to delete: ' + listOfOrganizationsToDelete.length);
-  
-  async.each(listOfOrganizationsToDelete, function(organization, callback2) {
+		
+	async.each(listOfOrganizationsToDelete, function(organization, callback2) {
 			console.log('preparing to delete organization: ' + organization.get('Name') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			
 		// delete organziation from organziation table
@@ -1890,11 +1943,11 @@ function deleteUnusedOrganization(profileJSON, response, organizationRecords, al
             return;
           } else {
             console.log('done adding or updating organizations, positions, and Position Changes.');
-			response.send('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname+ ' ' + profileJSON.lastname + '\n');
+			callback(null,'success');
           }
 	});
+  }
 
-  
 }
 
 function getPosition(position, profileJSON, callback) {
