@@ -1569,7 +1569,7 @@ function saveProfile(request, response) {
 		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
 	},
 	function(callback) {
-		deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords) {
+		deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords); 
 	},
 	function(callback) {
 		updateProfile(profileJSON, profileRecord, organizationRecords, callback);
