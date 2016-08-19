@@ -1537,7 +1537,6 @@ function saveProfile(request, response) {
         getProfile(profileId, profileJSON, profileRecord, callback);
       },
       function(callback) {
-		console.log('newly obtained profile record:' + profileRecord.get('Profile ID'));
         console.log('processing organization');
 		var listOfUploadedOrganizations = [];
 		for (var key in profileJSON.organization) {
@@ -1564,7 +1563,7 @@ function saveProfile(request, response) {
         // getOrganization(profileJSON.organization, profileJSON, callback);
     },
 	function(callback) {
-		updateOrganization(profileJSON, profileRecord, organizationRecords, allOrganizationRecords, callback);
+		updateOrganization(profileJSON, profileRecord[0], organizationRecords, allOrganizationRecords, callback);
 	},
 	function(callback) {
 		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
@@ -1573,7 +1572,7 @@ function saveProfile(request, response) {
 		deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords); 
 	},
 	function(callback) {
-		updateProfile(profileJSON, profileRecord, organizationRecords, callback);
+		updateProfile(profileJSON, profileRecord[0], organizationRecords, callback);
 	}
 	  
     ],
@@ -1639,7 +1638,6 @@ function getProfile(ID, profileJSON, profileRecord, callback) {
       } else {
         console.log('completed profile search: ' + foundRecord.get('Profile ID'));
 		profileRecord.push(foundRecord);
-		console.log('assigned profile: ' + profileRecord.get('Profile ID'));
         callback(null, foundRecord);
       }
 
@@ -1778,8 +1776,6 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 	console.log('preparing to update organizations: ' + organizationRecords.length);
   
 	async.each(organizationRecords, function(organization, callback2) {
-		console.log('preparing to update organization: ' + organization.get('Name'));
-		console.log('preparing to update profile: ' + profileRecord.get('Profile ID'));
 			console.log('preparing to update organization/profile: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID'));
 			// add profile id to the list of people in the organization if it has not been added before
 			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
