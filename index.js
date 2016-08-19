@@ -1639,6 +1639,7 @@ function getProfile(ID, profileJSON, profileRecord, callback) {
       } else {
         console.log('completed profile search: ' + foundRecord.get('Profile ID'));
 		profileRecord.push(foundRecord);
+		console.log('assigned profile: ' + profileRecord.get('Profile ID'));
         callback(null, foundRecord);
       }
 
