@@ -1537,6 +1537,7 @@ function saveProfile(request, response) {
         getProfile(profileId, profileJSON, profileRecord, callback);
       },
       function(callback) {
+		console.log('newly obtained profile record:' + profileRecord.get('Profile ID'));
         console.log('processing organization');
 		var listOfUploadedOrganizations = [];
 		for (var key in profileJSON.organization) {
