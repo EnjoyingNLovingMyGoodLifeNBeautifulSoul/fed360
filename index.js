@@ -1946,9 +1946,9 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			callback(null,'success');
           }
 	});
-  }
-
 }
+
+
 
 function getPosition(position, profileJSON, callback) {
   console.log('getting position ID: ' + position);
@@ -1976,7 +1976,7 @@ function getPosition(position, profileJSON, callback) {
   }, function done(error) {
     if (error) {
       console.log('getPosition error: ' + error);
-      callback('Error: ' + error, null);
+      callback('Error: ' + error);
     } else {
       if (typeof foundRecord == 'undefined') {
         console.log('no position found for ' + position);
