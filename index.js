@@ -1561,7 +1561,7 @@ function saveProfile(request, response) {
             for (var key in organizationRecords) {
               idsOfNewOrganizations += organizationRecords[key].getId() + ',';
             }
-            idsOfNewOrganizations = idsOfNewOrganizations.substring(0, namesOfNewOrganizations.length - 1);
+            idsOfNewOrganizations = idsOfNewOrganizations.substring(0, idsOfNewOrganizations.length - 1);
             console.log('list of new organizations: ' + idsOfNewOrganizations);
             callback(null, organizationRecords);
           }
