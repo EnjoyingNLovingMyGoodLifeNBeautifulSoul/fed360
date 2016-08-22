@@ -1847,7 +1847,8 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
 		for (var key in organizationRecords) {
 			for (var index in profileJSON.organization) {
 				if (profileJSON.organization[index].id == organizationRecords[key].getId()) {  
-					removePersonFromOrganization = false;
+					console.log('comparing organization id ' + profileJSON.organization[index].id + ' to ' + organizationRecords[key].getId());
+          removePersonFromOrganization = false;
 				}
 			}
 		}
