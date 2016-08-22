@@ -1559,7 +1559,7 @@ function saveProfile(request, response) {
 			console.log('number of organizations being updated: ' + organizationRecords.length);
             var idsOfNewOrganizations = '';
             for (var key in organizationRecords) {
-              namesOfNewOrganizations += organizationRecords[key].getId() + ',';
+              idsOfNewOrganizations += organizationRecords[key].getId() + ',';
             }
             idsOfNewOrganizations = idsOfNewOrganizations.substring(0, namesOfNewOrganizations.length - 1);
             console.log('list of new organizations: ' + idsOfNewOrganizations);
