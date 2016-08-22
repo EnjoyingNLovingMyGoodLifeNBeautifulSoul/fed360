@@ -1526,7 +1526,7 @@ function saveProfile(request, response) {
   }
   
   var profileRecord = [];
-  var organizationRecords = [];
+  var organizationRecords = []; // list of updated organizations
   var allOrganizationRecords = [];
   
   console.log('initial organizationRecord size: ' + organizationRecords.length);
@@ -1837,39 +1837,38 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
 	
 	
 	var listOfOrganizationsToUpdate = [];
-	for (var key in allOrganizationRecords) {
-		// remove person from organization
-		var removePersonFromOrganization = true;
-		var updatedOrganization = {
-			'reducedPeopleList': [],
-			'organization' : ''
-		};
-		for (var key in organizationRecords) {
-			for (var index in profileJSON.organization) {
-				if (profileJSON.organization[index].id == organizationRecords[key].getId()) {  
-					console.log('comparing organization id ' + profileJSON.organization[index].id + ' to ' + organizationRecords[key].getId());
+
+  // remove person from organization
+  var removePersonFromOrganization = true;
+  for (var key in allOrganizationRecords) {
+    for (var key in organizationRecords) {
+      if (allOrganizationRecords[key].getId() == organizationRecords[key].getId()) {  
+          console.log('comparing organization id ' + allOrganizationRecords[key].getId() + ' to ' + organizationRecords[key].getId());
           removePersonFromOrganization = false;
-				}
-			}
-		}
-		if (removePersonFromOrganization == true) {
-			var reducedPeopleList = [];
-			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
-			console.log('People array: ' + people.toString());
-			if (people.indexOf(profileRecord.getId()) == -1) {
-				people.push(profileRecord.getId());
-			}
-	
-			for (var index in people) {
-				if (people[index] != profileJSON.id) {
-					reducedPeopleList.push(people[index]);
-				}
-			}
-			updatedOrganization.reducedPeopleList = reducedPeopleList;
-			updatedOrganization.organization = allOrganizationRecords[index];
-			listOfOrganizationsToUpdate.push(updatedOrganization);
-		}
-	}
+      }
+    }
+    if (removePersonFromOrganization == true) {
+      removePersonFromOrganization = true;
+      var updatedOrganization = {
+          'reducedPeopleList': [],
+          'organization' : ''
+      };
+
+      var reducedPeopleList = [];
+      var people = typeof profileJSON.organization[index].people == 'undefined' ? [] : profileJSON.organization[index].people;
+      console.log('People array: ' + people.toString());
+  
+      for (var index in people) {
+        if (people[index] != profileJSON.id) {
+          reducedPeopleList.push(people[index]);
+        }
+      }
+      updatedOrganization.reducedPeopleList = reducedPeopleList;
+      updatedOrganization.organization = allOrganizationRecords[index];
+      listOfOrganizationsToUpdate.push(updatedOrganization);
+    }
+        
+  }
 	
 	console.log('number of organizations to clear name: ' + listOfOrganizationsToUpdate.length);
   
