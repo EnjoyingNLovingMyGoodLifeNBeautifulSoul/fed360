@@ -1835,15 +1835,15 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 function removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords) {
 	// add profile id to the list of people in the organization if it has not been added before
 	
-	
+	console.log('calling removeNameFromOrganization');
 	var listOfOrganizationsToUpdate = [];
 
   // remove person from organization
   var removePersonFromOrganization = true;
   for (var key in allOrganizationRecords) {
-    for (var key in organizationRecords) {
-      if (allOrganizationRecords[key].getId() == organizationRecords[key].getId()) {  
-          console.log('comparing organization id ' + allOrganizationRecords[key].getId() + ' to ' + organizationRecords[key].getId());
+    for (var key2 in organizationRecords) {
+      if (allOrganizationRecords[key].getId() == organizationRecords[key2].getId()) {  
+          console.log('comparing organization id ' + allOrganizationRecords[key].getId() + ' to ' + organizationRecords[key2].getId());
           removePersonFromOrganization = false;
       }
     }
@@ -1856,7 +1856,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
 
       var reducedPeopleList = [];
       var people = typeof profileJSON.organization[index].people == 'undefined' ? [] : profileJSON.organization[index].people;
-      console.log('People array: ' + people.toString());
+      console.log('updating profile ' + profileJSON.firstname + ' ' + profileJSON.lastname + ' People array: ' + people.toString());
   
       for (var index in people) {
         if (people[index] != profileJSON.id) {
