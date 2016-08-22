@@ -1526,7 +1526,7 @@ function saveProfile(request, response) {
   }
   
   var profileRecord = [];
-  var organizationRecords = []; // list of updated organizations
+  var organizationRecords = []; // list of updated organizations including newly created ones
   var allOrganizationRecords = [];
   
   console.log('initial organizationRecord size: ' + organizationRecords.length);
@@ -1539,11 +1539,12 @@ function saveProfile(request, response) {
       function(callback) {
         console.log('processing organization');
 		var listOfUploadedOrganizations = [];
-		for (var key in profileJSON.organization) {
+		/*for (var key in profileJSON.organization) {
 			listOfUploadedOrganizations.push(profileJSON.organization[key].name);
 		}
 		console.log('organizations: ' + listOfUploadedOrganizations.toString());
-		var organizationNames = profileJSON.organizationNames.split(',');
+		var organizationNames = profileJSON.organizationNames.split(',');*/
+    var organizationNames = profileJSON.organizationNames.split(',');
 		async.each(organizationNames, function(organizationName, callback2) {
 			console.log('async organizationRecord size: ' + organizationRecords.length);
 			getOrganization(organizationName, profileJSON, callback2, organizationRecords, allOrganizationRecords);
@@ -1556,6 +1557,12 @@ function saveProfile(request, response) {
           } else {
             console.log('done adding or updating organizations, positions, and Position Changes.');
 			console.log('number of organizations being updated: ' + organizationRecords.length);
+            var idsOfNewOrganizations = '';
+            for (var key in organizationRecords) {
+              namesOfNewOrganizations += organizationRecords[key].getId() + ',';
+            }
+            idsOfNewOrganizations = idsOfNewOrganizations.substring(0, namesOfNewOrganizations.length - 1);
+            console.log('list of new organizations: ' + idsOfNewOrganizations);
             callback(null, organizationRecords);
           }
         });
@@ -1836,6 +1843,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
 	// add profile id to the list of people in the organization if it has not been added before
 	
 	console.log('calling removeNameFromOrganization');
+
 	var listOfOrganizationsToUpdate = [];
 
   // remove person from organization
