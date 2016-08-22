@@ -1856,7 +1856,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
       }
     }
     if (removePersonFromOrganization == true) {
-      removePersonFromOrganization = true;
+      
       var updatedOrganization = {
           'reducedPeopleList': [],
           'organization' : ''
@@ -1874,6 +1874,8 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
       updatedOrganization.reducedPeopleList = reducedPeopleList;
       updatedOrganization.organization = allOrganizationRecords[index];
       listOfOrganizationsToUpdate.push(updatedOrganization);
+    } else {
+      removePersonFromOrganization = true;
     }
         
   }
