@@ -1910,9 +1910,11 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
 
 // removes name from removed organizations and deletes the organization if there is no name left
 function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords) {
+	console.log('deleting unused organizations');
 
 	var listOfOrganizationIdsToDelete = [];
 	for (var index in allOrganizationRecords) {
+		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + ' to see it has 0 names left');
 		for (var index2 in allOrganizationRecords[index].get('People')) {
 			if (allOrganizationRecords[index].get('People').length == 0) {
 				    console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
