@@ -1914,7 +1914,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 
 	var listOfOrganizationIdsToDelete = [];
 	for (var index in allOrganizationRecords) {
-		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + ' to see it has 0 names left');
+		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has '  + allOrganizationRecords[index].get('People').length  + ' names left');
 		for (var index2 in allOrganizationRecords[index].get('People')) {
 			if (allOrganizationRecords[index].get('People').length == 0) {
 				    console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
@@ -1950,7 +1950,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 	}, function(error) {
           if (error) {
             console.log('Error: ' + error);
-			response.send('Error: ' + err + '\n');
+			callback(error);
             return;
           } else {
             console.log('done deleting ' + listOfOrganizationIdsToDelete.length + ' unused organizations');
