@@ -1742,7 +1742,7 @@ function getAllOrganizations(profileJSON, callback, allOrganizationRecords) {
 		console.log('getAllOrganizations error: ' + error);
 		callback('Error: ' + error, null);
     } else {
-		console.log('total organization records length: ' + organizationRecords.length);
+		console.log('total organization records length: ' + allOrganizationRecords.length);
 		callback(null, 'success');
     }
   });
