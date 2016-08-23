@@ -1914,7 +1914,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 
 	var listOfOrganizationIdsToDelete = [];
 	for (var index in allOrganizationRecords) {
-		var numberOfPeople = allOrganizationRecords[index].get('People') == 'undefined' ? 0 : allOrganizationRecords[index].get('People').length;
+		var numberOfPeople = typeof allOrganizationRecords[index].get('People') == 'undefined' ? 0 : allOrganizationRecords[index].get('People').length;
 		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has '  + numberOfPeople  + ' names left');
 		if (numberOfPeople == 0) {
 			console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
