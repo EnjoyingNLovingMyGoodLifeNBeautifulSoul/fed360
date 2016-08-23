@@ -1914,10 +1914,10 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 	var listOfOrganizationsToDelete = [];
 	for (var index in allOrganizationRecords) {
 		for (var index2 in allOrganizationRecords[index].get('People')) {
-			if ((allOrganizationRecords[index].people.length == 0) ||
-			   ((allOrganizationRecords[index].people.length == 1) && 
-				(allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
-				listOfOrganizationIdsToDelete.push(allOrganizationRecords[index].getId());
+			if ((allOrganizationRecords[index].get('People').length == 0) ||
+			    ((allOrganizationRecords[index].get('People').length == 1) && 
+				 (allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
+					listOfOrganizationIdsToDelete.push(allOrganizationRecords[index].getId());
 			}
 		}
 	}
