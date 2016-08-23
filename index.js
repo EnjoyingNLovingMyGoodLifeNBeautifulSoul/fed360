@@ -1917,7 +1917,15 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			if ((allOrganizationRecords[index].get('People').length == 0) ||
 			    ((allOrganizationRecords[index].get('People').length == 1) && 
 				 (allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
-					listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
+					var updatedOrganization = false;
+					for (var index3 in organizationRecords) {
+						if (organizationRecords[index3].getId() == allOrganizationRecords.getId()) {
+							updatedOrganization = true;
+						}
+					}
+					if (updatedOrganization == false) {
+						listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
+					}
 			}
 		}
 	}
