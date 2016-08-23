@@ -1547,7 +1547,7 @@ function saveProfile(request, response) {
 		}
 		console.log('organizations: ' + listOfUploadedOrganizations.toString());
 		var organizationNames = profileJSON.organizationNames.split(',');*/
-    var organizationNames = profileJSON.organizationNames.split(',');
+		var organizationNames = profileJSON.organizationNames.split(',');
 		async.each(organizationNames, function(organizationName, callback2) {
 			console.log('async organizationRecord size: ' + organizationRecords.length);
 			getOrganization(organizationName, profileJSON, callback2, organizationRecords, allOrganizationRecords);
