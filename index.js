@@ -1914,21 +1914,21 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 
 	var listOfOrganizationIdsToDelete = [];
 	for (var index in allOrganizationRecords) {
-		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has '  + allOrganizationRecords[index].get('People').length  + ' names left');
-		for (var index2 in allOrganizationRecords[index].get('People')) {
-			if (allOrganizationRecords[index].get('People').length == 0) {
-				    console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
-					var updatedOrganization = false;
-					for (var index3 in organizationRecords) {
-						if (organizationRecords[index3].getId() == allOrganizationRecords[index].getId()) {
-							updatedOrganization = true;
-						}
-					}
-					if (updatedOrganization == false) {
-						console.log('adding unused organzation ' + allOrganizationRecords[index].get('Name') + ' to list to delete');
-						listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
-					}
+		var numberOfPeople = allOrganizationRecords[index].get('People') == 'undefined' ? 0 : allOrganizationRecords[index].get('People').length;
+		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has '  + numberOfPeople  + ' names left');
+		if (numberOfPeople == 0) {
+			console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
+			var updatedOrganization = false;
+			for (var index3 in organizationRecords) {
+				if (organizationRecords[index3].getId() == allOrganizationRecords[index].getId()) {
+					updatedOrganization = true;
+				}
 			}
+			if (updatedOrganization == false) {
+				console.log('adding unused organzation ' + allOrganizationRecords[index].get('Name') + ' to list to delete');
+				listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
+			}
+
 		}
 	}
 		
