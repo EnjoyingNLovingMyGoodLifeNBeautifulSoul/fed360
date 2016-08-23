@@ -1933,7 +1933,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			  callback2('deleteUnusedOrganization error: ' + err, null);
 			} else {
 			  console.log('organization ' + deletedRecord.get('Name') + ' deleted: ');
-			  callback2(null, record);
+			  callback2(null, deletedRecord);
 			}
 		  });
        
