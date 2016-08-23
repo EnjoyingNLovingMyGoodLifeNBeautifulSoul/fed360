@@ -1937,13 +1937,13 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			
 		// delete organziation from organziation table
 		  base('Organizations').destroy(organization.getId()
-		  , function(err, deletedRecord) {
+		  , function(err) {
 			if (err) {
 			  console.log('deleteUnusedOrganization error: ' + err);
 			  callback2('deleteUnusedOrganization error: ' + err, null);
 			} else {
-			  console.log('organization ' + deletedRecord.get('Name') + ' deleted: ');
-			  callback2(null, deletedRecord);
+			  console.log('organization ' + organization.get('Name') + ' deleted: ');
+			  callback2(null, 'success');
 			}
 		  });
        
