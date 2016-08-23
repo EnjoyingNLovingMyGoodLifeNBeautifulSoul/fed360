@@ -1917,22 +1917,22 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			if ((allOrganizationRecords[index].get('People').length == 0) ||
 			    ((allOrganizationRecords[index].get('People').length == 1) && 
 				 (allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
-					listOfOrganizationIdsToDelete.push(allOrganizationRecords[index].getId());
+					listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
 			}
 		}
 	}
 		
-	async.each(listOfOrganizationIdsToDelete, function(organizationId, callback2) {
+	async.each(listOfOrganizationIdsToDelete, function(organization, callback2) {
 			console.log('preparing to delete organization: ' + organization.get('Name') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			
 		// delete organziation from organziation table
-		  base('Organizations').destroy(organizationId
+		  base('Organizations').destroy(organization.getId()
 		  , function(err, deletedRecord) {
 			if (err) {
 			  console.log('deleteUnusedOrganization error: ' + err);
 			  callback2('deleteUnusedOrganization error: ' + err, null);
 			} else {
-			  console.log('number of organizations deleted: ' + listOfOrganizationIdsToDelete.length);
+			  console.log('organization ' + deletedRecord.get('Name') + ' deleted: ');
 			  callback2(null, record);
 			}
 		  });
@@ -1943,7 +1943,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			response.send('Error: ' + err + '\n');
             return;
           } else {
-            console.log('done deleting unused organizations');
+            console.log('done deleting ' + listOfOrganizationIdsToDelete.length + ' unused organizations');
 			callback(null,'success');
           }
 	});
