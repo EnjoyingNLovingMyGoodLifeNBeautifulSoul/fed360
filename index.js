@@ -1579,6 +1579,9 @@ function saveProfile(request, response) {
 		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
 	},
 	function(callback) {
+		getAllOrganizations(profileJSON, callback, allOrganizationRecords);
+	},
+	function(callback) {
 		deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords); 
 	},
 	function(callback) {
@@ -1915,7 +1918,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 	var listOfOrganizationIdsToDelete = [];
 	for (var index in allOrganizationRecords) {
 		var numberOfPeople = typeof allOrganizationRecords[index].get('People') == 'undefined' ? 0 : allOrganizationRecords[index].get('People').length;
-		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has '  + numberOfPeople  + ' names left');
+		console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has '  + numberOfPeople  + ' name/names left');
 		if (numberOfPeople == 0) {
 			console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
 			var updatedOrganization = false;
