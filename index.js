@@ -1919,11 +1919,12 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 				 (allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
 					var updatedOrganization = false;
 					for (var index3 in organizationRecords) {
-						if (organizationRecords[index3].getId() == allOrganizationRecords.getId()) {
+						if (organizationRecords[index3].getId() == allOrganizationRecords[index].getId()) {
 							updatedOrganization = true;
 						}
 					}
 					if (updatedOrganization == false) {
+						console.log('adding unused organzation ' + allOrganizationRecords[index].get('Name') + ' to list to delete');
 						listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
 					}
 			}
