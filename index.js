@@ -1850,8 +1850,9 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
   var removePersonFromOrganization = true;
   for (var key in allOrganizationRecords) {
     for (var key2 in organizationRecords) {
+	  console.log('comparing organization id ' + allOrganizationRecords[key].getId() + ' to ' + organizationRecords[key2].getId());
       if (allOrganizationRecords[key].getId() == organizationRecords[key2].getId()) {  
-          console.log('comparing organization id ' + allOrganizationRecords[key].getId() + ' to ' + organizationRecords[key2].getId());
+          console.log('matching ids found'));
           removePersonFromOrganization = false;
       }
     }
@@ -1863,7 +1864,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
       };
 
       var reducedPeopleList = [];
-      var people = typeof profileJSON.organization[index].people == 'undefined' ? [] : profileJSON.organization[index].people;
+      var people = typeof allOrganizationRecords[key].people == 'undefined' ? [] : allOrganizationRecords[key].people;
       console.log('updating profile ' + profileJSON.firstname + ' ' + profileJSON.lastname + ' People array: ' + people.toString());
   
       for (var index in people) {
@@ -1872,7 +1873,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
         }
       }
       updatedOrganization.reducedPeopleList = reducedPeopleList;
-      updatedOrganization.organization = allOrganizationRecords[index];
+      updatedOrganization.organization = allOrganizationRecords[key];
       listOfOrganizationsToUpdate.push(updatedOrganization);
     } else {
       removePersonFromOrganization = true;
