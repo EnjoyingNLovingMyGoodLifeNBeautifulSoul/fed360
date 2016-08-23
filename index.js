@@ -1761,7 +1761,7 @@ function getOrganization(organizationName, profileJSON, callback, organizationRe
 		  foundOrganization = true;
 	  }
   }
-  if (foundOrganization == true) {
+  if (foundOrganization == false) {
 	  addOrganization(profileJSON, callback, organizationRecords, organizationName);
   }
 
