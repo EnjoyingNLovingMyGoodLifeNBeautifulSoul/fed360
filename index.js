@@ -1852,7 +1852,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
     for (var key2 in organizationRecords) {
 	  console.log('comparing organization id ' + allOrganizationRecords[key].getId() + ' to ' + organizationRecords[key2].getId());
       if (allOrganizationRecords[key].getId() == organizationRecords[key2].getId()) {  
-          console.log('matching ids found'));
+          console.log('matching ids found');
           removePersonFromOrganization = false;
       }
     }
