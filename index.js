@@ -1595,18 +1595,6 @@ function saveProfile(request, response) {
 		} else {
 			console.log('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname+ ' ' + profileJSON.lastname + '\n');
 			response.send('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname+ ' ' + profileJSON.lastname + '\n');
-		/*
-        // results is now equal to ['one', 'two']
-        var profileRecord = results[0]; // first parameter returns profile record
-        console.log('profile record id: ' + profileRecord.getId());
-        var organizationRecord = results[1]; // second parameter returns organization record
-		for (var index in organizationRecord) {
-			console.log('organization record id: ' + organizationRecord[index].getId());
-		}
-        
-        console.log('temporarily done');
-        //updateProfile(profileJSON, profileRecord, organizationRecord, response);
-        //updateOrganization(profileJSON, profileRecord, organizationRecord, allOrganizationRecords, response);*/
       }
     });
 
@@ -1925,35 +1913,26 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 
 	var listOfOrganizationsToDelete = [];
 	for (var index in allOrganizationRecords) {
-	
-		// compare organization list to all new organization updates
-		var duplicateId = false;
-		for (var key in organizationRecords) {
-		  if (allOrganizationRecords[index].getId() == organizationRecords[key].getId()) {
-			duplicateId = true;
-		  }
-		}
-		if (duplicateId == false) {
-			var lastPersonInOrganization = false;
-			if ((allOrganizationRecords[index].length == 0) ||
-			   ((allOrganizationRecords[index].length == 1) && 
+		for (var index2 in allOrganizationRecords[index].get('People')) {
+			if ((allOrganizationRecords[index].people.length == 0) ||
+			   ((allOrganizationRecords[index].people.length == 1) && 
 				(allOrganizationRecords[index].get('People')[index2] == profileJSON.id))) {
-				listOfOrganizationsToDelete.push(allOrganizationRecords[index].getId());
+				listOfOrganizationIdsToDelete.push(allOrganizationRecords[index].getId());
 			}
 		}
 	}
 		
-	async.each(listOfOrganizationsToDelete, function(organization, callback2) {
+	async.each(listOfOrganizationIdsToDelete, function(organizationId, callback2) {
 			console.log('preparing to delete organization: ' + organization.get('Name') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			
 		// delete organziation from organziation table
-		  base('Organizations').destroy(''
+		  base('Organizations').destroy(organizationId
 		  , function(err, deletedRecord) {
 			if (err) {
 			  console.log('deleteUnusedOrganization error: ' + err);
 			  callback2('deleteUnusedOrganization error: ' + err, null);
 			} else {
-			  console.log('number of organizations deleted: ' + listOfOrganizationsToDelete.length);
+			  console.log('number of organizations deleted: ' + listOfOrganizationIdsToDelete.length);
 			  callback2(null, record);
 			}
 		  });
@@ -1964,7 +1943,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 			response.send('Error: ' + err + '\n');
             return;
           } else {
-            console.log('done adding or updating organizations, positions, and Position Changes.');
+            console.log('done deleting unused organizations');
 			callback(null,'success');
           }
 	});
