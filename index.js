@@ -1573,7 +1573,7 @@ function saveProfile(request, response) {
         // getOrganization(profileJSON.organization, profileJSON, callback);
     },
 	function(callback) {
-		updateOrganization(profileJSON, profileRecord[0], organizationRecords, allOrganizationRecords, callback);
+		updateOrganization(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, allOrganizationRecords, callback);
 	},
 	function(callback) {
 		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
@@ -1585,7 +1585,13 @@ function saveProfile(request, response) {
 		deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords); 
 	},
 	function(callback) {
-		updateProfile(profileJSON, profileRecord[0], organizationRecords, callback);
+		getAllPositions(profileJSON, callback, allPositionRecords);
+	},
+	function(callback) {
+		updatePosition(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, allPositionRecords, callback);
+	},
+	function(callback) {
+		updateProfile(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, callback);
 	}
 	  
     ],
@@ -1962,6 +1968,114 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 	});
 }
 
+function getAllPositions(profileJSON, callback, allPositionRecords) {
+	
+  console.log('getting all positions');
+  
+  base('Positions').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      console.log('recieved position record ' + record.get('Title'));
+	  allPositionRecords.push(record);
+
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+    if (error) {
+		console.log('getAllPosition error: ' + error);
+		callback('Error: ' + error, null);
+    } else {
+		console.log('total position records length: ' + allPositionRecords.length);
+		callback(null, 'success');
+    }
+  });
+}
+
+function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
+	var profileKey = Object.keys(profileRecord)[0];
+	console.log('preparing to update position: ' + profileJSON.position[profileKey].officialtitle);
+  
+    if (typeof profileJSON.title != 'undefined') {
+		// add title to position table
+		
+		var organizationIds = [];
+		for (var key in organizationRecords) {
+			organizationIds.push(organizationRecords[key].getId());
+		}
+		base('Positions').create({
+		//"Series (if application)": [],
+		//"Grade (if application)": [],
+			"Official Title": profileJSON.title,
+			"Organizations": organizationIds,
+			"People": [profileJSON.id]
+			
+		  }, function(err, record) {
+			if (err) {
+			  console.log('addPosition error: ' + err);
+			  callback('addPosition error: ' + err, null);
+			} else {
+			  console.log('position added: ' + profileJSON.title);
+			  callback(null, record);
+			}
+		  });
+		
+		return;
+	}
+	async.each(profileJSON.positions, function(position, callback2) {
+		
+			console.log('preparing to update position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID'));
+			// add profile id to the list of people in the organization if it has not been added before
+			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
+			console.log('People array: ' + people.toString());
+			if (people.indexOf(profileRecord.getId()) == -1) {
+				people.push(profileRecord.getId());
+			}
+			
+			
+			var newOrganizations = [];
+			for (var key in organizationRecords) {
+				newOrganizations.push(key);
+			}
+
+			base('Position').update(positionRecord.getId(), {
+				"Official Title": profileRecord.officialtitle,
+				"People": people,
+				"Organizations": newOrganizations
+			}, function(err, record) {
+				if (err) {
+				  console.log('updatePosition error:' + err);
+				  response.send('updatePosition error:' + err + '\n');
+				} else {
+				  console.log('position updated: ' + record.getId());
+				  response.send('Successfully added/updated record: ' + record.getId() + '\n');
+				}
+			});
+			
+       
+	}, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+			callback(error);
+            return;
+          } else {
+            console.log('done adding or updating organizations, positions, and Position Changes.');
+			callback(null, 'success');
+          }
+	});
+		
+
+  
+}
+
 
 
 function getPosition(position, profileJSON, callback) {
@@ -2032,19 +2146,26 @@ function addPosition(profileJSON, callback) {
     }
   });
 }
-
-function updatePosition(profileJSON, profileRecord, positionRecord, response) {
-  console.log('preparing to update position: ' + positionRecord.get('Name') + ' for ' + profileRecord.get('Profile ID'));
-  var people = typeof organizationRecord.get('People') == 'undefined' ? [] : organizationRecord.get('People');
+/*
+function updatePosition(profileJSON, profileRecord, organizationRecords, positionRecord, response) {
+  if (profileRecord
+	
+  console.log('preparing to update position: ' + positionRecord.get('Title') + ' for ' + profileRecord.get('Profile ID'));
+  var people = typeof positionRecord.get('People') == 'undefined' ? [] : positionRecord.get('People');
   console.log('People array: ' + people.toString());
   if (people.indexOf(profileRecord.getId()) == -1) {
     people.push(profileRecord.getId());
   }
+  
+  var newOrganizations = [];
+  for (var key in organizationRecords) {
+	  newOrganizations.push(key);
+  }
 
-  base('Position').update(organizationRecord.getId(), {
-    "Official Title": profileJSON.title,
-    //"Position Changes (from)": organizationRecord.get('Position Changes (from)'),
-    //"Position Changes (to)": organizationRecord.get('Position Changes (to)')
+  base('Position').update(positionRecord.getId(), {
+    "Official Title": profileRecord.officialtitle,
+	"People": profileRecord.people,
+	"Organizations": newOrganizations
   }, function(err, record) {
     if (err) {
       console.log('updatePosition error:' + err);
@@ -2054,7 +2175,7 @@ function updatePosition(profileJSON, profileRecord, positionRecord, response) {
       response.send('Successfully added/updated record: ' + record.getId() + '\n');
     }
   });
-}
+}*/
 
 app.post('/saveEndorsements', function(request, response) {
   console.log('POST received');
