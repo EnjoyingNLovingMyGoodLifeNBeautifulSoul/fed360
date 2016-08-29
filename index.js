@@ -1538,6 +1538,7 @@ function saveProfile(request, response) {
         getProfile(profileId, profileJSON, profileRecord, callback);
       },
 	  function(callback) {
+      console.log('profile record id: ' + profileRecord[0].getId());
 		  getAllOrganizations(profileJSON, callback, allOrganizationRecords);
 	  },
       function(callback) {
@@ -1561,7 +1562,7 @@ function saveProfile(request, response) {
           } else {
             console.log('done getting or creating all new organization records.');
 			console.log('number of organizations being updated: ' + organizationRecords.length);
-            console.log('profile record id: ' + profileRecord[0].getId());
+
             var idsOfNewOrganizations = '';
             for (var key in organizationRecords) {
               idsOfNewOrganizations += organizationRecords[key].getId() + ',';
