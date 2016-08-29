@@ -1528,6 +1528,7 @@ function saveProfile(request, response) {
   var profileRecord = [];
   var organizationRecords = []; // list of updated organizations including newly created ones
   var allOrganizationRecords = [];
+  var allPositionRecords = [];
   
   console.log('initial organizationRecord size: ' + organizationRecords.length);
 
