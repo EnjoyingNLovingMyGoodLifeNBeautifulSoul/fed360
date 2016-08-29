@@ -2004,7 +2004,7 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
 }
 
 function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
-	var profileKey = profileRecord.getId();
+	var profileKey = Object.keys(profileJSON.position)[0];
   console.log('profile key of profileRecord: ' + profileKey);
 	console.log('preparing to update position: ' + profileJSON.position[profileKey].officialtitle);
   
