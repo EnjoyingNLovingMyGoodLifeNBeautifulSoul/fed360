@@ -2003,6 +2003,7 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
 
 function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
 	var profileKey = Object.keys(profileRecord)[0];
+  console.log('profile key of profileRecord: ' + profileKey);
 	console.log('preparing to update position: ' + profileJSON.position[profileKey].officialtitle);
   
     if (typeof profileJSON.title != 'undefined') {
