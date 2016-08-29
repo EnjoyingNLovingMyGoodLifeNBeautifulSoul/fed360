@@ -1576,7 +1576,7 @@ function saveProfile(request, response) {
         // getOrganization(profileJSON.organization, profileJSON, callback);
     },
 	function(callback) {
-		updateOrganization(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, allOrganizationRecords, callback);
+		updateOrganization(profileJSON, profileRecord[0], organizationRecords, allOrganizationRecords, callback);
 	},
 	function(callback) {
 		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
@@ -1591,10 +1591,10 @@ function saveProfile(request, response) {
 		getAllPositions(profileJSON, callback, allPositionRecords);
 	},
 	function(callback) {
-		updatePositions(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, allPositionRecords, callback);
+		updatePositions(profileJSON, profileRecord[0], organizationRecords, allPositionRecords, callback);
 	},
 	function(callback) {
-		updateProfile(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, callback);
+		updateProfile(profileJSON, profileRecord[0], organizationRecords, callback);
 	}
 	  
     ],
