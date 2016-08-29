@@ -1559,8 +1559,9 @@ function saveProfile(request, response) {
             callback(error);
             return;
           } else {
-            console.log('done adding or updating organizations, positions, and Position Changes.');
+            console.log('done getting or creating all new organization records.');
 			console.log('number of organizations being updated: ' + organizationRecords.length);
+            console.log('profile record id: ' + profileRecord[0].getId());
             var idsOfNewOrganizations = '';
             for (var key in organizationRecords) {
               idsOfNewOrganizations += organizationRecords[key].getId() + ',';
@@ -1645,7 +1646,7 @@ function getProfile(ID, profileJSON, profileRecord, callback) {
         addProfile(profileJSON, callback);
       } else {
         console.log('completed profile search: ' + foundRecord.get('Profile ID'));
-		profileRecord.push(foundRecord);
+		  profileRecord.push(foundRecord);
         callback(null, foundRecord);
       }
 
