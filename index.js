@@ -1589,7 +1589,7 @@ function saveProfile(request, response) {
 		getAllPositions(profileJSON, callback, allPositionRecords);
 	},
 	function(callback) {
-		updatePosition(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, allPositionRecords, callback);
+		updatePositions(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, allPositionRecords, callback);
 	},
 	function(callback) {
 		updateProfile(profileJSON, profileRecord[Object.keys(profileRecord)[0]], organizationRecords, callback);
