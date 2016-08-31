@@ -2045,6 +2045,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			if (people.indexOf(profileRecord.getId()) == -1) {
 				console.log('adding ' + profileRecord.getId() + ' to people ' );
 				people.push(profileRecord.getId());
+				console.log('people: ' + people.toString());
 			}
 			console.log('people: ' + people.toString());
 			
