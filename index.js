@@ -2051,7 +2051,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 				newOrganizations.push(key);
 			}
 
-			base('Position').update(positionRecord.getId(), {
+			base('Position').update(position.id, {
 				"Official Title": position.officialtitle,
 				"People": people,
 				"Organizations": newOrganizations
