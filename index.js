@@ -2050,7 +2050,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			for (var key in organizationRecords) {
 				newOrganizations.push(key);
 			}
-
+			console.log('recordId : ' + recordId);
 			base('Positions').update(recordId, {
 				"Official Title": position.officialtitle,
 				"People": people,
