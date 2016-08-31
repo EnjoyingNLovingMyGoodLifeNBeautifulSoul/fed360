@@ -2041,6 +2041,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			// add profile id to the list of people in the organization if it has not been added before
 			var people = typeof position.people == 'undefined' ? [] : position.people;
 			console.log('People array: ' + people.toString());
+			console.log('Profile Id: ' + profileRecord.getId());
 			if (people.indexOf(profileRecord.getId()) == -1) {
 				people.push(profileRecord.getId());
 			}
