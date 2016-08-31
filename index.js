@@ -2039,7 +2039,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		
 			console.log('preparing to update position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID'));
 			// add profile id to the list of people in the organization if it has not been added before
-			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
+			var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
 			console.log('People array: ' + people.toString());
 			if (people.indexOf(profileRecord.getId()) == -1) {
 				people.push(profileRecord.getId());
