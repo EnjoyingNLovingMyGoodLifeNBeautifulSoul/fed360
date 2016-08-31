@@ -2034,8 +2034,8 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		
 		return;
 	}
-	console.log('number of postions to update: ' + profileJSON.positions.length);
-	async.each(profileJSON.positions, function(position, callback2) {
+	console.log('number of postions to update: ' + profileJSON.position.length);
+	async.each(profileJSON.position, function(position, callback2) {
 		
 			console.log('preparing to update position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID'));
 			// add profile id to the list of people in the organization if it has not been added before
