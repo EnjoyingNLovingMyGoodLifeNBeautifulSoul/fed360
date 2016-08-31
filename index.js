@@ -2058,10 +2058,10 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			}, function(err, record) {
 				if (err) {
 				  console.log('updatePosition error:' + err);
-				  response.send('updatePosition error:' + err + '\n');
+				  callback2(err);
 				} else {
 				  console.log('position updated: ' + record.getId());
-				  response.send('Successfully added/updated record: ' + record.getId() + '\n');
+				  callback2(null, 'success');
 				}
 			});
 			
