@@ -2043,6 +2043,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			console.log('People array: ' + people.toString());
 			console.log('Profile Id: ' + profileRecord.getId());
 			if (people.indexOf(profileRecord.getId()) == -1) {
+				console.log('adding ' + profileRecord.getId() + ' to people ' );
 				people.push(profileRecord.getId());
 			}
 			console.log('people: ' + people.toString());
