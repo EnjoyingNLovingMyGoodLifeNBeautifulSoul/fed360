@@ -2008,7 +2008,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
   console.log('profile key of profileRecord: ' + profileKey);
 	console.log('preparing to update position: ' + profileJSON.position[profileKey].officialtitle);
   
-    if (typeof profileJSON.title != 'undefined') {
+    if (typeof profileJSON.newtitle != 'undefined') {
 		// add title to position table
 		
 		var organizationIds = [];
@@ -2018,7 +2018,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		base('Positions').create({
 		//"Series (if application)": [],
 		//"Grade (if application)": [],
-			"Official Title": profileJSON.title,
+			"Official Title": profileJSON.newtitle,
 			"Organizations": organizationIds,
 			"People": [profileJSON.id]
 			
