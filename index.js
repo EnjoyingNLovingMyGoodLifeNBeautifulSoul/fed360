@@ -2044,12 +2044,14 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			if (people.indexOf(profileRecord.getId()) == -1) {
 				people.push(profileRecord.getId());
 			}
-			
+			console.log('people: ' + people.toString());
 			
 			var newOrganizations = [];
 			for (var key in organizationRecords) {
 				newOrganizations.push(key);
 			}
+			console.log('people: ' + newOrganizations.toString());
+			
 			console.log('recordId : ' + recordId);
 			base('Positions').update(recordId, {
 				"Official Title": position.officialtitle,
