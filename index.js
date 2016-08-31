@@ -2005,7 +2005,7 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
 
 function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
 	var profileKey = Object.keys(profileJSON.position)[0];
-  console.log('profile key of profileRecord: ' + profileKey);
+    console.log('profile key of profileRecord: ' + profileKey);
 	console.log('preparing to update position: ' + profileJSON.position[profileKey].officialtitle + ' to ' + profileJSON.newtitle);
   
     if (typeof profileJSON.newtitle == 'undefined') {
@@ -2034,6 +2034,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		
 		return;
 	}
+	console.log('number of postions to update: ' + profileJSON.positions.length);
 	async.each(profileJSON.positions, function(position, callback2) {
 		
 			console.log('preparing to update position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID'));
