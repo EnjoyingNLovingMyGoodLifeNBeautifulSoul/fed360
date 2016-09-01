@@ -2006,7 +2006,7 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
 function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
 	var profileKey = Object.keys(profileJSON.position)[0];
     console.log('profile key of profileRecord: ' + profileKey);
-	console.log('preparing to update position: ' + profileJSON.position[profileKey].officialtitle + ' to ' + profileJSON.newtitle);
+	console.log('preparing to update 1st position: ' + profileJSON.position[profileKey].officialtitle + ' to ' + profileJSON.newtitle);
   
     if (typeof profileJSON.newtitle == 'undefined') {
 		// add title to position table
@@ -2037,16 +2037,16 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 	console.log('number of postions to update: ' + Object.keys(profileJSON.position).length);
 	async.forEachOf(profileJSON.position, function(position, recordId, callback2) {
 		
-			console.log('preparing to update position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID') + ' with record id ' + recordId);
+			console.log('updating position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID') + ' with record id ' + recordId + ' to ' + profileJSON.newtitle);
 			// add profile id to the list of people in the organization if it has not been added before
 			var people = typeof position.people == 'undefined' ? [] : position.people;
 			console.log('People array: ' + people.toString());
 			console.log('Profile Id: ' + profileRecord.getId());
-			/*if (people.indexOf(profileRecord.getId()) == -1) {
+			if (people.indexOf(profileRecord.getId()) == -1) {
 				console.log('adding ' + profileRecord.getId() + ' to people ' );
 				people.push(profileRecord.getId());
 				console.log('people: ' + people.toString());
-			}*/
+			}
 			console.log('Updated people array: ' + people.toString());
 			
 			var newOrganizationIds = [];
@@ -2057,7 +2057,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			
 			console.log('recordId : ' + recordId);
 			base('Positions').update(recordId, {
-				"Official Title": position.officialtitle,
+				"Official Title": profileJSON.newtitle,
 				"People": people,
 				"Organizations": newOrganizationIds
 			}, function(err, record) {
