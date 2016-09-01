@@ -2053,7 +2053,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			for (var index in organizationRecords) {
 				newOrganizationIds.push(organizationRecords[index].getId());
 			}
-			console.log('new organizations: ' + newOrganizations.toString());
+			console.log('new organizations: ' + newOrganizationIds.toString());
 			
 			console.log('recordId : ' + recordId);
 			base('Positions').update(recordId, {
