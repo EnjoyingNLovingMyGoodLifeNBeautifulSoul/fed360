@@ -2049,17 +2049,17 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			}*/
 			console.log('Updated people array: ' + people.toString());
 			
-			var newOrganizations = [];
-			for (var key in organizationRecords) {
-				newOrganizations.push(key);
+			var newOrganizationIds = [];
+			for (var index in organizationRecords) {
+				newOrganizationIds.push(organizationRecords[index].getId());
 			}
-			console.log('people: ' + newOrganizations.toString());
+			console.log('new organizations: ' + newOrganizations.toString());
 			
 			console.log('recordId : ' + recordId);
 			base('Positions').update(recordId, {
 				"Official Title": position.officialtitle,
 				"People": people,
-				"Organizations": newOrganizations
+				"Organizations": newOrganizationIds
 			}, function(err, record) {
 				if (err) {
 				  console.log('updatePosition error:' + err);
