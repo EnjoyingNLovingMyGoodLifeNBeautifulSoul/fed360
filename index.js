@@ -1694,6 +1694,10 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, response
   for (var key in organizationRecords) {
 	  organizationIds.push(organizationRecords[key].getId());
   }
+  var positionIds = [];
+  for (var key in profileJSON.position) {
+	  positionIds.push(key);
+  }
 
   base('People').update(profileRecord.getId(), {
     "Name (First)": profileJSON.firstname,
@@ -1702,6 +1706,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, response
     //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
     //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
     //"Deliveries": profileRecord.get('Deliveries'),
+	"Position": positionIds,
     "Organization": organizationIds,
     "Direct Supervisor (email)": profileJSON.supervisoremail,
     "Email": profileJSON.email,
@@ -2172,6 +2177,25 @@ function addPosition(profileJSON, callback) {
       callback(null, record);
     }
   });
+}
+
+function updateProfilePicture(request, response) {
+	console.log('updating profile picture for: ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+	
+	var profileJSON = JSON.parse(request.body.profile);
+
+	base('People').update(profileJSON.id, {
+		"Profile Picture": profileJSON.profilepicture
+	}, function(err, record) {
+		if (err) {
+		  console.log('updateProfilePicture error: ' + err);
+		  response.send('Error: ' + err + '\n');
+		} else {
+		  console.log('updateProfilePicture successful for ' + profileJSON.firstname + ' ' + profileJSON.lastname + ': ' + profileJSON.profilepicture);
+		  response.send('Sucessfully updated profilepicture for People table ID: ' + record.getId());
+		}
+	});
+
 }
 /*
 function updatePosition(profileJSON, profileRecord, organizationRecords, positionRecord, response) {
