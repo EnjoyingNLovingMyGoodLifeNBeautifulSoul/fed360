@@ -2179,6 +2179,12 @@ function addPosition(profileJSON, callback) {
   });
 }
 
+app.post('/updateProfilePicture', function(request, response) {
+  console.log('POST received');
+  updateProfilePicture(request, response);
+  //response.send('done');
+});
+
 function updateProfilePicture(request, response) {
 	console.log('updating profile picture for: ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 	
