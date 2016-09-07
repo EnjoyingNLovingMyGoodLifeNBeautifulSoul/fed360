@@ -1687,18 +1687,23 @@ function addProfile(profileJSON, callback) {
 
 }
 
-function updateProfile(profileJSON, profileRecord, organizationRecord, response) {
+function updateProfile(profileJSON, profileRecord, organizationRecords, response) {
   console.log('updating profile: ' + profileRecord.get('Profile ID') + ' for ' + profileRecord.organization);
+  
+  var organizationIds = [];
+  for (var key in organizationRecords) {
+	  organizationIds.push(organizationRecords[key].getId());
+  }
 
   base('People').update(profileRecord.getId(), {
-    //"Name (First)": profileJSON.firstname,
+    "Name (First)": profileJSON.firstname,
     //"Password": profileJSON.password,
-    //"Name (Last)": profileJSON.lastname,
+    "Name (Last)": profileJSON.lastname,
     //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
     //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
     //"Deliveries": profileRecord.get('Deliveries'),
-    //"Organization": organizationRecord.getId(),
-    //"Direct Supervisor (email)": profileJSON.supervisoremail,
+    "Organization": organizationIds,
+    "Direct Supervisor (email)": profileJSON.supervisoremail,
     "Email": profileJSON.email,
     //"Job Changes": profileRecord.get('Job Changes'),
     "Username": profileJSON.username //,
@@ -2034,7 +2039,19 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		
 		return;
 	}
-	console.log('number of postions to update: ' + Object.keys(profileJSON.position).length);
+	
+	// assign if existing record with title is present
+	var titleExists = false;
+	for (var index in allPositionRecords) {
+		if (allPositionRecords[index].get('Title') == profileJSON.newtitle) {
+			titleExists = true;
+		}
+	}
+	if (titleExists == true) {
+		//remove old position record if its no longer used
+	}
+	
+	console.log('number of positions to update: ' + Object.keys(profileJSON.position).length);
 	async.forEachOf(profileJSON.position, function(position, recordId, callback2) {
 		
 			console.log('updating position/profile: ' + position.officialtitle + ' for ' + profileRecord.get('Profile ID') + ' with record id ' + recordId + ' to ' + profileJSON.newtitle);
