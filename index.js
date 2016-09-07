@@ -2186,9 +2186,10 @@ app.post('/updateProfilePicture', function(request, response) {
 });
 
 function updateProfilePicture(request, response) {
-	console.log('updating profile picture for: ' + profileJSON.firstname + ' ' + profileJSON.lastname);
-	
 	var profileJSON = JSON.parse(request.body.profile);
+		
+	console.log('updating profile picture for: ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+
 
 	base('People').update(profileJSON.id, {
 		"Profile Picture": profileJSON.profilepicture
