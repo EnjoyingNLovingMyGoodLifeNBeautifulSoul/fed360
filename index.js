@@ -2657,15 +2657,15 @@ app.post('/updateCompetencies', function(request, response) {
 			profileCompetencies.push(key);
 		}
 		
-		var checkMarkedProfileCompetencies = [];
+		var checkMarkedCompetencies = [];
 		for (var index in profileCompetencies) {
 			if (profileCompetencies[index].checkmarked == true) {
-				checkMarkedProfileCompetencies.push(profileCompetencies[index]);
+				checkMarkedCompetencies.push(profileCompetencies[index]);
 			}
 		}
 		for (var key in profileJSON.competencies) {
 			if (profileJSON.competencies[key].checkmarked == true) {
-				checkMarkedProfileCompetencies.push(key);
+				checkMarkedCompetencies.push(key);
 			}
 		}
 		
