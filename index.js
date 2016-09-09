@@ -561,6 +561,7 @@ function loadProfile(username, response) {
   var profileEndorsements = {};
   var profilePositions = {};
   var profileTrainings = {};
+  var checkMarkedCompetencies = [];
 
   async.series([
       function(callback) {
@@ -585,6 +586,8 @@ function loadProfile(username, response) {
             profileData['endorsementsreceived'] = allProfiles[index].endorsementsreceived;
             profileData['position'] = allProfiles[index].position;
             profileData['profilepicture'] = allProfiles[index].profilepicture;
+			
+			checkMarkedCompetencies = allProfiles[index].checkmarked;
           }
         }
         callback(null, 'success');
@@ -632,6 +635,16 @@ function loadProfile(username, response) {
         delete profileData.competencies['endorsements'];
         delete profileData.competencies['people'];
         //console.log(profileData.competencies);
+		
+		for (var key in profileData.competencies) {
+			profileData.competencies[key].checkmarked = false;
+			for (var index in checkMarkedCompetencies) {
+				if (key == checkMarkedCompetencies[index]) {
+					profileData.competencies[key].checkmarked = true;
+				}
+			}
+
+		}
         callback(null, 'success');
       },
       function(callback) {
@@ -750,6 +763,7 @@ function getAllProfiles(username, allProfiles, callback) {
         'supervisoremail': record.get('Direct Supervisor (email)'),
         'organization': record.get('Organization'), //id
         'competencies': record.get('Competencies'),
+		'checkmarked': record.get('Check Marked Competencies'),
         'endorsementsreceived': record.get('Endorsements (received)'),
         'endorsementsgiven': record.get('Endorsements (given)'),
         'roles': record.get('Roles'),
@@ -2564,6 +2578,7 @@ app.post('/updateCompetencies', function(request, response) {
   //console.log(request.body.results);
   //console.log(JSON.parse(request.body.results));
   var profileJSON = JSON.parse(request.body.result);
+  var profileCompetencies = [];
 
   console.log('profile received: ' + profileJSON);
   async.series([
@@ -2593,6 +2608,7 @@ app.post('/updateCompetencies', function(request, response) {
                 return;
               }
               console.log('saved created competency of ' + competencyJSON.Name);
+			  profileCompetencies.push(record.getId());
               callback2(null, 'success');
 
             });
@@ -2634,7 +2650,40 @@ app.post('/updateCompetencies', function(request, response) {
           }
         });
 
-      }
+      }, function(callback) {
+		console.log('saving the updated competencies list and check marked competency list in the profile');
+		
+		for (var key in profileJSON.competencies) {
+			profileCompetencies.push(key);
+		}
+		
+		var checkMarkedProfileCompetencies = [];
+		for (var index in profileCompetencies) {
+			if (profileCompetencies[index].checkmarked == true) {
+				checkMarkedProfileCompetencies.push(profileCompetencies[index]);
+			}
+		}
+		for (var key in profileJSON.competencies) {
+			if (profile.competencies[key].checkmarked == true) {
+				checkMarkedProfileCompetencies.push(key);
+			}
+		}
+		
+		base('People').update(profileJSON.id, {
+				"Competencies": profileCompetencies,
+				"Check Marked Competencies": checkMarkedCompetencies
+			},
+			function(err, record) {
+			  if (err) {
+				console.log(err);
+				callback(err);
+				return;
+			  }
+			  console.log('updated People profile competencies for ' + competencyJSON.Name);
+			  callback(null, 'success');
+
+		});
+	  }
 
     ],
     // series callback
