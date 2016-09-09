@@ -2680,7 +2680,7 @@ app.post('/updateCompetencies', function(request, response) {
 				callback(err);
 				return;
 			  }
-			  console.log('updated People profile competencies for ' + competencyJSON.Name);
+			  console.log('updated People profile competencies for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			  callback(null, 'success');
 
 		});
