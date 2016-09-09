@@ -2610,6 +2610,10 @@ app.post('/updateCompetencies', function(request, response) {
               }
               console.log('saved created competency of ' + competencyJSON.Name);
 			  profileCompetencies.push(record.getId());
+			  if (newCompetency.checkmarked == true) {
+				  checkMarkedCompetencies.push(record.getId());
+			  }
+			  
               callback2(null, 'success');
 
             });
@@ -2654,21 +2658,15 @@ app.post('/updateCompetencies', function(request, response) {
       }, function(callback) {
 		console.log('saving the updated competencies list and check marked competency list in the profile');
 		
+		// complete list of all profile competencies
 		for (var key in profileJSON.competencies) {
 			profileCompetencies.push(key);
-		}
-		
-		
-		for (var index in profileCompetencies) {
-			if (profileCompetencies[index].checkmarked == true) {
-				checkMarkedCompetencies.push(profileCompetencies[index]);
-			}
-		}
-		for (var key in profileJSON.competencies) {
+			// complete list of competency ids that reflect the check marked competencies
 			if (profileJSON.competencies[key].checkmarked == true) {
 				checkMarkedCompetencies.push(key);
 			}
 		}
+
 		
 		base('People').update(profileJSON.id, {
 				"Competencies": profileCompetencies,
