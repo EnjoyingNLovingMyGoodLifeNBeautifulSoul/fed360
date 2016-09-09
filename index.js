@@ -2579,6 +2579,7 @@ app.post('/updateCompetencies', function(request, response) {
   //console.log(JSON.parse(request.body.results));
   var profileJSON = JSON.parse(request.body.result);
   var profileCompetencies = [];
+  var checkMarkedCompetencies = [];
 
   console.log('profile received: ' + profileJSON);
   async.series([
@@ -2657,7 +2658,7 @@ app.post('/updateCompetencies', function(request, response) {
 			profileCompetencies.push(key);
 		}
 		
-		var checkMarkedCompetencies = [];
+		
 		for (var index in profileCompetencies) {
 			if (profileCompetencies[index].checkmarked == true) {
 				checkMarkedCompetencies.push(profileCompetencies[index]);
