@@ -2664,7 +2664,7 @@ app.post('/updateCompetencies', function(request, response) {
 			}
 		}
 		for (var key in profileJSON.competencies) {
-			if (profile.competencies[key].checkmarked == true) {
+			if (profileJSON.competencies[key].checkmarked == true) {
 				checkMarkedProfileCompetencies.push(key);
 			}
 		}
