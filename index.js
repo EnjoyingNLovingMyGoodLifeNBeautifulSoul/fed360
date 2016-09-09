@@ -2658,6 +2658,7 @@ app.post('/updateCompetencies', function(request, response) {
       }, function(callback) {
 		console.log('saving the updated competencies list and check marked competency list in the profile');
 		
+		console.log('check marked before:' + checkMarkedCompetencies.toString());
 		// complete list of all profile competencies
 		for (var key in profileJSON.competencies) {
 			profileCompetencies.push(key);
@@ -2666,7 +2667,7 @@ app.post('/updateCompetencies', function(request, response) {
 				checkMarkedCompetencies.push(key);
 			}
 		}
-
+		console.log('check marked after:' + checkMarkedCompetencies.toString());
 		
 		base('People').update(profileJSON.id, {
 				"Competencies": profileCompetencies,
