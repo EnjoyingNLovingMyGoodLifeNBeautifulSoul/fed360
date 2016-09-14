@@ -38,6 +38,73 @@ app.listen(app.get('port'), function() {
 //Your api key, from Mailgun’s Control Panel
 var api_key = 'key-2b66aeb552d0359e216a4b0e0a8cad81';
 
+
+app.post('/loginFed360', function(request, response) {
+  console.log('/loginFed360 POST received');
+  //console.log(JSON.stringify(request.body));
+  console.log(request.body.result);
+  console.log(JSON.parse(request.body.result));
+  var credentials = JSON.parse(request.body.result);
+
+  console.log('data being processed: ' + JSON.stringify(credentials));
+
+  if ((typeof credentials.username == 'undefined') || (credentials.username == '')) {
+    console.log('no username or email found');
+    response.send('no username or email found');
+    return;
+  }
+
+  //async.series([
+  //function(callback) {
+  // read from database
+  pg.defaults.ssl = true;
+  pg.connect(process.env.DATABASE_URL, function(err, client) {
+    if (err) throw err;
+    console.log('Connected to postgres! Getting schemas...');
+
+    //client
+    //.query('SELECT table_schema,table_name FROM information_schema.tables;')
+    //.on('row', function(row) {
+    //  console.log(JSON.stringify(row));
+    // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+    //});
+    var query = client.query('SELECT * FROM user_credentials;');
+    query.on('row', function(row) {
+      console.log(JSON.stringify(row));
+
+      if ((credentials.username == row.username) || (credentials.username == row.email)) {
+        console.log(credentials.username + ': username match, checking password');
+
+        console.log('hash length ' + row.salted_hash.length);
+        // Load hash from your password DB.
+        bcrypt.compare(credentials.password, row.salted_hash, function(err, res) {
+
+          console.log('correctLogin: ' + res);
+          if (res == true) {
+            console.log(credentials.username + ': verified username and password');
+            //response.send('download completed');
+            loadProfile(credentials.username, response);
+          } else {
+            console.log(credentials.username + ': username password does not match');
+            response.send('Username or password does not match.');
+          }
+
+          client.end.bind(client);
+          console.log(credentials.username + ": login database disconnected");
+
+        });
+        //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
+
+      }
+
+    });
+    query.on('end', function() {
+      // not used.  triggers after query is over and does wait until bcrypt function is complete
+
+    });
+  });
+
+
 //Your domain, from the Mailgun Control Panel
 var domain = 'mg.mrrmrr.com';
 
@@ -549,6 +616,7 @@ function loadProfile(username, response) {
     'lastname': '',
     'linkedin': '',
     'supervisoremail': '',
+	'email':'',
     'organization': [],
     'competencies': [],
     'endorsements': [],
@@ -1545,7 +1613,7 @@ function saveProfile(request, response) {
   var allPositionRecords = [];
   
   console.log('initial organizationRecord size: ' + organizationRecords.length);
-
+	  
   async.series([
       function(callback) {
         console.log('processing profile');
