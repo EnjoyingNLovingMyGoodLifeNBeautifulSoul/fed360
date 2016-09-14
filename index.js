@@ -38,7 +38,7 @@ app.listen(app.get('port'), function() {
 //Your api key, from Mailgun’s Control Panel
 var api_key = 'key-2b66aeb552d0359e216a4b0e0a8cad81';
 
-
+/* This will be used to get a password rest email
 app.post('/loginFed360', function(request, response) {
   console.log('/loginFed360 POST received');
   //console.log(JSON.stringify(request.body));
@@ -104,7 +104,7 @@ app.post('/loginFed360', function(request, response) {
     });
   });
 }
-
+*/
 
 //Your domain, from the Mailgun Control Panel
 var domain = 'mg.mrrmrr.com';
