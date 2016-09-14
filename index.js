@@ -616,7 +616,7 @@ function loadProfile(username, response) {
     'lastname': '',
     'linkedin': '',
     'supervisoremail': '',
-	'email':'',
+	'email': '',
     'organization': [],
     'competencies': [],
     'endorsements': [],
