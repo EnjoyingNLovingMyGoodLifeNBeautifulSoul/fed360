@@ -103,6 +103,7 @@ app.post('/loginFed360', function(request, response) {
 
     });
   });
+}
 
 
 //Your domain, from the Mailgun Control Panel
