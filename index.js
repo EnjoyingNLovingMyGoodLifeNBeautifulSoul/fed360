@@ -1730,7 +1730,7 @@ function getProfile(ID, profileJSON, profileRecord, callback) {
         addProfile(profileJSON, callback);
       } else {
         console.log('completed profile search: ' + foundRecord.get('Profile ID'));
-		  profileRecord.push(foundRecord);
+		profileRecord.push(foundRecord);
         callback(null, foundRecord);
       }
 
@@ -1743,17 +1743,18 @@ function addProfile(profileJSON, callback) {
   console.log('adding profile: ' + profileJSON.firstname);
   // save profile to Airtable
   base('People').create({
+	"Username": profileJSON.username,
     "Name (First)": profileJSON.firstname //,
       //"Password": profileJSON.password,
-      //"Name (Last)": profileJSON.lastname,
+    "Name (Last)": profileJSON.lastname,
       //"Endorsements (received)": [],
       //"Endorsements (given)": [],
       //"Deliveries": [],
       //"Organization": '',
-      //"Direct Supervisor (email)": profileJSON.supervisoremail,
-      //"Email": profileJSON.email,
+    "Direct Supervisor (email)": profileJSON.supervisoremail,
+    "Email": profileJSON.email,
       //"Job Changes": [],
-      //"Username": profileJSON.username,
+
       //"Training Ratings": "1", // ask Logan about this
       //"Deliveries copy": []
   }, function(err, record) {
