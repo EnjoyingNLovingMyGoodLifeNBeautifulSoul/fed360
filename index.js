@@ -1889,7 +1889,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 			console.log('preparing to update organization/profile: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID') + ' with id ' + profileRecord.getId());
 			// add profile id to the list of people in the organization if it has not been added before
 			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
-			console.log('People array: ' + people);
+			console.log('People array(' + people.length + '): ' + people);
 			if (people.indexOf(profileRecord.getId()) == -1) {
 				people.push(profileRecord.getId());
 			}
