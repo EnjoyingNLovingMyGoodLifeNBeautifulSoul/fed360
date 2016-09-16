@@ -2142,8 +2142,9 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 				}
 			  });
 			
-			return;
+			
 		}
+		return;
 	}
 	
 	console.log('number of positions to update: ' + Object.keys(profileJSON.position).length);
