@@ -2118,17 +2118,6 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 	}
 	if (titleExists == false) {
 		if (typeof profileJSON.newtitle != 'undefined') {
-			var newRecord = false;
-			for (var key in allPositionRecords) {
-				if (profileJSON.newtitle == allPositionRecords[key].get('Official Title')) {
-					newRecord = true;
-				}
-			}
-			
-			if (newRecord = false) {
-				return;
-			}
-			
 			// add title to position table
 			
 			var organizationIds = [];
