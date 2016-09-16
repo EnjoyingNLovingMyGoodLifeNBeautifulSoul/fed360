@@ -2125,6 +2125,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			for (var key in organizationRecords) {
 				organizationIds.push(organizationRecords[key].getId());
 			}
+			console.log('creating position record: ' + profileJSON.newtitle + ' with ' + organizationIds + ' and people ' + profileJSON.id);
 			base('Positions').create({
 			//"Series (if application)": [],
 			//"Grade (if application)": [],
@@ -2143,6 +2144,8 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			  });
 			
 			
+		} else {
+			console.log('No new title/position or previous title/position found');
 		}
 		return;
 	}
