@@ -2113,6 +2113,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 	var titleExists = false;
 	for (var index in allPositionRecords) {
 		if (allPositionRecords[index].get('Official Title') == profileJSON.newtitle) {
+			console.log('Title/position exists of ' + profileJSON.newtitle);
 			titleExists = true;
 		}
 	}
