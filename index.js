@@ -1967,7 +1967,7 @@ function removeNameFromOrganization(profileJSON, callback, organizationRecords, 
       };
 
       var reducedPeopleList = [];
-      var people = typeof allOrganizationRecords[key].people == 'undefined' ? [] : allOrganizationRecords[key].people;
+      var people = typeof allOrganizationRecords[key].get("People") == 'undefined' ? [] : allOrganizationRecords[key].get("People");
       console.log('updating profile ' + profileJSON.firstname + ' ' + profileJSON.lastname + ' People array: ' + people.toString());
   
       for (var index in people) {
@@ -2025,11 +2025,13 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
 		if (numberOfPeople == 0) {
 			console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
 			var updatedOrganization = false;
+			// get id of organization that has zero names left
 			for (var index3 in organizationRecords) {
 				if (organizationRecords[index3].getId() == allOrganizationRecords[index].getId()) {
 					updatedOrganization = true;
 				}
 			}
+			// update said organization
 			if (updatedOrganization == false) {
 				console.log('adding unused organzation ' + allOrganizationRecords[index].get('Name') + ' to list to delete');
 				listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
