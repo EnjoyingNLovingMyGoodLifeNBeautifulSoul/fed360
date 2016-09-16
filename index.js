@@ -2107,43 +2107,53 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 	console.log('preparing to update 1st position: ' + 
 	(typeof profileJSON.position[profileKey] == 'undefined' ? 'undefined' : profileJSON.position[profileKey].officialtitle) +
 	' to ' + profileJSON.newtitle);
-  
-    if (typeof profileJSON.newtitle == 'undefined') {
-		// add title to position table
-		
-		var organizationIds = [];
-		for (var key in organizationRecords) {
-			organizationIds.push(organizationRecords[key].getId());
-		}
-		base('Positions').create({
-		//"Series (if application)": [],
-		//"Grade (if application)": [],
-			"Official Title": profileJSON.newtitle,
-			"Organizations": organizationIds,
-			"People": [profileJSON.id]
-			
-		  }, function(err, record) {
-			if (err) {
-			  console.log('addPosition error: ' + err);
-			  callback('addPosition error: ' + err, null);
-			} else {
-			  console.log('position added: ' + profileJSON.title);
-			  callback(null, record);
-			}
-		  });
-		
-		return;
-	}
+	
 	
 	// assign if existing record with title is present
 	var titleExists = false;
 	for (var index in allPositionRecords) {
-		if (allPositionRecords[index].get('Title') == profileJSON.newtitle) {
+		if (allPositionRecords[index].get('Official Title') == profileJSON.newtitle) {
 			titleExists = true;
 		}
 	}
-	if (titleExists == true) {
-		//remove old position record if its no longer used
+	if (titleExists == false) {
+		if (typeof profileJSON.newtitle != 'undefined') {
+			var newRecord = false;
+			for (var key in allPositionRecords) {
+				if (profileJSON.newtitle == allPositionRecords[key].get('Official Title')) {
+					newRecord = true;
+				}
+			}
+			
+			if (newRecord = false) {
+				return;
+			}
+			
+			// add title to position table
+			
+			var organizationIds = [];
+			for (var key in organizationRecords) {
+				organizationIds.push(organizationRecords[key].getId());
+			}
+			base('Positions').create({
+			//"Series (if application)": [],
+			//"Grade (if application)": [],
+				"Official Title": profileJSON.newtitle,
+				"Organizations": organizationIds,
+				"People": [profileJSON.id]
+				
+			  }, function(err, record) {
+				if (err) {
+				  console.log('addPosition error: ' + err);
+				  callback('addPosition error: ' + err, null);
+				} else {
+				  console.log('position added: ' + profileJSON.title);
+				  callback(null, record);
+				}
+			  });
+			
+			return;
+		}
 	}
 	
 	console.log('number of positions to update: ' + Object.keys(profileJSON.position).length);
