@@ -1621,7 +1621,7 @@ function saveProfile(request, response) {
         getProfile(profileId, profileJSON, profileRecord, callback);
       },
 	  function(callback) {
-      console.log('profile record id: ' + profileRecord[0].getId());
+      console.log('profile record id: ' + (profileRecord.length > 0 ? profileRecord[0].getId() : 'no record found'));
 		  getAllOrganizations(profileJSON, callback, allOrganizationRecords);
 	  },
       function(callback) {
