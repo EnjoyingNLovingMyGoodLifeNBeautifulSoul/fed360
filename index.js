@@ -165,6 +165,11 @@ app.post('/sendEndorseLink',
       if (fromEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
         fromEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
+	  for (var index in fromEmails) {
+		  if (fromEmails[index].includes('mailgun') || fromEmails[index].includes('sandbox')) {
+			  fromEmails.splice(index, 1);
+		  }
+	  }
     }
 
     if (typeof to != 'undefined') {
@@ -180,6 +185,11 @@ app.post('/sendEndorseLink',
       if (toEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
         toEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
+	  for (var index in toEmails) {
+		  if (toEmails[index].includes('mailgun') || toEmails[index].includes('sandbox')) {
+			  toEmails.splice(index, 1);
+		  }
+	  }
     }
 
     if (typeof cc != 'undefined') {
