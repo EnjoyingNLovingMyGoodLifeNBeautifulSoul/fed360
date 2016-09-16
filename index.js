@@ -1744,7 +1744,7 @@ function addProfile(profileJSON, callback) {
   // save profile to Airtable
   base('People').create({
 	"Username": profileJSON.username,
-    "Name (First)": profileJSON.firstname //,
+    "Name (First)": profileJSON.firstname,
       //"Password": profileJSON.password,
     "Name (Last)": profileJSON.lastname,
       //"Endorsements (received)": [],
