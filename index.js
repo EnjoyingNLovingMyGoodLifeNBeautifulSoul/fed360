@@ -2100,7 +2100,9 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
 function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
 	var profileKey = Object.keys(profileJSON.position)[0];
     console.log('profile key of profileRecord: ' + profileKey);
-	console.log('preparing to update 1st position: ' + profileJSON.position[profileKey].officialtitle + ' to ' + profileJSON.newtitle);
+	console.log('preparing to update 1st position: ' + 
+	(typeof profileJSON.position[profileKey].officialtitle == 'undefined' ? 'undefined' : profileJSON.position[profileKey].officialtitle) +
+	' to ' + profileJSON.newtitle);
   
     if (typeof profileJSON.newtitle == 'undefined') {
 		// add title to position table
