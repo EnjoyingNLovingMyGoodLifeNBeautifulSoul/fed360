@@ -1886,7 +1886,7 @@ function updateOrganization(profileJSON, profileRecord, organizationRecords, all
 	console.log('preparing to update organizations: ' + organizationRecords.length);
   
 	async.each(organizationRecords, function(organization, callback2) {
-			console.log('preparing to update organization/profile: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID'));
+			console.log('preparing to update organization/profile: ' + organization.get('Name') + ' for ' + profileRecord.get('Profile ID') + ' with id ' + profileRecord.getId());
 			// add profile id to the list of people in the organization if it has not been added before
 			var people = typeof organization.get('People') == 'undefined' ? [] : organization.get('People');
 			console.log('People array: ' + people.toString());
