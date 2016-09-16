@@ -1665,6 +1665,8 @@ function saveProfile(request, response) {
 		removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
 	},
 	function(callback) {
+		// refresh list
+		allOrganizationRecords = [];
 		getAllOrganizations(profileJSON, callback, allOrganizationRecords);
 	},
 	function(callback) {
