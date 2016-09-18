@@ -185,11 +185,12 @@ app.post('/sendEndorseLink',
       if (toEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
         toEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
-	  for (var index in toEmails) {
-		  if (toEmails[index].includes('mailgun') || toEmails[index].includes('sandbox')) {
-			  toEmails.splice(index, 1);
-		  }
-	  }
+  	  for (var index in toEmails) {
+  		  if (toEmails[index].includes('mailgun') || toEmails[index].includes('sandbox')
+          || toEmails[index].includes('mrrmrr.com')) {
+  			  toEmails.splice(index, 1);
+  		  }
+  	  }
     }
 
     if (typeof cc != 'undefined') {
