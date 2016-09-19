@@ -163,9 +163,10 @@ app.post('/sendEndorseLink',
 
       }
       if (fromEmails.indexOf('mail@mg.mrrmrr.com') != -1) {
-        fromEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
+        fromEmails.splice(fromEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
       for (var index in fromEmails) {
+		console.log('checking mailgun email for the word mailgun: ' + fromEmails[index].includes('mailgun'));
         if (fromEmails[index].includes('mailgun') || fromEmails[index].includes('sandbox')) {
           fromEmails.splice(index, 1);
         }
