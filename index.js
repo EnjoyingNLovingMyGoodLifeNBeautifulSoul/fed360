@@ -1622,6 +1622,7 @@ function saveProfile(request, response) {
   var profileRecord = [];
   var organizationRecords = []; // list of updated organizations including newly created ones
   var allOrganizationRecords = [];
+  var positionRecord = [];
   var allPositionRecords = [];
   
   console.log('initial organizationRecord size: ' + organizationRecords.length);
@@ -1687,10 +1688,10 @@ function saveProfile(request, response) {
 		getAllPositions(profileJSON, callback, allPositionRecords);
 	},
 	function(callback) {
-		updatePositions(profileJSON, profileRecord[0], organizationRecords, allPositionRecords, callback);
+		updatePositions(profileJSON, profileRecord[0], organizationRecords, allPositionRecords, positionRecord, callback);
 	},
 	function(callback) {
-		updateProfile(profileJSON, profileRecord[0], organizationRecords, callback);
+		updateProfile(profileJSON, profileRecord[0], organizationRecords, positionRecord, callback);
 	}
 	  
     ],
@@ -1784,16 +1785,12 @@ function addProfile(profileJSON, callback) {
 
 }
 
-function updateProfile(profileJSON, profileRecord, organizationRecords, response) {
+function updateProfile(profileJSON, profileRecord, organizationRecords, positionRecord, response) {
   console.log('updating profile: ' + profileRecord.get('Profile ID') + ' for ' + profileRecord.organization);
   
   var organizationIds = [];
   for (var key in organizationRecords) {
 	  organizationIds.push(organizationRecords[key].getId());
-  }
-  var positionIds = [];
-  for (var key in profileJSON.position) {
-	  positionIds.push(key);
   }
 
   base('People').update(profileRecord.getId(), {
@@ -1803,7 +1800,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, response
     //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
     //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
     //"Deliveries": profileRecord.get('Deliveries'),
-	"Position": positionIds,
+	  "Position": positionRecord,
     "Organization": organizationIds,
     "Direct Supervisor (email)": profileJSON.supervisoremail,
     "Email": profileJSON.email,
@@ -2112,7 +2109,7 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
   });
 }
 
-function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
+function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, positionRecord, callback) {
 	console.log('calling updatePositions for profile id: ' + profileJSON.id + ' name: ' + profileJSON.firstname + ' ' + profileJSON.lastname);
   var positionKey = Object.keys(profileJSON.position)[0];
   console.log('position key of profileRecord: ' + positionKey);
@@ -2151,6 +2148,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 				  callback('addPosition error: ' + err, null);
 				} else {
 				  console.log('position added: ' + profileJSON.title);
+          positionRecord.push(record.getId());
 				  callback(null, record);
 				}
 			  });
@@ -2194,6 +2192,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 				  callback2(err);
 				} else {
 				  console.log('position updated: ' + record.getId());
+          positionRecord.push(record.getId());
 				  callback2(null, 'success');
 				}
 			});
