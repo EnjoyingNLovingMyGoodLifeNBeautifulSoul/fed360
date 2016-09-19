@@ -169,6 +169,8 @@ app.post('/sendEndorseLink',
       for (var index in fromEmails) {
 		console.log('index: ' + index);
 		console.log('checking mailgun email for the word mailgun: ' + fromEmails[index]);
+		var str = 'test string';
+		console.log('testing includes statement: ' + str.includes('test'));
         if (fromEmails[index].includes('mailgun') || fromEmails[index].includes('sandbox')) {
           fromEmails.splice(index, 1);
         }
