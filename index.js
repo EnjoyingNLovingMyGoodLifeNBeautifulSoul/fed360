@@ -2143,7 +2143,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			//"Grade (if application)": [],
 				"Official Title": profileJSON.newtitle,
 				"Organizations": organizationIds,
-				"People": [profileJSON.id]
+				"People": [profileJSON.id.toString()]
 			  }, function(err, record) {
 				if (err) {
 				  console.log('addPosition error: ' + err);
