@@ -2737,6 +2737,7 @@ app.post('/updateCompetencies', function(request, response) {
             checkMarkedCompetencies.push(key);
           }
         }
+        console.log('profile competency ids: ' + profileCompetencies.toString());
         console.log('check marked after:' + checkMarkedCompetencies.toString());
 
         base('People').update(profileJSON.id, {
