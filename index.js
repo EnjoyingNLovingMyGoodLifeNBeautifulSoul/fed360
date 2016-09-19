@@ -167,11 +167,8 @@ app.post('/sendEndorseLink',
       }
 	  console.log('fromEmails: ' + fromEmails.toString());
       for (var index in fromEmails) {
-		console.log('index: ' + index);
-		console.log('checking mailgun email for the word mailgun: ' + fromEmails[index]);
-		var str = 'test string';
-		console.log('testing includes statement: ' + str.includes('test'));
-        if (fromEmails[index].includes('mailgun') || fromEmails[index].includes('sandbox')) {
+        if ((fromEmails[index].indexOf('mailgun') > 0) || 
+		    (fromEmails[index].indexOf('sandbox') > 0)) {
           fromEmails.splice(index, 1);
         }
       }
@@ -191,8 +188,9 @@ app.post('/sendEndorseLink',
         toEmails.splice(toEmails.indexOf('mail@mg.mrrmrr.com'), 1);
       }
       for (var index in toEmails) {
-        if (toEmails[index].includes('mailgun') || toEmails[index].includes('sandbox') ||
-          toEmails[index].includes('mrrmrr.com')) {
+        if ((toEmails[index].indexOf('mailgun') > 0) || 
+		    (toEmails[index].indexOf('sandbox') > 0) ||
+            (toEmails[index].indexOf('mrrmrr.com') > 0)) {
           toEmails.splice(index, 1);
         }
       }
