@@ -2113,10 +2113,11 @@ function getAllPositions(profileJSON, callback, allPositionRecords) {
 }
 
 function updatePositions(profileJSON, profileRecord, organizationRecords, allPositionRecords, callback) {
-	var profileKey = Object.keys(profileJSON.position)[0];
-    console.log('profile key of profileRecord: ' + profileKey);
+	console.log('calling updatePositions for profile id: ' + profileJSON.id + ' name: ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+  var positionKey = Object.keys(profileJSON.position)[0];
+  console.log('position key of profileRecord: ' + positionKey);
 	console.log('preparing to update 1st position: ' + 
-	(typeof profileJSON.position[profileKey] == 'undefined' ? 'undefined' : profileJSON.position[profileKey].officialtitle) +
+	(typeof profileJSON.position[positionKey] == 'undefined' ? 'undefined' : profileJSON.position[positionKey].officialtitle) +
 	' to ' + profileJSON.newtitle);
 	
 	
