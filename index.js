@@ -1574,14 +1574,14 @@ app.get('/loadProfiles', function(request, response) {
         //var profileRecord = results[0];
         console.log('all profiles loaded');
         // include all trainings
-        console.log('trainings:');
+        //console.log('trainings:');
         //console.log(trainings);
         profilesJSON.trainings = trainings;
-        console.log('profiles:');
+        //console.log('profiles:');
         //console.log(profilesJSON.trainings);
         profilesJSON.delivery = allDeliveries[deliveryId];
         console.log('deliveries:');
-        //console.log(profilesJSON.deliveries);
+        console.log(profilesJSON.deliveries);
         console.log('full string:');
         //console.log(profilesJSON);
         console.log('returning compiled profiles in response');
