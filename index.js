@@ -1580,8 +1580,8 @@ app.get('/loadProfiles', function(request, response) {
         profilesJSON.trainings = trainings;
         //console.log('profiles:');
         //console.log(profilesJSON.trainings);
-		console.log('all deliveries');
-		console.log(allDeliveries);
+		//console.log('all deliveries');
+		//console.log(allDeliveries);
 		console.log('delivery id for comparison: ' + deliveryId);
         profilesJSON.delivery = allDeliveries[deliveryId];
         console.log('deliveries:');
