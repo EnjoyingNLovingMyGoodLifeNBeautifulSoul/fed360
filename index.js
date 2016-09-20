@@ -537,7 +537,7 @@ app.post('/registerFed360', function(request, response) {
       res.writeHead(500, {
         'content-type': 'text/plain'
       });
-      res.end('An error occurred');
+      res.end('An error occurred'); 
       return true;
     };
 
@@ -2041,8 +2041,13 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
       }
       // update said organization
       if (updatedOrganization == false) {
-        console.log('adding unused organzation ' + allOrganizationRecords[index].get('Name') + ' to list to delete');
-        listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
+		if (allOrganizationRecords[index].get('Predefined') == 'True') {
+			console.log('organization ' + allOrganizationRecords[index].get('Name') + 'is predefined and cannot be deleted');
+		} else {
+			console.log('adding unused organzation ' + allOrganizationRecords[index].get('Name') + ' to list to delete');
+			listOfOrganizationIdsToDelete.push(allOrganizationRecords[index]);
+		}
+        
       }
 
     }
@@ -2709,17 +2714,37 @@ app.post('/updateCompetencies', function(request, response) {
 
       function(callback) {
         console.log('deleting extra previous competencies');
+		var listOfCompetenciesToDelete = profileJSON.deletedCompetencies;
+		for (var index in listOfCompetenciesToDelete) {
+		}
 
         async.each(profileJSON.deletedCompetencies, function(deletedCompetency, callback2) {
-          base('Competencies').destroy(deletedCompetency.id, function(err, deletedRecord) {
-            if (err) {
+	      base('Competencies').find(deletedCompetency.id, function(err, retrievedRecord) {
+			if (err) {
               console.log(err);
               callback2(error);
               return;
             }
-            console.log('Deleted record ' + deletedCompetency.name);
-            callback2(null, 'success');
-          });
+            console.log('Competency record ' + deletedCompetency.name + ' predefined: ' + retrievedRecord.get('Predefined'));
+			if (retrievedRecord.get('Predefined') == 'True') {
+				console.log('Predfined competencies are not deleted');
+				callback2(null, 'success');
+			} else  {
+				console.log('deleting competency: ' + deletedCompetency.name);
+				base('Competencies').destroy(deletedCompetency.id, function(err, deletedRecord) {
+					if (err) {
+					  console.log(err);
+					  callback2(error);
+					  return;
+					}
+					console.log('Deleted record ' + deletedCompetency.name);
+					callback2(null, 'success');
+				});
+				
+			}
+
+		  });
+          
         }, function(error) {
           if (error) {
             console.log('Error: ' + error);
