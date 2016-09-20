@@ -2521,7 +2521,8 @@ app.post('/saveEndorsements', function(request, response) {
             "Competency": endorsement['Competency'],
             "Timestamp": endorsement['Timestamp'],
             "Endorsement": endorsement['Endorsement'],
-            "Recommended Training": endorsement['Recommended Training']
+            "Recommended Training": endorsement['Recommended Training'],
+			"Viewed by Endorsee": 'False'
           };
 
           console.log(endorsementJSON);
@@ -2577,7 +2578,7 @@ app.post('/saveEndorsements', function(request, response) {
               callback2(err);
               return;
             }
-            console.log('Deleted record ', deletedRecord.id);
+            console.log('Deleted record ' + deletedRecord.id);
             callback2(null, 'success');
           });
         }, function(error) {
@@ -2649,6 +2650,30 @@ function loadEndorsements(endorsementsReference, callback) {
     callback(null, 'success');
   });
 }
+
+app.post('updateViewedByEndorsee', function(request, response) {
+	console.log('');
+	console.log('POST received: starting updateViewedByEndorsee');
+	if (typeof request.body == 'undefined') {
+		console.log('request body is undefined');
+		response.send('undefined body');
+	}
+	
+	var profileJSON = JSON.parse(request.body.result);
+	
+	base('Endorsements').update(profileJSON.endorsementId, {
+		'Viewed by Endorsee': 'True'
+	},
+	function(err, updatedRecord) {
+		if (err) {
+			console.log('Error: ' + err);
+			response.send('Error: ' + err);
+		} else {
+			console.log('Viewed by Endorsee column updated in Endorsements table for ' + updatedRecord.get('Of') + ' by ' + updatedRecord.get('By') + ' record id ' + updatedRecord.getId());
+			response.send('Done');
+		}
+    });
+});
 
 app.post('/updateCompetencies', function(request, response) {
   console.log('');
