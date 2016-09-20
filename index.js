@@ -1053,7 +1053,7 @@ function getAllDeliveries(allDeliveries, callback) {
       console.log(error);
     } else {
       console.log('successfully loaded all deliveries');
-	  console.log(allDeliveries);
+	  //console.log(allDeliveries);
       callback(null, 'success');
     }
   });
@@ -1580,6 +1580,9 @@ app.get('/loadProfiles', function(request, response) {
         profilesJSON.trainings = trainings;
         //console.log('profiles:');
         //console.log(profilesJSON.trainings);
+		console.log('all deliveries');
+		console.log(allDeliveries);
+		console.log('delivery id for comparison: ' + deliveryId);
         profilesJSON.delivery = allDeliveries[deliveryId];
         console.log('deliveries:');
         console.log(profilesJSON.deliveries);
