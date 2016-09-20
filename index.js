@@ -2714,9 +2714,6 @@ app.post('/updateCompetencies', function(request, response) {
 
       function(callback) {
         console.log('deleting extra previous competencies');
-		var listOfCompetenciesToDelete = profileJSON.deletedCompetencies;
-		for (var index in listOfCompetenciesToDelete) {
-		}
 
         async.each(profileJSON.deletedCompetencies, function(deletedCompetency, callback2) {
 	      base('Competencies').find(deletedCompetency.id, function(err, retrievedRecord) {
@@ -2770,7 +2767,7 @@ app.post('/updateCompetencies', function(request, response) {
           }
         }
         console.log('profile competency ids: ' + profileCompetencies.toString());
-        console.log('check marked after:' + checkMarkedCompetencies.toString());
+        console.log('check marked after' + checkMarkedCompetencies.length +  ' :' + checkMarkedCompetencies.toString());
 
         base('People').update(profileJSON.id, {
             "Competencies": profileCompetencies,
