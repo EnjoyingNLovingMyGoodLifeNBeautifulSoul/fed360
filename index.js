@@ -2652,6 +2652,7 @@ function loadEndorsements(endorsementsReference, callback) {
 }
 
 app.post('updateViewedByEndorsee', function(request, response) {
+	// updates all endorsements for a competency by setting updateViewedByEndorsee to True
 	console.log('');
 	console.log('POST received: starting updateViewedByEndorsee');
 	if (typeof request.body == 'undefined') {
@@ -2659,12 +2660,23 @@ app.post('updateViewedByEndorsee', function(request, response) {
 		response.send('undefined body');
 	}
 	
-	var profileJSON = JSON.parse(request.body.result);
+	var endorsements = JSON.parse(request.body.result);
 	
-	base('Endorsements').update(profileJSON.endorsementId, {
-		'Viewed by Endorsee': 'True'
-	},
-	function(err, updatedRecord) {
+	async.each(endorsements.ids, function(endorsementId, callback) {
+		base('Endorsements').update(endorsementId, {
+			'Viewed by Endorsee': 'True'
+			},
+			function(err, updatedRecord) {
+				if (err) {
+					console.log('Error: ' + err);
+					callback(err);
+				} else {
+					console.log('Viewed by Endorsee column updated in Endorsements table for ' + updatedRecord.get('Of') + ' by ' + updatedRecord.get('By') + ' record id ' + updatedRecord.getId());
+					callback(null, 'success');
+				}
+			});
+	}, function(err) {
+		console.log('finishing async');
 		if (err) {
 			console.log('Error: ' + err);
 			response.send('Error: ' + err);
@@ -2673,6 +2685,36 @@ app.post('updateViewedByEndorsee', function(request, response) {
 			response.send('Done');
 		}
     });
+	
+	async.series([
+		function(callback) {
+			base('Endorsements').update(profileJSON.endorsementId, {
+			'Viewed by Endorsee': 'True'
+			},
+			function(err, updatedRecord) {
+				if (err) {
+					console.log('Error: ' + err);
+					callback(err);
+				} else {
+					console.log('Viewed by Endorsee column updated in Endorsements table for ' + updatedRecord.get('Of') + ' by ' + updatedRecord.get('By') + ' record id ' + updatedRecord.getId());
+					callback(null, 'success');
+				}
+			});
+		}
+	],
+    // series callback
+    function(err, results) {
+		console.log('finishing async');
+		if (err) {
+			console.log('Error: ' + err);
+			response.send('Error: ' + err);
+		} else {
+			console.log('Viewed by Endorsee column updated in Endorsements table for ' + updatedRecord.get('Of') + ' by ' + updatedRecord.get('By') + ' record id ' + updatedRecord.getId());
+			response.send('Done');
+		}
+    });
+	
+	
 });
 
 app.post('/updateCompetencies', function(request, response) {
