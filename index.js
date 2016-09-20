@@ -2651,7 +2651,7 @@ function loadEndorsements(endorsementsReference, callback) {
   });
 }
 
-app.post('updateViewedByEndorsee', function(request, response) {
+app.post('/updateViewedByEndorsee', function(request, response) {
 	// updates all endorsements for a competency by setting updateViewedByEndorsee to True
 	console.log('');
 	console.log('POST received: starting updateViewedByEndorsee');
