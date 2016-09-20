@@ -2676,7 +2676,8 @@ app.post('/updateCompetencies', function(request, response) {
             'Short Description': newCompetency.description,
             'Link': newCompetency.readMoreURL,
             'Type': 'Team',
-            'People': [profileJSON.id]
+            'People': [profileJSON.id],
+			'Predefined': newCompetency.checkmarked == true ? 'True' : 'False'
           };
 
           console.log(competencyJSON);
