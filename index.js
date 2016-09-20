@@ -1053,6 +1053,7 @@ function getAllDeliveries(allDeliveries, callback) {
       console.log(error);
     } else {
       console.log('successfully loaded all deliveries');
+	  console.log(allDeliveries);
       callback(null, 'success');
     }
   });
