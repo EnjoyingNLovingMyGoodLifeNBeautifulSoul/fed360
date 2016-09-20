@@ -746,9 +746,9 @@ function loadProfile(username, response) {
       function(callback) {
         console.log(username + ': assigning profile endorsements');
         profileData.endorsements = profileEndorsements;
-        delete profileData.competencies['timestamp'];
-        delete profileData.competencies['of'];
-        delete profileData.competencies['by'];
+        delete profileData.endorsements['timestamp'];
+        delete profileData.endorsements['of'];
+        delete profileData.endorsements['by'];
 
         callback(null, 'success');
       },
@@ -1885,7 +1885,8 @@ function addOrganization(profileJSON, callback, organizationRecords, organizatio
     "People": [],
     "Positions": [],
     "Position Changes (from)": [],
-    "Position Changes (to)": []
+    "Position Changes (to)": [],
+	"Predefined": 'False'
   }, function(err, record) {
     if (err) {
       console.log('addOrganization error: ' + err);
