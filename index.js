@@ -2163,7 +2163,66 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
     }
     return;
   }
-
+  console.log('updating positions');
+  async.forEachOf(allPositionRecords, function(position, recordId, callback2) {
+		var updateRecord = 'retain names';
+		
+		var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+		if (people.indexOf(profileJSON.id) == true) {
+			// person has that position
+			if (position.get('Official Title') != positionRecord.get('Official Title')) {
+				// person's new position is not the same as the old one.  use the reduced people list
+				updateRecord = 'remove name';
+			} else {
+				updateRecord = 'add name';
+			}
+		}
+		
+		var reducedPeopleSet = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+		reducedPeopleSet.splice(reducedPeopleSet.indexOf(profileJSON.id), 1);
+		
+		if (updateRecord != 'retain names') {
+			if (updateRecord == 'add name' ) {
+				console.log('add position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' profileJSON.lastname);
+			} else if (updateRecord == 'remove name') {
+				console.log('update position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' profileJSON.lastname);
+			}
+			
+			// Airtable automatically updates cross referenced linked columns, however, in case this changes or is slow or asynchronous, its good to update it manually
+			var newOrganizationIds = [];
+			for (var index in organizationRecords) {
+			  newOrganizationIds.push(organizationRecords[index].getId());
+			}
+			console.log('new organizations: ' + newOrganizationIds.toString());
+			
+			base('Positions').update(recordId, {
+			  "Official Title": profileJSON.newtitle,
+			  "People": updateRecord == 'add name' ? people : reducedPeopleSet,
+			  "Organizations": newOrganizationIds
+			}, function(err, record) {
+			  if (err) {
+				console.log('updatePosition error:' + err);
+				callback2(err);
+			  } else {
+				console.log('position updated: ' + record.getId());
+				callback2(null, 'success');
+			  }
+			});
+			
+		}
+		
+	  
+  }, function(error) {
+    if (error) {
+      console.log('Error: ' + error);
+      callback(error);
+      return;
+    } else {
+      console.log('done adding or updating organizations, positions, and Position Changes.');
+      callback(null, 'success');
+    }
+  });
+  /* This updates all new positions. a new process should check to which positions have been updated including those positions that no longer include that person and update those
   console.log('number of positions to update: ' + Object.keys(profileJSON.position).length);
   async.forEachOf(profileJSON.position, function(position, recordId, callback2) {
 
