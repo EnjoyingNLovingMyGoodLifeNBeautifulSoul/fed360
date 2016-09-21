@@ -2367,9 +2367,11 @@ function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, 
 		}
     }
   }
+  
+  console.log('number of positions to delete: ' + listOfPositionIdsToDelete.length);
 
-  async.each(listOfPositionIdsToDelete, function(positionRecord, callback2) {
-    console.log('preparing to delete position: ' + positionRecord.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+  async.each(listOfPositionIdsToDelete, function(position, callback2) {
+    console.log('preparing to delete position: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 
     // delete organziation from organziation table
     base('Position').destroy(positionRecord.getId(), function(err) {
@@ -2377,7 +2379,7 @@ function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, 
         console.log('deleteUnusedPosition error: ' + err);
         callback2('deleteUnusedPosition error: ' + err, null);
       } else {
-        console.log('position ' + positionRecord.get('Position') + ' deleted: ');
+        console.log('position ' + position.get('Position') + ' deleted: ');
         callback2(null, 'success');
       }
     });
