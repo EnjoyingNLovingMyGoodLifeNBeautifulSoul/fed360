@@ -2184,7 +2184,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		if (updateRecord != 'retain names') {
 			if (updateRecord == 'add name' ) {
 				console.log('official title: ' + position.get('Official Title'));
-				console.log('add position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' profileJSON.lastname);
+				console.log('add position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			} else if (updateRecord == 'remove name') {
 				console.log('update position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' profileJSON.lastname);
 			}
