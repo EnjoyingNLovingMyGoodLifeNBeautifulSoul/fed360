@@ -2286,6 +2286,51 @@ app.post('/updateProfilePicture', function(request, response) {
   //response.send('done');
 });
 
+// removes name from removed positions and deletes the organization if there is no name left
+function deleteUnusedPositions(profileJSON, allPositionRecords, callback) {
+  console.log('deleting unused positions');
+
+  var listOfPositionIdsToDelete = [];
+  for (var index in allPositionRecords) {
+    var numberOfPeople = typeof allPositionRecords[index].get('People') == 'undefined' ? 0 : allPositionRecords[index].get('People').length;
+    console.log('checking position ' + allPositionRecords[index].get('Title') + '. it has ' + numberOfPeople + ' people left');
+    if (numberOfPeople == 0) {
+		console.log('found position ' + allPositionRecords[index].get('Title') + ' has 0 names left');
+		if (allPositionRecords[index].get('Predefined') == 'True') {
+			console.log('position ' + allPositionRecords[index].get('Title') + ' is predefined and cannot be deleted');
+		} else {
+			console.log('adding unused position ' + allPositionRecords[index].get('Title') + ' to list to delete');
+			listOfPositionIdsToDelete.push(allPositionRecords[index]);
+		}
+    }
+  }
+
+  async.each(listOfPositionIdsToDelete, function(positionRecord, callback2) {
+    console.log('preparing to delete position: ' + positionRecord.get('Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+
+    // delete organziation from organziation table
+    base('Position').destroy(positionRecord.getId(), function(err) {
+      if (err) {
+        console.log('deleteUnusedPosition error: ' + err);
+        callback2('deleteUnusedPosition error: ' + err, null);
+      } else {
+        console.log('position ' + positionRecord.get('Position') + ' deleted: ');
+        callback2(null, 'success');
+      }
+    });
+
+  }, function(error) {
+    if (error) {
+      console.log('Error: ' + error);
+      callback(error);
+      return;
+    } else {
+      console.log('done deleting ' + listOfPositionIdsToDelete.length + ' unused position');
+      callback(null, 'success');
+    }
+  });
+}
+
 function updateProfilePicture(request, response) {
   var profileJSON = JSON.parse(request.body.profile);
 
