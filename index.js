@@ -2270,7 +2270,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
       console.log('done adding or updating organizations, positions, and Position Changes.');
       callback(null, 'success');
     }
-  });
+  });*/
 
 }
 
