@@ -1697,7 +1697,7 @@ function saveProfile(request, response) {
         updatePositions(profileJSON, profileRecord[0], organizationRecords, allPositionRecords, positionRecord, callback);
       },
 	  function(callback) {
-		deleteUnusedPositions(profileJSON, allPositionRecords, callback);
+		deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, callback);
 	  },
       function(callback) {
         updateProfile(profileJSON, profileRecord[0], organizationRecords, positionRecord, callback);
@@ -2350,7 +2350,7 @@ app.post('/updateProfilePicture', function(request, response) {
 });
 
 // removes name from removed positions and deletes the organization if there is no name left
-function deleteUnusedPositions(profileJSON, allPositionRecords, callback) {
+function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, callback) {
   console.log('deleting unused positions');
 
   var listOfPositionIdsToDelete = [];
