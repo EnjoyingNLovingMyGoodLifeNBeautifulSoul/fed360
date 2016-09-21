@@ -2186,7 +2186,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 				console.log('official title: ' + position.get('Official Title'));
 				console.log('add position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			} else if (updateRecord == 'remove name') {
-				console.log('update position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' profileJSON.lastname);
+				console.log('update position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 			}
 			
 			// Airtable automatically updates cross referenced linked columns, however, in case this changes or is slow or asynchronous, its good to update it manually
