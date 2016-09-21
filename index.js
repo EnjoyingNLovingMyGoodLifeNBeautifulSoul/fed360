@@ -2296,20 +2296,20 @@ function deleteUnusedPositions(profileJSON, allPositionRecords, callback) {
   var listOfPositionIdsToDelete = [];
   for (var index in allPositionRecords) {
     var numberOfPeople = typeof allPositionRecords[index].get('People') == 'undefined' ? 0 : allPositionRecords[index].get('People').length;
-    console.log('checking position ' + allPositionRecords[index].get('Title') + '. it has ' + numberOfPeople + ' people left');
+    console.log('checking position ' + allPositionRecords[index].get('Official Title') + '. it has ' + numberOfPeople + ' people left');
     if (numberOfPeople == 0) {
-		console.log('found position ' + allPositionRecords[index].get('Title') + ' has 0 names left');
+		console.log('found position ' + allPositionRecords[index].get('Official Title') + ' has 0 names left');
 		if (allPositionRecords[index].get('Predefined') == 'True') {
-			console.log('position ' + allPositionRecords[index].get('Title') + ' is predefined and cannot be deleted');
+			console.log('position ' + allPositionRecords[index].get('Official Title') + ' is predefined and cannot be deleted');
 		} else {
-			console.log('adding unused position ' + allPositionRecords[index].get('Title') + ' to list to delete');
-			listOfPositionIdsToDelete.push(allPositionRecords[index]);
+			console.log('adding unused position ' + allPositionRecords[index].get('Official Title') + ' to list to delete');
+			listOfPositionIdsToDelete.push(allPositionRecords[index].getId());
 		}
     }
   }
 
   async.each(listOfPositionIdsToDelete, function(positionRecord, callback2) {
-    console.log('preparing to delete position: ' + positionRecord.get('Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+    console.log('preparing to delete position: ' + positionRecord.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 
     // delete organziation from organziation table
     base('Position').destroy(positionRecord.getId(), function(err) {
