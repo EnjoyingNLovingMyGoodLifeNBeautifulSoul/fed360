@@ -2353,7 +2353,7 @@ app.post('/updateProfilePicture', function(request, response) {
 function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, callback) {
   console.log('deleting unused positions');
 
-  var listOfPositionIdsToDelete = [];
+  var listOfPositionsToDelete = [];
   for (var index in allPositionRecords) {
     var numberOfPeople = typeof allPositionRecords[index].get('People') == 'undefined' ? 0 : allPositionRecords[index].get('People').length;
     console.log('checking position ' + allPositionRecords[index].get('Official Title') + '. it has ' + numberOfPeople + ' people left');
@@ -2363,14 +2363,14 @@ function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, 
 			console.log('position ' + allPositionRecords[index].get('Official Title') + ' is predefined and cannot be deleted');
 		} else {
 			console.log('adding unused position ' + allPositionRecords[index].get('Official Title') + ' to list to delete');
-			listOfPositionIdsToDelete.push(allPositionRecords[index].getId());
+			listOfPositionsToDelete.push(allPositionRecords[index]);
 		}
     }
   }
   
-  console.log('number of positions to delete: ' + listOfPositionIdsToDelete.length);
+  console.log('number of positions to delete: ' + listOfPositionsToDelete.length);
 
-  async.each(listOfPositionIdsToDelete, function(position, callback2) {
+  async.each(listOfPositionsToDelete, function(position, callback2) {
     console.log('preparing to delete position: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 
     // delete organziation from organziation table
@@ -2390,7 +2390,7 @@ function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, 
       callback(error);
       return;
     } else {
-      console.log('done deleting ' + listOfPositionIdsToDelete.length + ' unused position');
+      console.log('done deleting ' + listOfPositionsToDelete.length + ' unused position');
       callback(null, 'success');
     }
   });
