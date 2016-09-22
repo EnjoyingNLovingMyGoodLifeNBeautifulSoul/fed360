@@ -2374,7 +2374,7 @@ function deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, 
     console.log('preparing to delete position: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
 
     // delete organziation from organziation table
-    base('Position').destroy(positionRecord.getId(), function(err) {
+    base('Position').destroy(position.getId(), function(err) {
       if (err) {
         console.log('deleteUnusedPosition error: ' + err);
         callback2('deleteUnusedPosition error: ' + err, null);
