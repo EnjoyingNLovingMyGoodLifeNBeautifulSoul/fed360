@@ -2140,7 +2140,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 					var updateRecord = 'retain names';
 					
 					var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
-					if (people.indexOf(profileJSON.id) == true) {
+					if (people.indexOf(profileJSON.id) > -1) {
 						// person has that position
 						if (position.get('Official Title') != positionRecord.get('Official Title')) {
 							// person's new position is not the same as the old one.  use the reduced people list
