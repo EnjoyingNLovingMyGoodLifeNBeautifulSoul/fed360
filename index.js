@@ -2154,7 +2154,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 					console.log('index of id to remove from people list: ' + reducedPeopleSet.indexOf(profileJSON.id));
 					reducedPeopleSet.splice(reducedPeopleSet.indexOf(profileJSON.id), 1);
 					
-					console.log('updateRecord: ' + updateRecord');
+					console.log('updateRecord: ' + updateRecord);
 					if (updateRecord != 'retain names') {
 						if (updateRecord == 'add name' ) {
 							console.log('official title: ' + position.get('Official Title'));
