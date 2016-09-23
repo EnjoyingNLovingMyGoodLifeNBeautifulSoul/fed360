@@ -2243,20 +2243,23 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 				} else {
 				  console.log('position added: ' + profileJSON.title);
 				  positionRecord.push(record.getId());
-				  callback2(null, record);
+				  callback2(null, 'success');
 				}
 			  });
 
 			} else {
 			  console.log('Empty or blank title found');
+			  callback2(null, 'success');
 			}
+		  } else {
+			  console.log('no new record position needed to be created for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+			  callback2(null, 'success');
 		  }
 		},
 	  
 	  ],
 	// series callback
 	function(err, results) {
-	  console.log('finishing async');
 	  if (err) {
 		console.log('Error: ' + err);
 		callback('updatePositions error: ' + err);
