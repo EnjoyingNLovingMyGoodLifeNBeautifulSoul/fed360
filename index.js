@@ -2132,7 +2132,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
     }
   }
   if (titleExists == false) {
-    if (typeof profileJSON.newtitle != 'undefined') {
+    if ((typeof profileJSON.newtitle != 'undefined') || (profileJSON.newtitle != '')) {
       // add title to position table
 
       var organizationIds = [];
