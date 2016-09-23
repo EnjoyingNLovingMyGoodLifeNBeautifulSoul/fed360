@@ -2033,7 +2033,7 @@ function deleteUnusedOrganizations(profileJSON, callback, organizationRecords, a
   var listOfOrganizationIdsToDelete = [];
   for (var index in allOrganizationRecords) {
     var numberOfPeople = typeof allOrganizationRecords[index].get('People') == 'undefined' ? 0 : allOrganizationRecords[index].get('People').length;
-    console.log('checking organzation ' + allOrganizationRecords[index].get('Name') + '. it has ' + numberOfPeople + ' name/names left');
+    console.log('checking organization ' + allOrganizationRecords[index].get('Name') + '. it has ' + numberOfPeople + ' name/names left');
     if (numberOfPeople == 0) {
       console.log('found organzation ' + allOrganizationRecords[index].get('Name') + ' has 0 names left');
       var updatedOrganization = false;
@@ -2179,6 +2179,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		}
 		
 		var reducedPeopleSet = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+		console.log('index of id to remove from people list: ' + reducedPeopleSet.indexOf(profileJSON.id));
 		reducedPeopleSet.splice(reducedPeopleSet.indexOf(profileJSON.id), 1);
 		
 		if (updateRecord != 'retain names') {
