@@ -2143,7 +2143,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 					var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
 					if (people.indexOf(profileJSON.id) > -1) {
 						// person has that position
-						if (position.get('Official Title') != positionRecord.get('Official Title')) {
+						if (position.get('Official Title') != profileJSON.newtitle) {
 							// person's new position is not the same as the old one.  use the reduced people list
 							updateRecord = 'remove name';
 						} else {
