@@ -2202,6 +2202,8 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						  }
 						});
 						
+					} else {
+						callback3(null, 'success');
 					}
 					
 				  
@@ -2246,7 +2248,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			  });
 
 			} else {
-			  console.log('No new title/position or previous title/position found');
+			  console.log('Empty or blank title found');
 			}
 		  }
 		},
