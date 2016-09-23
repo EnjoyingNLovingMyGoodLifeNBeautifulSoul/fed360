@@ -2217,6 +2217,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			  });
 		},
 		function(callback2) {
+		  console.log('checking to see if new position record needs to be created');
 		  if (titleExists == false) {
 			if ((typeof profileJSON.newtitle != 'undefined') && (profileJSON.newtitle != '')) {
 			  // add title to position table
