@@ -1708,10 +1708,11 @@ function saveProfile(request, response) {
     function(err, results) {
       console.log('finishing async');
       if (err) {
-        console.log('Error: ' + err);
-        response.send('Error: ' + err);
+        console.log('loadProfile Error: ' + err);
+        response.send('loadProfile  Error: ' + err);
       } else {
-        console.log('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname + ' ' + profileJSON.lastname + '\n');
+        console.log('loadProfile complete.  Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname + ' ' + profileJSON.lastname + '\n');
+		console.log('*********************');
         response.send('Successfully added/updated record: ' + profileJSON.username + ' name: ' + profileJSON.firstname + ' ' + profileJSON.lastname + '\n');
       }
     });
