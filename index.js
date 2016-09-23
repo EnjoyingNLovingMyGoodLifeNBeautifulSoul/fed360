@@ -2179,6 +2179,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 							  // remove if present
 							  for (var key in currentOrganizationIds) {
 								  if (key == organizationRecords[index].getId()) {
+									  console.log('deleting key ' + key);
 									  delete currentOrganizationIds[key];
 								  }
 							  }
