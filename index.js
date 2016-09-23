@@ -2131,99 +2131,120 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
       titleExists = true;
     }
   }
-  if (titleExists == false) {
-    if ((typeof profileJSON.newtitle != 'undefined') && (profileJSON.newtitle != '')) {
-      // add title to position table
+  
+  
+  async.series([
+		function(callback2) {
+			console.log('updating positions');
+			  async.forEachOf(allPositionRecords, function(position, recordId, callback3) {
+					var updateRecord = 'retain names';
+					
+					var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+					if (people.indexOf(profileJSON.id) == true) {
+						// person has that position
+						if (position.get('Official Title') != positionRecord.get('Official Title')) {
+							// person's new position is not the same as the old one.  use the reduced people list
+							updateRecord = 'remove name';
+						} else {
+							updateRecord = 'add name';
+						}
+					}
+					
+					var reducedPeopleSet = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+					console.log('index of id to remove from people list: ' + reducedPeopleSet.indexOf(profileJSON.id));
+					reducedPeopleSet.splice(reducedPeopleSet.indexOf(profileJSON.id), 1);
+					
+					if (updateRecord != 'retain names') {
+						if (updateRecord == 'add name' ) {
+							console.log('official title: ' + position.get('Official Title'));
+							console.log('add position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+						} else if (updateRecord == 'remove name') {
+							console.log('update position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
+						}
+						
+						// Airtable automatically updates cross referenced linked columns, however, in case this changes or is slow or asynchronous, its good to update it manually
+						var newOrganizationIds = [];
+						for (var index in organizationRecords) {
+						  newOrganizationIds.push(organizationRecords[index].getId());
+						}
+						console.log('new organizations: ' + newOrganizationIds.toString());
+						
+						base('Positions').update(recordId, {
+						  "Official Title": profileJSON.newtitle,
+						  "People": updateRecord == 'add name' ? people : reducedPeopleSet,
+						  "Organizations": newOrganizationIds
+						}, function(err, record) {
+						  if (err) {
+							console.log('updatePosition error:' + err);
+							callback3(err);
+						  } else {
+							console.log('position updated: ' + record.getId());
+							callback3(null, 'success');
+						  }
+						});
+						
+					}
+					
+				  
+			  }, function(error) {
+				if (error) {
+				  console.log('Error: ' + error);
+				  callback2(error);
+				  return;
+				} else {
+				  console.log('done adding or updating organizations, positions, and Position Changes.');
+				  callback2(null, 'success');
+				}
+			  });
+		},
+		function(callback2) {
+		  if (titleExists == false) {
+			if ((typeof profileJSON.newtitle != 'undefined') && (profileJSON.newtitle != '')) {
+			  // add title to position table
 
-      var organizationIds = [];
-      for (var key in organizationRecords) {
-        organizationIds.push(organizationRecords[key].getId());
-      }
-      console.log('creating position record: ' + profileJSON.newtitle + ' with ' + organizationIds + ' and people ' + profileJSON.id);
-      base('Positions').create({
-        //"Series (if application)": [],
-        //"Grade (if application)": [],
-        "Official Title": profileJSON.newtitle,
-        "Organizations": organizationIds,
-        //"People": ['rec2G23lF9nnxdbXL']
-        "People": [profileJSON.id]
-      }, function(err, record) {
-        if (err) {
-          console.log('addPosition error: ' + err);
-          callback('addPosition error: ' + err, null);
-        } else {
-          console.log('position added: ' + profileJSON.title);
-          positionRecord.push(record.getId());
-          callback(null, record);
-        }
-      });
-
-    } else {
-      console.log('No new title/position or previous title/position found');
-    }
-    return;
-  }
-  console.log('updating positions');
-  async.forEachOf(allPositionRecords, function(position, recordId, callback2) {
-		var updateRecord = 'retain names';
-		
-		var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
-		if (people.indexOf(profileJSON.id) == true) {
-			// person has that position
-			if (position.get('Official Title') != positionRecord.get('Official Title')) {
-				// person's new position is not the same as the old one.  use the reduced people list
-				updateRecord = 'remove name';
-			} else {
-				updateRecord = 'add name';
-			}
-		}
-		
-		var reducedPeopleSet = typeof position.get('People') == 'undefined' ? [] : position.get('People');
-		console.log('index of id to remove from people list: ' + reducedPeopleSet.indexOf(profileJSON.id));
-		reducedPeopleSet.splice(reducedPeopleSet.indexOf(profileJSON.id), 1);
-		
-		if (updateRecord != 'retain names') {
-			if (updateRecord == 'add name' ) {
-				console.log('official title: ' + position.get('Official Title'));
-				console.log('add position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
-			} else if (updateRecord == 'remove name') {
-				console.log('update position record: ' + position.get('Official Title') + ' for ' + profileJSON.firstname + ' ' + profileJSON.lastname);
-			}
-			
-			// Airtable automatically updates cross referenced linked columns, however, in case this changes or is slow or asynchronous, its good to update it manually
-			var newOrganizationIds = [];
-			for (var index in organizationRecords) {
-			  newOrganizationIds.push(organizationRecords[index].getId());
-			}
-			console.log('new organizations: ' + newOrganizationIds.toString());
-			
-			base('Positions').update(recordId, {
-			  "Official Title": profileJSON.newtitle,
-			  "People": updateRecord == 'add name' ? people : reducedPeopleSet,
-			  "Organizations": newOrganizationIds
-			}, function(err, record) {
-			  if (err) {
-				console.log('updatePosition error:' + err);
-				callback2(err);
-			  } else {
-				console.log('position updated: ' + record.getId());
-				callback2(null, 'success');
+			  var organizationIds = [];
+			  for (var key in organizationRecords) {
+				organizationIds.push(organizationRecords[key].getId());
 			  }
-			});
-			
-		}
-		
+			  console.log('creating position record: ' + profileJSON.newtitle + ' with ' + organizationIds + ' and people ' + profileJSON.id);
+			  base('Positions').create({
+				//"Series (if application)": [],
+				//"Grade (if application)": [],
+				"Official Title": profileJSON.newtitle,
+				"Organizations": organizationIds,
+				//"People": ['rec2G23lF9nnxdbXL']
+				"People": [profileJSON.id]
+			  }, function(err, record) {
+				if (err) {
+				  console.log('addPosition error: ' + err);
+				  callback2('addPosition error: ' + err, null);
+				} else {
+				  console.log('position added: ' + profileJSON.title);
+				  positionRecord.push(record.getId());
+				  callback2(null, record);
+				}
+			  });
+
+			} else {
+			  console.log('No new title/position or previous title/position found');
+			}
+			return;
+		  }
+		},
 	  
-  }, function(error) {
-    if (error) {
-      console.log('Error: ' + error);
-      callback(error);
-      return;
-    } else {
-      console.log('done adding or updating organizations, positions, and Position Changes.');
-      callback(null, 'success');
-    }
-  });
+	  ],
+	// series callback
+	function(err, results) {
+	  console.log('finishing async');
+	  if (err) {
+		console.log('Error: ' + err);
+		callback('updatePositions error: ' + err);
+	  } else {
+		callback(null, results);
+	  }
+	});
+  
+  
   /* This updates all new positions. a new process should check to which positions have been updated including those positions that no longer include that person and update those
   console.log('number of positions to update: ' + Object.keys(profileJSON.position).length);
   async.forEachOf(profileJSON.position, function(position, recordId, callback2) {
