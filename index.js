@@ -1820,11 +1820,11 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, position
   }, function(err, record) {
     if (err) {
       console.log('updateProfile error: ' + err);
-	  callback('updateProfile error: ' err);
+	  callback('updateProfile error: ' + err);
       //response.send('Error: ' + err + '\n');
     } else {
       console.log('profile updated: ' + record.getId());
-	  callback('updateProfile error: ' err);
+	  callback(null, 'success');
       //response.send('Sucessfully added/updated record: ' + record.getId());
     }
   });
