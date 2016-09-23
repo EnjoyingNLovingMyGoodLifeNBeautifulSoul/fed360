@@ -2248,7 +2248,6 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 			} else {
 			  console.log('No new title/position or previous title/position found');
 			}
-			return;
 		  }
 		},
 	  
@@ -2261,6 +2260,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		callback('updatePositions error: ' + err);
 	  } else {
 		console.log('done updating or creating positions');
+		console.log('***********************************');
 		callback(null, results);
 	  }
 	});
