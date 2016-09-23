@@ -2259,6 +2259,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		console.log('Error: ' + err);
 		callback('updatePositions error: ' + err);
 	  } else {
+		console.log('done updating or creating positions');
 		callback(null, results);
 	  }
 	});
