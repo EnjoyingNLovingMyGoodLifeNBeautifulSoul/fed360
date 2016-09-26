@@ -2141,6 +2141,8 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 		function(callback2) {
 			console.log('updating positions');
 			  async.forEachOf(allPositionRecords, function(position, recordId, callback3) {
+				    console.log('position people list: ' + position.get('People'));
+					console.log('profile id to remove/add: ' + profileJSON.id);
 					var updateRecord = 'retain names';
 					
 					var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
