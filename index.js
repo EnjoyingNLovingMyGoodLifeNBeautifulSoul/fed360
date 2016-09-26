@@ -2152,7 +2152,9 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						if (position.get('Official Title') != profileJSON.newtitle) {
 							// person's new position is not the same as the old one.  use the reduced people list
 							updateRecord = 'remove name';
-						} else {
+						}
+					} else {
+						if (position.get('Official Title') == profileJSON.newtitle) {
 							updateRecord = 'add name';
 						}
 					}
