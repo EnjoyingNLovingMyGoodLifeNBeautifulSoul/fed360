@@ -1697,7 +1697,7 @@ function saveProfile(request, response) {
         updatePositions(profileJSON, profileRecord[0], organizationRecords, allPositionRecords, positionRecord, callback);
       },
 	  function(callback) {
-		deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, callback);
+		//deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, callback);
 	  },
       function(callback) {
         updateProfile(profileJSON, profileRecord[0], organizationRecords, positionRecord, callback);
