@@ -2146,7 +2146,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 					console.log('profile id to remove/add: ' + profileJSON.id);
 					var updateRecord = 'retain names';
 					
-					var people = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+					var people = typeof position.get('People') == 'undefined' ? [] : position.get('People').slice(0);
 					if (people.indexOf(profileJSON.id) > -1) {
 						// person has that position
 						if (position.get('Official Title') != profileJSON.newtitle) {
@@ -2161,7 +2161,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						}
 					}
 					
-					var reducedPeopleSet = typeof position.get('People') == 'undefined' ? [] : position.get('People');
+					var reducedPeopleSet = typeof position.get('People') == 'undefined' ? [] : position.get('People').slice(0);
 					console.log('index of id to remove from people list: ' + reducedPeopleSet.indexOf(profileJSON.id));
 					reducedPeopleSet.splice(reducedPeopleSet.indexOf(profileJSON.id), 1);
 					
