@@ -2202,7 +2202,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						console.log('updating position record: ' + allPositionRecords[recordId].getId());
 						base('Positions').update(allPositionRecords[recordId].getId(), {
 						  "Official Title": position.get('Official Title'),
-						  "People": updateRecord == 'add name' ? people : reducedPeopleSet,
+						  "People": (updateRecord == 'add name' ? people : reducedPeopleSet),
 						  "Organizations": currentOrganizationIds
 						}, function(err, record) {
 						  if (err) {
