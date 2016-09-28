@@ -2180,19 +2180,21 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						// Airtable automatically updates cross referenced linked columns, however, in case this changes or is slow or asynchronous, its good to update it manually
 						
 						var currentOrganizationIds =  typeof position.get('Organizations') == 'undefined' ? [] : position.get('Organizations');
+						console.log('current organization ids: ' + currentOrganizationIds);
 						for (var index in organizationRecords) {
 						  if (updateRecord == 'add name')  {
 							  // add if not already present
 							  for (var key in currentOrganizationIds) {
 								  if (key == organizationRecords[index].getId()) {
 									  currentOrganizationIds.push(organizationRecords[index].getId());
+									  console.log('added new organization to list);
 								  }
 							  }
 						  } else {
 							  // remove if present
 							  for (var key in currentOrganizationIds) {
 								  if (key == organizationRecords[index].getId()) {
-									  console.log('deleting key ' + key);
+									  console.log('deleting existing organization key ' + key);
 									  delete currentOrganizationIds[key];
 								  }
 							  }
