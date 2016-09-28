@@ -2202,21 +2202,17 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						
 						console.log('people: ' + people);
 						console.log('reducedPeopleSet: ' + reducedPeopleSet);
-						var jsonTest = {
+						var updateValues = {
 						  "Official Title": position.get('Official Title'),
 						  "People": (updateRecord == 'add name' ? people : reducedPeopleSet),
 						  "Organizations": currentOrganizationIds
 						};
 						
-						console.log('people list json object: ' + jsonTest);
-						console.log('people list selector: ' + JSON.stringify(jsonTest));
+						console.log('people list json object: ' + updateValues);
+						console.log('people list selector: ' + JSON.stringify(updateValues));
 						
 						console.log('updating position record: ' + allPositionRecords[recordId].getId());
-						base('Positions').update(allPositionRecords[recordId].getId(), {
-						  "Official Title": position.get('Official Title'),
-						  "People": (updateRecord == 'add name' ? people : reducedPeopleSet),
-						  "Organizations": currentOrganizationIds
-						}, function(err, record) {
+						base('Positions').update(allPositionRecords[recordId].getId(), updateValues, function(err, record) {
 						  if (err) {
 							console.log('updatePosition error:' + err);
 							callback3(err);
