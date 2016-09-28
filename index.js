@@ -2202,6 +2202,10 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						  "People": (updateRecord == 'add name' ? people : reducedPeopleSet),
 						  "Organizations": currentOrganizationIds
 						};
+						jsonTest = {
+							"testtag":"test"
+						};
+						console.log('people list json object: ' + jsonTest);
 						console.log('people list selector: ' + jsonTest.stringify());
 						
 						console.log('updating position record: ' + allPositionRecords[recordId].getId());
