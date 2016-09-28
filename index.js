@@ -2197,7 +2197,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						}
 						console.log('new organizations: ' + currentOrganizationIds.toString());
 						
-						console.log('people list selector: ' + updateRecord == 'add name' ? people : reducedPeopleSet);
+						console.log('people list selector: ' + (updateRecord == 'add name' ? people : reducedPeopleSet));
 						
 						console.log('updating position record: ' + allPositionRecords[recordId].getId());
 						base('Positions').update(allPositionRecords[recordId].getId(), {
