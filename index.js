@@ -2197,6 +2197,8 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						}
 						console.log('new organizations: ' + currentOrganizationIds.toString());
 						
+						console.log('people: ' + people);
+						console.log('reducedPeopleSet: ' + reducedPeopleSet);
 						var jsonTest = {
 						  "Official Title": position.get('Official Title'),
 						  "People": (updateRecord == 'add name' ? people : reducedPeopleSet),
