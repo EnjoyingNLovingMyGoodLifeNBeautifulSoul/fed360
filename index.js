@@ -2157,7 +2157,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						if (position.get('Official Title') == profileJSON.newtitle) {
 							updateRecord = 'add name';
 							people.push(profileJSON.id);
-							console.log('added person to list: ' + people);
+							console.log('added person to list.  new list: ' + people);
 						}
 					}
 					
