@@ -2187,7 +2187,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 							  for (var key in currentOrganizationIds) {
 								  if (key == organizationRecords[index].getId()) {
 									  currentOrganizationIds.push(organizationRecords[index].getId());
-									  console.log('added new organization to list);
+									  console.log('added new organization to list');
 								  }
 							  }
 						  } else {
