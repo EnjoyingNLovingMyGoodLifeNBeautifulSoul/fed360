@@ -2189,6 +2189,10 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						console.log('previous record organization ids: ' + currentOrganizationIds);
 				
 						for (var index in organizationRecords) {
+							console.log('previous organization record : ' + organizationRecords[index].get('Name'));
+						}
+						console.log('organizationRecords length: ' + organizationRecords.length);
+						for (var index in organizationRecords) {
 						  if (updateRecord == 'add name')  {
 							  // add if not already present
 							  var newRecord = true;
