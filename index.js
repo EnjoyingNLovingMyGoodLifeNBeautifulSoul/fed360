@@ -2199,6 +2199,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 							  for (var key in currentOrganizationIds) {
 								  if (key == organizationRecords[index].getId()) {
 									  newRecord = false;
+									  continue;
 								  }
 							  }
 							  if (newRecord == true) {
