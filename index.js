@@ -1804,6 +1804,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, position
     organizationIds.push(organizationRecords[key].getId());
   }
 
+  console.log('position record: ' + positionRecord.get('Official Title'));
   base('People').update(profileRecord.getId(), {
     "Name (First)": profileJSON.firstname,
     //"Password": profileJSON.password,
