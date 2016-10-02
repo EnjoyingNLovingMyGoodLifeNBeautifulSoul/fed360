@@ -39,8 +39,8 @@ app.listen(app.get('port'), function() {
 var api_key = 'key-2b66aeb552d0359e216a4b0e0a8cad81';
 
 /* This will be used to get a password rest email*/
-app.post('/resetPassword', function(request, response) {
-  console.log('/resetPassword POST received');
+app.post('/resetPasswordFed360', function(request, response) {
+  console.log('/resetPasswordFed360 POST received');
   //console.log(JSON.stringify(request.body));
   console.log(request.body.result);
   console.log(JSON.parse(request.body.result));
