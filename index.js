@@ -91,7 +91,6 @@ app.post('/resetPasswordFed360', function(request, response) {
             correctPassword = true;
           } else {
             console.log(credentials.username + ': username password does not match');
-            response.send('Username or password does not match.');
           }
 
           //client.end.bind(client);
@@ -102,7 +101,6 @@ app.post('/resetPasswordFed360', function(request, response) {
 
       } else {
             console.log(credentials.username + ': username or email does not match');
-            response.send('Username or email does not match.');
       }
 
     });
