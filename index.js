@@ -66,6 +66,7 @@ app.post('/resetPasswordFed360', function(request, response) {
     var existingUsername = false;
     var correctPassword = false;
 
+    // verify username, email, and password before resetting
     var query = client.query('SELECT * FROM user_credentials;');
     query.on('row', function(row) {
       console.log(JSON.stringify(row));
