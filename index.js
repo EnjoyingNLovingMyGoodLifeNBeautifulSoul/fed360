@@ -139,7 +139,7 @@ app.post('/resetPasswordFed360', function(request, response) {
         //disconnect client when all queries are finished. used as callback
         //client.on('drain', client.end.bind(client)); 
 
-        done();
+        //done();
         console.log(credentials.email + ": Database client was disconnected without updating password.");
         response.send('Email is not registered. No password reset completed.');
         client.end.bind(client);
