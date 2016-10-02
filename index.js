@@ -151,7 +151,7 @@ app.post('/resetPassword', function(request, response) {
 
     }); //disconnect client manually. no callback
   });
-}
+});
 
 //Your domain, from the Mailgun Control Panel
 var domain = 'mg.mrrmrr.com';
