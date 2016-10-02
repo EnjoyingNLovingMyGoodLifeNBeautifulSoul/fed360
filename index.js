@@ -38,9 +38,9 @@ app.listen(app.get('port'), function() {
 //Your api key, from Mailgun’s Control Panel
 var api_key = 'key-2b66aeb552d0359e216a4b0e0a8cad81';
 
-/* This will be used to get a password rest email
-app.post('/loginFed360', function(request, response) {
-  console.log('/loginFed360 POST received');
+/* This will be used to get a password rest email*/
+app.post('/resetPassword', function(request, response) {
+  console.log('/resetPassword POST received');
   //console.log(JSON.stringify(request.body));
   console.log(request.body.result);
   console.log(JSON.parse(request.body.result));
@@ -62,18 +62,22 @@ app.post('/loginFed360', function(request, response) {
     if (err) throw err;
     console.log('Connected to postgres! Getting schemas...');
 
-    //client
-    //.query('SELECT table_schema,table_name FROM information_schema.tables;')
-    //.on('row', function(row) {
-    //  console.log(JSON.stringify(row));
-    // {"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
-    //});
+    var existingEmail = false;
+    var existingUsername = false;
+    var correctPassword = false;
+
     var query = client.query('SELECT * FROM user_credentials;');
     query.on('row', function(row) {
       console.log(JSON.stringify(row));
 
-      if ((credentials.username == row.username) || (credentials.username == row.email)) {
-        console.log(credentials.username + ': username match, checking password');
+      if ((credentials.username == row.username) || (credentials.email == row.email)) {
+        console.log(credentials.username + ': username and email match, checking password');
+        if (row.email == credentials.email) {
+          existingEmail = true;
+        }
+        if (row.username == credentials.username) {
+          existingUsername = true;
+        }
 
         console.log('hash length ' + row.salted_hash.length);
         // Load hash from your password DB.
@@ -83,14 +87,14 @@ app.post('/loginFed360', function(request, response) {
           if (res == true) {
             console.log(credentials.username + ': verified username and password');
             //response.send('download completed');
-            loadProfile(credentials.username, response);
+            correctPassword = true;
           } else {
             console.log(credentials.username + ': username password does not match');
             response.send('Username or password does not match.');
           }
 
           client.end.bind(client);
-          console.log(credentials.username + ": login database disconnected");
+          console.log(credentials.username + ": reset password connection to database disconnected");
 
         });
         //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
@@ -98,13 +102,56 @@ app.post('/loginFed360', function(request, response) {
       }
 
     });
-    query.on('end', function() {
-      // not used.  triggers after query is over and does wait until bcrypt function is complete
 
-    });
+    query.on('end', function() {
+      console.log(credentials.email + ': credential verification query completed');
+
+      if ((existingEmail == true) || (existingUsername == true)) {
+        console.log(credentials.email + ': previous email or username registration found for ' + credentials.email + ' username ' + credentials.username);
+        bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
+          // Store hash in your password DB.
+          //console.log('created hash ' + hash);
+          console.log(credentials.email + ': created new hash');
+          // write to database
+          var query2 = client.query('INSERT INTO user_credentials (salted_hash) ' +
+            'VALUES (\'' + hash + '\');');
+          query2.on('end', function() {
+            console.log(credentials.email + ': updated Postgresql database with user password change');
+            response.send('password reset completed');
+            client.end.bind(client);
+            console.log(credentials.email + ": Database client was disconnected after password reset.");
+          });
+
+          //disconnect client when all queries are finished. used as callback
+          //client.on('drain', client.end.bind(client)); 
+
+          // callback when connection is finished
+          //client.on('end', function(){
+          //  console.log("Database client was disconnected.")
+          //  response.send('regisration complete');
+          //}); 
+
+        });
+      } else {
+        console.log(credentials.email + ': no previous registration exists for ' + credentials.email + ' username ' + credentials.username);
+        //disconnect client when all queries are finished. used as callback
+        //client.on('drain', client.end.bind(client)); 
+
+        done();
+        console.log(credentials.email + ": Database client was disconnected without updating password.");
+        response.send('Email is not registered. No password reset completed.');
+        client.end.bind(client);
+
+        // callback when connection is finished
+        //client.on('end', function(){
+        //  
+
+        //});
+      }
+
+    }); //disconnect client manually. no callback
   });
 }
-*/
 
 //Your domain, from the Mailgun Control Panel
 var domain = 'mg.mrrmrr.com';
