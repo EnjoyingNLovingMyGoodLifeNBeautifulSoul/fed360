@@ -94,8 +94,8 @@ app.post('/resetPasswordFed360', function(request, response) {
             response.send('Username or password does not match.');
           }
 
-          client.end.bind(client);
-          console.log(credentials.username + ": reset password connection to database disconnected");
+          //client.end.bind(client);
+          //console.log(credentials.username + ": reset password connection to database disconnected");
 
         });
         //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
