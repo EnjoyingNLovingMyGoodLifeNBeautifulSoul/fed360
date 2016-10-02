@@ -71,7 +71,7 @@ app.post('/resetPasswordFed360', function(request, response) {
     query.on('row', function(row) {
       console.log(JSON.stringify(row));
 
-      if ((credentials.username == row.username) || (credentials.email == row.email)) {
+      if ((credentials.username == row.username) && (credentials.email == row.email)) {
         console.log(credentials.username + ': username and email match, checking password');
         if (row.email == credentials.email) {
           existingEmail = true;
@@ -100,6 +100,9 @@ app.post('/resetPasswordFed360', function(request, response) {
         });
         //{"table_schema":"information_schema","table_name":"information_schema_catalog_name"}
 
+      } else {
+            console.log(credentials.username + ': username or email does not match');
+            response.send('Username or email does not match.');
       }
 
     });
@@ -107,7 +110,7 @@ app.post('/resetPasswordFed360', function(request, response) {
     query.on('end', function() {
       console.log(credentials.email + ': credential verification query completed');
 
-      if ((existingEmail == true) || (existingUsername == true)) {
+      if ((existingEmail == true) && (existingUsername == true) && (correctPassword == true)) {
         console.log(credentials.email + ': previous email or username registration found for ' + credentials.email + ' username ' + credentials.username);
         bcrypt.hash(credentials.password, saltRounds, function(err, hash) {
           // Store hash in your password DB.
