@@ -1857,6 +1857,8 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, position
   for (var key in positionRecord) {
 	  positionIds.push(positionRecord[key].getId());
   }
+  
+  console.log('updateProfile new position ids: ' + positionIds);
 
   base('People').update(profileRecord.getId(), {
     "Name (First)": profileJSON.firstname,
