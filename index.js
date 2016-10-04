@@ -1727,23 +1727,29 @@ function saveProfile(request, response) {
       },
       function(callback) {
         updateOrganization(profileJSON, profileRecord[0], organizationRecords, allOrganizationRecords, callback);
+		console.log('1 current organzation records: ' + organizationRecords);
       },
       function(callback) {
         removeNameFromOrganization(profileJSON, callback, organizationRecords, allOrganizationRecords);
+		console.log('2 current organzation records: ' + organizationRecords);
       },
       function(callback) {
         // refresh list
         allOrganizationRecords = [];
         getAllOrganizations(profileJSON, callback, allOrganizationRecords);
+		console.log('3 current organzation records: ' + organizationRecords);
       },
       function(callback) {
         deleteUnusedOrganizations(profileJSON, callback, organizationRecords, allOrganizationRecords);
+		console.log('4 current organzation records: ' + organizationRecords);
       },
       function(callback) {
         getAllPositions(profileJSON, callback, allPositionRecords);
+		console.log('5 current organzation records: ' + organizationRecords);
       },
       function(callback) {
         updatePositions(profileJSON, profileRecord[0], organizationRecords, allPositionRecords, positionRecord, callback);
+		console.log('6 current organzation records: ' + organizationRecords);
       },
 	  function(callback) {
 		//deleteUnusedPositions(profileJSON, allPositionRecords, positionRecord, callback);
