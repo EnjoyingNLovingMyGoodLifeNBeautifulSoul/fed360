@@ -2253,10 +2253,10 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 						  if (updateRecord == 'add name')  {
 							  // add if not already present
 							  var newRecord = true;
-							  for (var key in currentOrganizationIds) {
-								  console.log('comparing current organization: ' + key + ' and ' + organizationRecords[index].getId());
+							  for (var index2 in currentOrganizationIds) {
+								  console.log('comparing current organization: ' + currentOrganizationIds[index2] + ' and ' + organizationRecords[index].getId());
 								  if (key == organizationRecords[index].getId()) {
-									  console.log('current organization id already in list: ' + key + ' matches ' + organizationRecords[index].getId());
+									  console.log('current organization id already in list: ' + currentOrganizationIds[index2] + ' matches ' + organizationRecords[index].getId());
 									  newRecord = false;
 									  break;
 								  }
@@ -2267,10 +2267,10 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 							  }
 						  } else {
 							  // remove if present
-							  for (var key in currentOrganizationIds) {
-								  if (key == organizationRecords[index].getId()) {
-									  console.log('deleting existing organization key ' + key);
-									  delete currentOrganizationIds[key];
+							  for (var index2 in currentOrganizationIds) {
+								  if (currentOrganizationIds[index2] == organizationRecords[index].getId()) {
+									  console.log('deleting existing organization key ' + currentOrganizationIds[index2]);
+									  delete currentOrganizationIds[currentOrganizationIds[index2]];
 								  }
 							  }
 						  }
