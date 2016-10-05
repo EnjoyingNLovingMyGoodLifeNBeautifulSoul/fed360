@@ -2254,6 +2254,7 @@ function updatePositions(profileJSON, profileRecord, organizationRecords, allPos
 							  // add if not already present
 							  var newRecord = true;
 							  for (var key in currentOrganizationIds) {
+								  console.log('comparing current organization: ' + key + ' and ' + organizationRecords[index].getId());
 								  if (key == organizationRecords[index].getId()) {
 									  console.log('current organization id already in list: ' + key + ' matches ' + organizationRecords[index].getId());
 									  newRecord = false;
