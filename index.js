@@ -1873,7 +1873,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, position
     //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
     //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
     //"Deliveries": profileRecord.get('Deliveries'),
-    //"Position": positionIds,
+    "Position": positionIds,
     "Organization": organizationIds,
     "Direct Supervisor (email)": profileJSON.supervisoremail,
     "Email": profileJSON.email,
@@ -2919,9 +2919,10 @@ app.post('/updateViewedByEndorsee', function(request, response) {
 	
 	var totalUpdates = 0;
 	
+	// update all endorsements
 	async.each(endorsements.ids, function(endorsementId, callback) {
 		base('Endorsements').update(endorsementId, {
-			'Viewed by Endorsee': 'True'
+			'Viewed by Endorsee': endorsements.updateViewedByEndorsee
 			},
 			function(err, updatedRecord) {
 				if (err) {
@@ -2943,10 +2944,11 @@ app.post('/updateViewedByEndorsee', function(request, response) {
 			response.send('Done');
 		}
     });
-	
+	/*
+	// update a single endorsement
 	async.series([
 		function(callback) {
-			base('Endorsements').update(profileJSON.endorsementId, {
+			base('Endorsements').update(endorsements.ids, {
 			'Viewed by Endorsee': 'True'
 			},
 			function(err, updatedRecord) {
@@ -2972,7 +2974,7 @@ app.post('/updateViewedByEndorsee', function(request, response) {
 		}
     });
 	
-	
+	*/
 });
 
 app.post('/updateCompetencies', function(request, response) {
