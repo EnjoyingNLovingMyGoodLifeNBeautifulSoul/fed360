@@ -2940,7 +2940,7 @@ app.post('/updateViewedByEndorsee', function(request, response) {
 			console.log('Error: ' + err);
 			response.send('Error: ' + err);
 		} else {
-			console.log('All ' + totalUpdates + ' viewedByEndorsee records updated');
+			console.log('All ' + totalUpdates + ' endorsements  for viewedByEndorsee records updated for ' + endorsements.competency);
 			response.send('Done');
 		}
     });
