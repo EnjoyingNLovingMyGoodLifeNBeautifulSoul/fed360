@@ -1855,13 +1855,13 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, position
   console.log('updating profile: ' + profileRecord.get('Profile ID') + ' for ' + profileRecord.organization);
 
   var organizationIds = [];
-  for (var key in organizationRecords) {
-    organizationIds.push(organizationRecords[key].getId());
+  for (var index in organizationRecords) {
+    organizationIds.push(organizationRecords[index].getId());
   }
   
   var positionIds = [];
-  for (var key in positionRecord) {
-	  positionIds.push(positionRecord[key].getId());
+  for (var index in positionRecord) {
+	  positionIds.push(positionRecord[index].getId());
   }
   
   console.log('updateProfile new position ids: ' + positionIds);
@@ -1873,7 +1873,7 @@ function updateProfile(profileJSON, profileRecord, organizationRecords, position
     //"Endorsements (received)": profileRecord.get('Endorsements (received)'),
     //"Endorsements (given)": profileRecord.get('Endorsements (given)'),
     //"Deliveries": profileRecord.get('Deliveries'),
-    "Position": positionIds,
+    //"Position": positionIds,
     "Organization": organizationIds,
     "Direct Supervisor (email)": profileJSON.supervisoremail,
     "Email": profileJSON.email,
