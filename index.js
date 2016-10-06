@@ -2922,7 +2922,7 @@ app.post('/updateViewedByEndorsee', function(request, response) {
 	// update all endorsements
 	async.each(endorsements.ids, function(endorsementId, callback) {
 		base('Endorsements').update(endorsementId, {
-			'Viewed by Endorsee': endorsements.updateViewedByEndorsee
+			'Viewed by Endorsee': endorsements.updateViewedByEndorsee ? 'True' : 'False'
 			},
 			function(err, updatedRecord) {
 				if (err) {
