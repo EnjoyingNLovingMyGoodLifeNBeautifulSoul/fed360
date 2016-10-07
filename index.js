@@ -2921,15 +2921,16 @@ app.post('/updateViewedByEndorsee', function(request, response) {
 	
 	// update all endorsements
 	async.each(endorsements.ids, function(endorsementId, callback) {
+		console.log('Viewed by Endorsee column JSON ' + endorsementId + ' veiwed ' + endorsements.viewedbyendorsee);
 		base('Endorsements').update(endorsementId, {
-			'Viewed by Endorsee': endorsements.updateViewedByEndorsee ? 'True' : 'False'
+			'Viewed by Endorsee': endorsements.viewedbyendorsee ? 'True' : 'False'
 			},
 			function(err, updatedRecord) {
 				if (err) {
 					console.log('Error: ' + err);
 					callback(err);
 				} else {
-					console.log('Viewed by Endorsee column updated in Endorsements table for ' + updatedRecord.get('Of') + ' by ' + updatedRecord.get('By') + ' record id ' + updatedRecord.getId());
+					console.log('Viewed by Endorsee column updated in Endorsements table for ' + updatedRecord.get('Of') + ' by ' + updatedRecord.get('By') + ' record id ' + updatedRecord.getId() + ' to ' + updatedRecord.get('Viewed by Endorsee'));
 					totalUpdates++;
 					callback(null, 'success');
 				}
