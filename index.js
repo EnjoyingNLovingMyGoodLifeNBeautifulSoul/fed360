@@ -1175,8 +1175,7 @@ function createDelivery(createdDeliveryRecord, deliveryName, fromIds, ccIds, cal
 
 //app.get('/loadProfiles', cors(corsOptions), function(request, response) {
 app.get('/loadProfiles', function(request, response) {
-  console.log('GET received')
-  console.log('loadProfiles called');
+  console.log('GET received: loadProfiles called');
   var profilesJSON = {
     'profiles': []
   };
@@ -2904,6 +2903,102 @@ function loadEndorsements(endorsementsReference, callback) {
     //console.log(endorsements);
     callback(null, 'success');
   });
+}
+
+function loadAllTrainings(trainings, callback) {
+	base('Trainings').select({
+          view: "Main View"
+        }).eachPage(function page(records, fetchNextPage) {
+
+          // This function (`page`) will get called for each page of records.
+
+          records.forEach(function(record) {
+            console.log('processing training ' + record.get('Title'));
+            trainings[record.getId()] = {
+              'title': record.get('Title'),
+              'subtitle': record.get('Subtitle'),
+              'abstract': record.get('Abstract'),
+              'description': record.get('Description (markdown compatible?)'),
+              'link': record.get('Link'),
+              'related': record.get('Related Competencies'),
+              'associated': record.get('Associated Endorsements'),
+              'recommendations': record.get('Recommendations')
+
+            };
+
+          });
+
+          // To fetch the next page of records, call `fetchNextPage`.
+          // If there are more records, `page` will get called again.
+          // If there are no more records, `done` will get called.
+          fetchNextPage();
+
+        }, function done(error) {
+          if (error) {
+            console.log('error:');
+            console.log(error);
+            callback(error);
+          } else {
+			callback(null,'all trainings lodaded success');
+		  }
+		});
+}
+
+function updateNewTrainings(trainings, profiles, callback) {
+	
+	// update all trainings
+	async.series([
+      function(callback2) {
+        // update previous training records
+		async.each(newtrainings, function(newtraining, callback3) {
+			console.log(' ' + newtrainingId + ' being updated');
+			
+			
+			
+			base('Trainings').update(newtraining.id, {
+					  'Title': ,
+					  'Description (markdown compatible?)': ,
+					  'Related Competencies': ,
+					  'Recommendations': ,
+
+			}, function(err, record) {
+				  if (error) {
+					console.log('error:');
+					console.log(error);
+					callback3(error);
+				  } else {
+					callback3(null,'training updated successfully');
+				  }
+			});
+			
+			}, function(err) {
+			console.log('finishing async');
+			if (err) {
+				console.log('Error: ' + err);
+				callback2(error);
+			} else {
+				console.log('All ' + totalUpdates + ' trainings updated or added or deleted records ' + endorsements.competency);
+				callback2(null,'all trainings upadted success');
+			}
+		});
+      },
+	  function(callback2) {
+		// create new training record
+	  }
+	  ],
+    // series callback
+    function(err, results) {
+      console.log('finishing updateNewTrainings');
+      if (err) {
+        console.log('Error: ' + err);
+        callback(err);
+      } else {
+		console.log('all new trainings updated or added');
+        callback(null,'success');
+      }
+    });
+	  
+	
 }
 
 app.post('/updateViewedByEndorsee', function(request, response) {
