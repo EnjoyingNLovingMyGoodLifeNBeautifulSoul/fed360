@@ -2956,10 +2956,10 @@ function updateNewTrainings(trainings, profiles, callback) {
 			
 			
 			base('Trainings').update(newtraining.id, {
-					  'Title': ,
-					  'Description (markdown compatible?)': ,
-					  'Related Competencies': ,
-					  'Recommendations': ,
+					  'Title': '',
+					  'Description (markdown compatible?)': '',
+					  'Related Competencies': '',
+					  'Recommendations': '',
 
 			}, function(err, record) {
 				  if (error) {
