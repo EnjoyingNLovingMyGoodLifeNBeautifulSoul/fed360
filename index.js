@@ -2949,17 +2949,25 @@ function updateNewTrainings(trainings, profiles, callback) {
 	// update all trainings
 	async.series([
       function(callback2) {
+        var totalUpdates = 0;
         // update previous training records
 		async.each(newtrainings, function(newtraining, callback3) {
 			console.log(' ' + newtrainingId + ' being updated');
 			
-			
+      var competencylist = [];
+      for (var index in profiles) {
+        if (profiles[index].competency.id) {
+          competencylist.push(profiles[index].competency.id); 
+        }
+      }
+
+x			
 			
 			base('Trainings').update(newtraining.id, {
-					  'Title': '',
-					  'Description (markdown compatible?)': '',
-					  'Related Competencies': '',
-					  'Recommendations': '',
+					  'Title': newtraining.endorsedName,
+					  'Description (markdown compatible?)': newtraining.endorsedDescription,
+					  'Related Competencies': competencylist,
+					  'Predefined': 'FALSE',
 
 			}, function(err, record) {
 				  if (error) {
@@ -2967,6 +2975,7 @@ function updateNewTrainings(trainings, profiles, callback) {
 					console.log(error);
 					callback3(error);
 				  } else {
+          totalUpdates++;
 					callback3(null,'training updated successfully');
 				  }
 			});
@@ -2977,7 +2986,7 @@ function updateNewTrainings(trainings, profiles, callback) {
 				console.log('Error: ' + err);
 				callback2(error);
 			} else {
-				console.log('All ' + totalUpdates + ' trainings updated or added or deleted records ' + endorsements.competency);
+				console.log('All ' + totalUpdates + ' trainings updated or added or deleted records');
 				callback2(null,'all trainings upadted success');
 			}
 		});
