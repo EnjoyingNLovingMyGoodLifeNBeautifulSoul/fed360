@@ -2961,7 +2961,7 @@ function updateNewTrainings(trainings, profiles, callback) {
         }
       }
 
-x			
+			
 			
 			base('Trainings').update(newtraining.id, {
 					  'Title': newtraining.endorsedName,
