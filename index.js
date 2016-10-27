@@ -2617,6 +2617,8 @@ app.post('/saveEndorsements', function(request, response) {
 
   var allEndorsements = {};
   var removeEndorsements = [];
+  
+  var allTrainings = {};
 
   async.series([
       function(callback) {
@@ -2791,6 +2793,16 @@ app.post('/saveEndorsements', function(request, response) {
                   return;
                 }
                 console.log('saved created endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
+				// add new endorsements ids to the profiles list
+				for (var index in profilesJSON) {
+					if (profilesJSON.profiles[index].id == endorsement['Of']) {
+						if (typeof profilesJSON.profiles[index].newEndorsements == 'undefined') {
+							profilesJSON.profiles[index].newEndorsements = [];
+						}
+						profilesJSON.profiles[index].newEndorsements.push(record.getId());
+					}
+				}
+				//record.getId();
                 callback2(null, 'success');
 
               });
@@ -2845,8 +2857,15 @@ app.post('/saveEndorsements', function(request, response) {
             callback(null, 'success');
           }
         });
-      }
-
+      },
+	function(callback) {
+        console.log('loading all trainings');
+		loadAllTrainings(allTrainings, callback);
+	},
+	function(callback) {
+		console.log('updating all endorsements trainings');
+		updateNewTrainings(allTrainings, profilesJSON, callback);
+	}
     ],
     // series callback
     function(err, results) {
@@ -2920,8 +2939,8 @@ function loadAllTrainings(trainings, callback) {
               'abstract': record.get('Abstract'),
               'description': record.get('Description (markdown compatible?)'),
               'link': record.get('Link'),
-              'related': record.get('Related Competencies'),
-              'associated': record.get('Associated Endorsements'),
+              'competencies': record.get('Related Competencies'),
+              'endorsements': record.get('Associated Endorsements'),
               'recommendations': record.get('Recommendations')
 
             };
@@ -2944,29 +2963,103 @@ function loadAllTrainings(trainings, callback) {
 		});
 }
 
-function updateNewTrainings(trainings, profiles, callback) {
+function updateNewTrainings(allTrainings, profiles, callback) {
+	
+	var newTrainings = [];
+	for (var index in profiles) {
+		for (var index2 in profiles.competencies) {
+			for (var index3 in profiles.competencies[index].endorsedTraining) {
+				if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
+					// create endorsement list from previous and new endorsments
+					var endorsementList = [];
+					/*if (typeof profiles[index].endorsements != 'undefined') {
+						for (var index4 in profiles[index].endorsements) {
+							if (profiles[index].competencies[index2].name == profiles[index].endorsements[index4].competency) {
+								endorsementList.push(profiles[index].endorsements[index4].id);
+							}
+						
+						}
+						
+					}*/
+					for (var index5 in profiles[index].newEndorsements) {
+						endorsementList.push(profiles[index].newEndorsements[index5]);
+					}
+					
+					newTrainings.push({
+						'endorsedDescription':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedDescription,
+						'endorsedName':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedName,
+						'endorsedReadMoreURL':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedReadMoreURL,
+						'id':  profiles[index].competencies[index2].endorsedTraining[index3].id,
+						'newTraining':  profiles[index].competencies[index2].endorsedTraining[index3].newTraining,
+						'competency': profiles[index].competencies[index2].name,
+						'competencyid': profiles[index].competencies[index2].id,
+						'newendorsementids': endorsementList
+					});
+				}
+				
+			}
+		}
+	}
 	
 	// update all trainings
 	async.series([
       function(callback2) {
         var totalUpdates = 0;
+		var totalNewRecords = 0;
         // update previous training records
-		async.each(newtrainings, function(newtraining, callback3) {
-			console.log(' ' + newtrainingId + ' being updated');
+		async.each(newTrainings, function(newtraining, callback3) {
+			console.log(' ' + newtraining.endorsedName + ' being created/updated');
 			
-      var competencylist = [];
-      for (var index in profiles) {
-        if (profiles[index].competency.id) {
-          competencylist.push(profiles[index].competency.id); 
-        }
-      }
+      
+			if (typeof newtraining.id == 'undefined') {
+				console.log('created new training record');
+				
+				base('Trainings').create({
+						  'Title': newtraining.endorsedName,
+						  'Description (markdown compatible?)': newtraining.endorsedDescription,
+						  'Link': newtraining.endorsedReadMoreURL,
+						  'Related Competencies': competencylist,
+						  'Associated Endorsements': newtraining.endorsementid,
+						  'Predefined': 'FALSE',
 
+				}, function(err, record) {
+					  if (error) {
+						console.log('error:');
+						console.log(error);
+						callback3(error);
+					  } else {
+						totalNewRecords++;
+						callback3(null,'training record created successfully');
+					  }
+				});
+				
+				return;
+			}
+
+			var competencylist = [];
+			// load existing competency list if the previous record exists
+			competencyList = allTrainings[newtraining.id].competencies;
+			if (competencyList.indexOf(newtraining.competencyid) != -1 ) {
+				competencyList.push(newtraining.competencyid);
+			}
 			
+			
+			var endorsementlist = [];
+			// load existing endorsement list if the previous record exists
+			endorsementList = allTrainings[newtraining.id].endorsements;
+			for (var index in newtraining.newendorsementids) {
+				if (endorsementList.indexOf(newtraining.newendorsementids[index]) != -1 ) {
+					endorsementList.push(newtraining.newendorsementids[index]);
+				}
+			}
+			
+
 			
 			base('Trainings').update(newtraining.id, {
 					  'Title': newtraining.endorsedName,
 					  'Description (markdown compatible?)': newtraining.endorsedDescription,
 					  'Related Competencies': competencylist,
+					  'Associated Endorsements': newtraining.endorsementids,
 					  'Predefined': 'FALSE',
 
 			}, function(err, record) {
@@ -2975,12 +3068,12 @@ function updateNewTrainings(trainings, profiles, callback) {
 					console.log(error);
 					callback3(error);
 				  } else {
-          totalUpdates++;
+					totalUpdates++;
 					callback3(null,'training updated successfully');
 				  }
 			});
 			
-			}, function(err) {
+		}, function(err) {
 			console.log('finishing async');
 			if (err) {
 				console.log('Error: ' + err);
