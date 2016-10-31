@@ -2963,8 +2963,97 @@ function loadAllTrainings(trainings, callback) {
 		});
 }
 
+function addNewTrainings(allTrainings, profiles, callback) {
+	// build list of uploaded trainings.  this time with newly compiled endorsement list.
+	var newTrainings = [];
+	for (var index in profiles) {
+		for (var index2 in profiles[index].competencies) {
+			for (var index3 in profiles[index].competencies[index2].endorsedTraining) {
+				if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
+					// only add if record does not exist
+					var existingTrainingId = '';
+					for (var index4 in allTrainings) {
+						if (allTrainings.get('Title') == profiles[index].competencies[index2].endorsedTraining[index3].endorsedName) {
+							existingTrainingId = allTrainings.getId();
+						}
+					}
+					if (existingTrainingId != '') {
+						newTrainings.push({
+							'endorsedDescription':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedDescription,
+							'endorsedName':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedName,
+							'endorsedReadMoreURL':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedReadMoreURL,
+							'newTraining':  profiles[index].competencies[index2].endorsedTraining[index3].newTraining,
+							'competency': profiles[index].competencies[index2].name,
+							'competencyid': profiles[index].competencies[index2].id,
+							'newendorsementids': []
+						});
+					} else {
+						profiles[index].competencies[index2].endorsedTraining[index3].id = existingTrainingId;
+					}
+
+				}
+				
+			}
+		}
+	}
+	
+	var totalNewRecords = 0;
+        // process all uploaded training records
+		async.each(newTrainings, function(newtraining, callback2) {
+			console.log(' ' + newtraining.endorsedName + ' being created/updated');
+			
+			// if the uploaded training is new, it has no id
+			if (typeof newtraining.id == 'undefined') {
+				console.log('created new training record');
+				
+				base('Trainings').create({
+						  'Title': newtraining.endorsedName,
+						  'Description (markdown compatible?)': newtraining.endorsedDescription,
+						  'Link': newtraining.endorsedReadMoreURL,
+						  'Related Competencies': competencylist,
+						  'Associated Endorsements': newtraining.endorsementid,
+						  'Predefined': 'FALSE',
+
+				}, function(err, record) {
+					  if (error) {
+						console.log('error:');
+						console.log(error);
+						callback2(error);
+					  } else {
+						totalNewRecords++;
+						for (var index in profiles) {
+							for (var index2 in profiles[index].competencies) {
+								for (var index3 in profiles[index].competencies[index2].endorsedTraining) {
+									if (profiles[index].competencies[index2].endorsedTraining[index3].endorsedName == record.get('Title')) {
+										profiles[index].competencies[index2].endorsedTraining[index3].id = record.getId();
+									}
+								}
+							}
+						}
+				
+						callback2(null,'training record created successfully');
+					  }
+				});
+				
+				return;
+			}
+
+			
+		}, function(err) {
+			console.log('finishing addNewTrainings async');
+			if (err) {
+				console.log('Error: ' + err);
+				callback(error);
+			} else {
+				console.log('All ' + totalNewRecords + ' new trainings added');
+				callback(null,'all trainings added success');
+			}
+		});	
+}
+
 function updateNewTrainings(allTrainings, profiles, callback) {
 	
+	// build list of uploaded trainings.  this time with newly compiled endorsement list.
 	var newTrainings = [];
 	for (var index in profiles) {
 		for (var index2 in profiles.competencies) {
@@ -3006,11 +3095,11 @@ function updateNewTrainings(allTrainings, profiles, callback) {
       function(callback2) {
         var totalUpdates = 0;
 		var totalNewRecords = 0;
-        // update previous training records
+        // process all uploaded training records
 		async.each(newTrainings, function(newtraining, callback3) {
 			console.log(' ' + newtraining.endorsedName + ' being created/updated');
 			
-      
+			// if the uploaded training is new, it has no id
 			if (typeof newtraining.id == 'undefined') {
 				console.log('created new training record');
 				
@@ -3036,6 +3125,7 @@ function updateNewTrainings(allTrainings, profiles, callback) {
 				return;
 			}
 
+			// if it does have an id, then update its competency and endorsement list
 			var competencylist = [];
 			// load existing competency list if the previous record exists
 			competencyList = allTrainings[newtraining.id].competencies;
@@ -3085,7 +3175,7 @@ function updateNewTrainings(allTrainings, profiles, callback) {
 		});
       },
 	  function(callback2) {
-		// create new training record
+		// delete trainings with no endorsements
 	  }
 	  ],
     // series callback
