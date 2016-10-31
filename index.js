@@ -2626,40 +2626,22 @@ app.post('/saveEndorsements', function(request, response) {
 		loadAllTrainings(allTrainings, callback);
 	  },
 	  function(callback) {
+		console.log('add new training records');
 		addNewTraining(allTrainings, profilesJSON.profiles, callback);
 	  },
       function(callback) {
+		  console.log('loading all endorsements');
         loadEndorsements(allEndorsements, callback);
       },
 
       function(callback) {
-        console.log('saving endorsement');
-        saveEndorsements(allEndorsements, profilesJSON.profiles, callback);
+        console.log('saving endorsements');
+        saveEndorsements(allEndorsements, profilesJSON.profiles, removeEndorsements, callback);
       },
 
       function(callback) {
-        console.log('deleting extra previous endorsements');
-
-        async.each(removeEndorsements, function(endorsementId, callback2) {
-          base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
-            if (err) {
-              console.log(err);
-              callback2(err);
-              return;
-            }
-            console.log('Deleted record ' + deletedRecord.id);
-            callback2(null, 'success');
-          });
-        }, function(error) {
-          if (error) {
-            console.log('Error: ' + error);
-            callback(error);
-            return;
-          } else {
-            console.log('done replacing all entries');
-            callback(null, 'success');
-          }
-        });
+        console.log('deleting undone endorsements');
+		removeExtraEndorsements(removeEndorsements, callback);
       },
 	
 	function(callback) {
@@ -2724,7 +2706,7 @@ function loadEndorsements(endorsementsReference, callback) {
   });
 }
 
-function saveEndorsements(allEndorsements, profiles, callback) {
+function saveEndorsements(allEndorsements, profiles, removeEndorsements, callback) {
 	var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
         var twoDigitMonth = ("0" + date.getMonth().toString()).slice(-2);
@@ -2930,6 +2912,35 @@ function saveEndorsements(allEndorsements, profiles, callback) {
         });
 }
 
+function removeExtraEndorsements(removeEndorsements, profiles, callback) {
+	
+	async.each(removeEndorsements, function(endorsementId, callback2) {
+	  base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
+		if (err) {
+		  console.log(err);
+		  callback2(err);
+		  return;
+		}
+		console.log('Deleted record ' + deletedRecord.id);
+		if (typeof profiles.removeEndorsements == 'undefined') {
+			profiles.removeEndorsements = [];
+		}
+	    profiles.removeEndorsements.push(deletedRecord.getId());
+		callback2(null, 'success');
+	  });
+	}, function(error) {
+	  if (error) {
+		console.log('Error: ' + error);
+		callback(error);
+		return;
+	  } else {
+		  
+		console.log('done deleting undone endorsements');
+		callback(null, 'success');
+	  }
+	});
+}
+
 function loadAllTrainings(trainings, callback) {
 	base('Trainings').select({
           view: "Main View"
@@ -3036,6 +3047,18 @@ function addNewTrainings(allTrainings, profiles, callback) {
 								}
 							}
 						}
+						
+						// used to update endorsement column
+						allTrainings[record.getId()] = {
+						  'title': record.get('Title'),
+						  'subtitle': record.get('Subtitle'),
+						  'abstract': record.get('Abstract'),
+						  'description': record.get('Description (markdown compatible?)'),
+						  'link': record.get('Link'),
+						  'competencies': record.get('Related Competencies'),
+						  'endorsements': record.get('Associated Endorsements'),
+						  'recommendations': record.get('Recommendations')
+						};
 				
 						callback2(null,'training record created successfully');
 					  }
@@ -3057,8 +3080,41 @@ function addNewTrainings(allTrainings, profiles, callback) {
 		});	
 }
 
-function updateNewTrainings(allTrainings, profiles, callback) {
+function updateTrainings(allTrainings, profiles, callback) {
 	
+	async.each(allTrainings, function(training, callback2) {
+		// check endorsements in each training record.  Add id if its listed in newEndorsements.  Remove id if its listed in removeEndorsements
+		
+		profiles[index].competencies[index2].endorsedTraining[index3].id
+		
+		for (var index in training.endorsements) {
+			var alreadyHasEndorsement = false;
+			for (var index2 in profiles) {
+				for (var index3 in profiles[index2].newEndorsements) {
+					if (training.endorsements[index] == profiles[index2].newEndorsements[index3]) {
+						alreadyHasEndorsement = true;
+					}
+				}
+			}
+			if (alreadyHasEndorsement == false) {
+				training.endorsements.push(
+			}
+			
+		}
+
+		callback2(null,' training update success');
+	}, function(err) {
+		console.log('finishing async');
+		if (err) {
+			console.log('Error: ' + err);
+			callback(error);
+		} else {
+			console.log('All ' + totalUpdates + ' trainings updated or added or deleted records');
+			callback(null,'all trainings upadted success');
+		}
+	});
+
+	/*
 	// build list of uploaded trainings.  this time with newly compiled endorsement list.
 	var newTrainings = [];
 	for (var index in profiles) {
@@ -3067,15 +3123,7 @@ function updateNewTrainings(allTrainings, profiles, callback) {
 				if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
 					// create endorsement list from previous and new endorsments
 					var endorsementList = [];
-					/*if (typeof profiles[index].endorsements != 'undefined') {
-						for (var index4 in profiles[index].endorsements) {
-							if (profiles[index].competencies[index2].name == profiles[index].endorsements[index4].competency) {
-								endorsementList.push(profiles[index].endorsements[index4].id);
-							}
-						
-						}
-						
-					}*/
+
 					for (var index5 in profiles[index].newEndorsements) {
 						endorsementList.push(profiles[index].newEndorsements[index5]);
 					}
@@ -3196,7 +3244,7 @@ function updateNewTrainings(allTrainings, profiles, callback) {
       }
     });
 	  
-	
+	*/
 }
 
 app.post('/updateViewedByEndorsee', function(request, response) {
