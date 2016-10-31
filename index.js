@@ -2621,14 +2621,111 @@ app.post('/saveEndorsements', function(request, response) {
   var allTrainings = {};
 
   async.series([
+	  function(callback) {
+		console.log('loading all trainings');
+		loadAllTrainings(allTrainings, callback);
+	  },
+	  function(callback) {
+		addNewTraining(allTrainings, profilesJSON.profiles, callback);
+	  },
       function(callback) {
         loadEndorsements(allEndorsements, callback);
       },
 
       function(callback) {
         console.log('saving endorsement');
+        saveEndorsements(allEndorsements, profilesJSON.profiles, callback);
+      },
 
-        var date = new Date();
+      function(callback) {
+        console.log('deleting extra previous endorsements');
+
+        async.each(removeEndorsements, function(endorsementId, callback2) {
+          base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
+            if (err) {
+              console.log(err);
+              callback2(err);
+              return;
+            }
+            console.log('Deleted record ' + deletedRecord.id);
+            callback2(null, 'success');
+          });
+        }, function(error) {
+          if (error) {
+            console.log('Error: ' + error);
+            callback(error);
+            return;
+          } else {
+            console.log('done replacing all entries');
+            callback(null, 'success');
+          }
+        });
+      },
+	
+	function(callback) {
+		console.log('updating all endorsements trainings');
+		updateNewTrainings(allTrainings, profilesJSON, callback);
+	}
+    ],
+    // series callback
+    function(err, results) {
+      console.log('finishing async');
+      if (err) {
+        console.log('Error: ' + err);
+        response.send('Error: ' + err);
+      } else {
+        response.send('Done');
+      }
+    });
+
+});
+
+function loadEndorsements(endorsementsReference, callback) {
+  console.log('loading endorsements');
+  console.log(endorsementsReference);
+
+  base('Endorsements').select({
+    view: "Main View"
+  }).eachPage(function page(records, fetchNextPage) {
+
+    // This function (`page`) will get called for each page of records.
+
+    records.forEach(function(record) {
+      console.log('processing endorsement ' + record.get('Endorsement ID'));
+      endorsementsReference[record.getId()] = {
+        'endorsementid': record.get('Endorsement ID'),
+        'timestamp': record.get('Timestamp'),
+        'relateddelivery': record.get('Related Delivery') ? record.get('Related Delivery') : '',
+        'competency': record.get('Competency') ? record.get('Competency') : '',
+        'of': record.get('Of') ? record.get('Of') : '',
+        'by': record.get('By') ? record.get('By') : '',
+        'endorsement': record.get('Endorsement'),
+        'recommendedtraining': record.get('Recommended Training')
+
+      };
+
+    });
+
+    // To fetch the next page of records, call `fetchNextPage`.
+    // If there are more records, `page` will get called again.
+    // If there are no more records, `done` will get called.
+    fetchNextPage();
+
+  }, function done(error) {
+    if (error) {
+      console.log('error:');
+      console.log(error);
+      callback(error);
+      return;
+    }
+    console.log('successfully loaded endorsements');
+    //console.log(endorsements);
+    callback(null, 'success');
+  });
+}
+
+function saveEndorsements(allEndorsements, profiles, callback) {
+	var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
         var twoDigitMonth = ("0" + date.getMonth().toString()).slice(-2);
         var twoDigitDay = ("0" + date.getDate().toString()).slice(-2);
@@ -2642,47 +2739,47 @@ app.post('/saveEndorsements', function(request, response) {
 
         // compile list of all endorsements(including skipped and blank ones)
         var endorsements = [];
-        for (var index in profilesJSON.profiles) {
+        for (var index in profiles) {
 
-          if (profilesJSON.profiles[index].endorsement != 'endorsed') {
+          if (profiles[index].endorsement != 'endorsed') {
             var blankEndorsement = {
 
-              'Of': profilesJSON.profiles[index].id,
-              'Related Delivery': profilesJSON.delivery.id,
-              'By': profilesJSON.submitter.id,
+              'Of': profiles[index].id,
+              'Related Delivery': delivery.id,
+              'By': submitter.id,
               'Competency': [],
               'Timestamp': dateString,
-              'Endorsement': profilesJSON.profiles[index].endorsement,
+              'Endorsement': profiles[index].endorsement,
               'Recommended Training': []
             };
             endorsements.push(blankEndorsement);
 
           } else {
             var endorsementCount = 0;
-            for (var index2 in profilesJSON.profiles[index].competencies) {
-              if (profilesJSON.profiles[index].competencies[index2].endorsedCompetency == false) {
+            for (var index2 in profiles[index].competencies) {
+              if (profiles[index].competencies[index2].endorsedCompetency == false) {
                 continue;
               }
 
               endorsementCount++;
 
               var trainingArray = [];
-              for (var index3 in profilesJSON.profiles[index].competencies[index2].endorsedTraining) {
-                trainingArray.push(profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].id);
+              for (var index3 in profiles[index].competencies[index2].endorsedTraining) {
+                trainingArray.push(profiles[index].competencies[index2].endorsedTraining[index3].id);
               }
-              //if (profilesJSON.profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
+              //if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
               var endorsement = {
 
-                'Of': profilesJSON.profiles[index].id,
-                'Related Delivery': profilesJSON.delivery.id,
-                'By': profilesJSON.submitter.id,
-                'Competency': [profilesJSON.profiles[index].competencies[index2].id],
+                'Of': profiles[index].id,
+                'Related Delivery': delivery.id,
+                'By': submitter.id,
+                'Competency': [profiles[index].competencies[index2].id],
                 'Timestamp': dateString,
-                'Endorsement': profilesJSON.profiles[index].endorsement,
+                'Endorsement': profiles[index].endorsement,
                 'Recommended Training': trainingArray
               };
               endorsements.push(endorsement);
-              console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profilesJSON.profiles[index].competencies[index2].name);
+              console.log('adding endorsement for ' + profiles[index].email + ' by ' + endorsement['By'] + ' of ' + profiles[index].competencies[index2].name);
               //}
 
             }
@@ -2690,16 +2787,16 @@ app.post('/saveEndorsements', function(request, response) {
             if (endorsementCount == 0) {
               var endorsement = {
 
-                'Of': profilesJSON.profiles[index].id,
-                'Related Delivery': profilesJSON.delivery.id,
-                'By': profilesJSON.submitter.id,
+                'Of': profiles[index].id,
+                'Related Delivery': delivery.id,
+                'By': submitter.id,
                 'Competency': [],
                 'Timestamp': dateString,
-                'Endorsement': profilesJSON.profiles[index].endorsement,
+                'Endorsement': profiles[index].endorsement,
                 'Recommended Training': []
               };
               endorsements.push(endorsement);
-              console.log('adding endorsement for ' + profilesJSON.profiles[index].email + ' by ' + endorsement['By']);
+              console.log('adding endorsement for ' + profiles[index].email + ' by ' + endorsement['By']);
 
             }
 
@@ -2795,11 +2892,11 @@ app.post('/saveEndorsements', function(request, response) {
                 console.log('saved created endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
 				// add new endorsements ids to the profiles list
 				for (var index in profilesJSON) {
-					if (profilesJSON.profiles[index].id == endorsement['Of']) {
-						if (typeof profilesJSON.profiles[index].newEndorsements == 'undefined') {
-							profilesJSON.profiles[index].newEndorsements = [];
+					if (profiles[index].id == endorsement['Of']) {
+						if (typeof profiles[index].newEndorsements == 'undefined') {
+							profiles[index].newEndorsements = [];
 						}
-						profilesJSON.profiles[index].newEndorsements.push(record.getId());
+						profiles[index].newEndorsements.push(record.getId());
 					}
 				}
 				//record.getId();
@@ -2831,97 +2928,6 @@ app.post('/saveEndorsements', function(request, response) {
             callback(null, 'success');
           }
         });
-
-      },
-
-      function(callback) {
-        console.log('deleting extra previous endorsements');
-
-        async.each(removeEndorsements, function(endorsementId, callback2) {
-          base('Endorsements').destroy(endorsementId, function(err, deletedRecord) {
-            if (err) {
-              console.log(err);
-              callback2(err);
-              return;
-            }
-            console.log('Deleted record ' + deletedRecord.id);
-            callback2(null, 'success');
-          });
-        }, function(error) {
-          if (error) {
-            console.log('Error: ' + error);
-            callback(error);
-            return;
-          } else {
-            console.log('done replacing all entries');
-            callback(null, 'success');
-          }
-        });
-      },
-	function(callback) {
-        console.log('loading all trainings');
-		loadAllTrainings(allTrainings, callback);
-	},
-	function(callback) {
-		console.log('updating all endorsements trainings');
-		updateNewTrainings(allTrainings, profilesJSON, callback);
-	}
-    ],
-    // series callback
-    function(err, results) {
-      console.log('finishing async');
-      if (err) {
-        console.log('Error: ' + err);
-        response.send('Error: ' + err);
-      } else {
-        response.send('Done');
-      }
-    });
-
-});
-
-function loadEndorsements(endorsementsReference, callback) {
-  console.log('loading endorsements');
-  console.log(endorsementsReference);
-
-  base('Endorsements').select({
-    view: "Main View"
-  }).eachPage(function page(records, fetchNextPage) {
-
-    // This function (`page`) will get called for each page of records.
-
-    records.forEach(function(record) {
-      console.log('processing endorsement ' + record.get('Endorsement ID'));
-      endorsementsReference[record.getId()] = {
-        'endorsementid': record.get('Endorsement ID'),
-        'timestamp': record.get('Timestamp'),
-        'relateddelivery': record.get('Related Delivery') ? record.get('Related Delivery') : '',
-        'competency': record.get('Competency') ? record.get('Competency') : '',
-        'of': record.get('Of') ? record.get('Of') : '',
-        'by': record.get('By') ? record.get('By') : '',
-        'endorsement': record.get('Endorsement'),
-        'recommendedtraining': record.get('Recommended Training')
-
-      };
-
-    });
-
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    // If there are no more records, `done` will get called.
-    fetchNextPage();
-
-  }, function done(error) {
-    if (error) {
-      console.log('error:');
-      console.log(error);
-      callback(error);
-      return;
-    }
-    console.log('successfully loaded endorsements');
-    //console.log(endorsements);
-    callback(null, 'success');
-  });
 }
 
 function loadAllTrainings(trainings, callback) {
