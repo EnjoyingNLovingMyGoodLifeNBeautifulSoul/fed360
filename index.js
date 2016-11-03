@@ -3147,6 +3147,7 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 		
 		if (endorsementListChanged == true) {
 			console.log('updating trainingId : ' + trainingId);
+			console.log('endorsementsForTraining : ' + endorsementsForTraining);
 			base('Trainings').update(trainingId, {
 					  'Associated Endorsements': endorsementsForTraining
 
