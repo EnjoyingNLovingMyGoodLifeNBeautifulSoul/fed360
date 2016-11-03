@@ -3117,7 +3117,6 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 	async.eachOf(allTrainings, function(training, trainingId, callback2) {
 		// check endorsements in each training record.  Add id if its listed in newEndorsements.  Remove id if its listed in removeEndorsements
 		
-		profiles[index].competencies[index2].endorsedTraining[index3].id;
 		
 		var endorsementsForTraining = [];
 		// go through all the endorsements that contain this training (id)
