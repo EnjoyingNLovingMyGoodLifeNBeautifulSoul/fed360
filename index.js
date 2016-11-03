@@ -2724,6 +2724,7 @@ function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, re
         for (var index in profiles) {
 
           if (profiles[index].endorsement != 'endorsed') {
+			console.log('building base endorsed endorsement');
             var blankEndorsement = {
 
               'Of': profiles[index].id,
@@ -2737,6 +2738,7 @@ function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, re
             endorsements.push(blankEndorsement);
 
           } else {
+			console.log('building endorsed endorsement with traaning');
             var endorsementCount = 0;
             for (var index2 in profiles[index].competencies) {
               if (profiles[index].competencies[index2].endorsedCompetency == false) {
@@ -2749,6 +2751,7 @@ function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, re
               for (var index3 in profiles[index].competencies[index2].endorsedTraining) {
                 trainingArray.push(profiles[index].competencies[index2].endorsedTraining[index3].id);
               }
+			  console.log('training array: ' + trainingArray);
               //if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
               var endorsement = {
 
