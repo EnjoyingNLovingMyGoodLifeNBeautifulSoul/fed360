@@ -3148,10 +3148,10 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 					  'Associated Endorsements': endorsementsForTraining
 
 			}, function(err, record) {
-				  if (error) {
+				  if (err) {
 					console.log('error:');
-					console.log(error);
-					callback2(error);
+					console.log(err);
+					callback2(err);
 				  } else {
 					totalUpdates++;
 					callback2(null,'training endorsements updated successfully');
