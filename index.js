@@ -2641,7 +2641,7 @@ app.post('/saveEndorsements', function(request, response) {
 
       function(callback) {
         console.log('deleting undone endorsements');
-		removeExtraEndorsements(removeEndorsements, callback);
+		removeExtraEndorsements(removeEndorsements, profilesJSON.profiles, callback);
       },
 	
 	function(callback) {
