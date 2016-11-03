@@ -3161,11 +3161,12 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 					callback2(err);
 				  } else {
 					totalUpdates++;
-					callback2(null,'training endorsements updated successfully');
+					callback2(null,'training endorsement updated successfully');
 				  }
 			});
 		} else {
 			console.log('training endorsement not updated');
+			callback2(null,'training endorsement skipped successfully');
 		}
 	}, function(err) {
 		console.log('finishing async training updates');
