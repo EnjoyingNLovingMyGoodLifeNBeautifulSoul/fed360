@@ -3058,7 +3058,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 						  'Title': newtraining.endorsedName,
 						  'Description (markdown compatible?)': newtraining.endorsedDescription,
 						  'Link': newtraining.endorsedReadMoreURL,
-						  'Related Competencies': [newtraining.competencyid],
+// computed column		  'Related Competencies': [newtraining.competencyid],
 						  'Associated Endorsements': [newtraining.endorsementid],
 						  'Predefined': 'FALSE',
 
