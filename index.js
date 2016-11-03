@@ -2646,7 +2646,7 @@ app.post('/saveEndorsements', function(request, response) {
 	
 	function(callback) {
 		console.log('updating all endorsements trainings');
-		updateNewTrainings(allTrainings, allEndorsements, profilesJSON, callback);
+		updateTrainings(allTrainings, allEndorsements, profilesJSON.profiles, callback);
 	}
     ],
     // series callback
