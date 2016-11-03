@@ -3023,6 +3023,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 						}
 					}
 					if (existingTrainingId != '') {
+						console.log('new training record to be created for ' + profiles[index].competencies[index2].endorsedTraining[index3].endorsedName);
 						newTrainings.push({
 							'endorsedDescription':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedDescription,
 							'endorsedName':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedName,
@@ -3033,6 +3034,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 							'newendorsementids': []
 						});
 					} else {
+						console.log('previous training name exists.  assigning id to training: ' + existingTrainingId);
 						profiles[index].competencies[index2].endorsedTraining[index3].id = existingTrainingId;
 					}
 
