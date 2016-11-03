@@ -2656,6 +2656,7 @@ app.post('/saveEndorsements', function(request, response) {
         console.log('Error: ' + err);
         response.send('Error: ' + err);
       } else {
+		console.log('finished saveEndorsements POST call');
         response.send('Done');
       }
     });
@@ -3131,7 +3132,8 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 		}
 		
 		// update training id if there are any changes in the endorsement list
-	
+	    console.log('endorsementsForTraining : ' + endorsementsForTraining);
+		
 		var endorsementListChanged = false;
 		for (var index in endorsementsForTraining) {
 			var endorsementAlreadyInTraining = false;
@@ -3161,6 +3163,8 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 					callback2(null,'training endorsements updated successfully');
 				  }
 			});
+		} else {
+			console.log('endorsement not updated');
 		}
 	}, function(err) {
 		console.log('finishing async training updates');
