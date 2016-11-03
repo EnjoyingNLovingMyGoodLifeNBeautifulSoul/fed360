@@ -3023,7 +3023,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 							console.log('previous training existing id: ' + existingTrainingId);
 						}
 					}
-					if (existingTrainingId != '') {
+					if (existingTrainingId == '') {
 						console.log('new training record to be created for ' + profiles[index].competencies[index2].endorsedTraining[index3].endorsedName);
 						newTrainings.push({
 							'endorsedDescription':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedDescription,
