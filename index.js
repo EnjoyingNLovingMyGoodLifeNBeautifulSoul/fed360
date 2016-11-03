@@ -3103,7 +3103,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 			console.log('finishing addNewTrainings async');
 			if (err) {
 				console.log('Error: ' + err);
-				callback(error);
+				callback(err);
 			} else {
 				console.log('All ' + totalNewRecords + ' new trainings added');
 				callback(null,'all trainings added success');
