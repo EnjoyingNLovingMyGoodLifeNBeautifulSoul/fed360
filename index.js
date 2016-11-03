@@ -2636,7 +2636,7 @@ app.post('/saveEndorsements', function(request, response) {
 
       function(callback) {
         console.log('saving endorsements');
-        saveEndorsements(allEndorsements, profilesJSON.profiles, removeEndorsements, callback);
+        saveEndorsements(allEndorsements, profilesJSON.profiles, profilesJSON.delivery.id, profilesJSON.submitter.id, removeEndorsements, callback);
       },
 
       function(callback) {
@@ -2706,7 +2706,7 @@ function loadEndorsements(endorsementsReference, callback) {
   });
 }
 
-function saveEndorsements(allEndorsements, profiles, removeEndorsements, callback) {
+function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, removeEndorsements, callback) {
 	var date = new Date();
         // Timestamp format: 2016-01-25T17:10:00.000Z
         var twoDigitMonth = ("0" + date.getMonth().toString()).slice(-2);
@@ -2727,8 +2727,8 @@ function saveEndorsements(allEndorsements, profiles, removeEndorsements, callbac
             var blankEndorsement = {
 
               'Of': profiles[index].id,
-              'Related Delivery': delivery.id,
-              'By': submitter.id,
+              'Related Delivery': deliveryid,
+              'By': submitterid,
               'Competency': [],
               'Timestamp': dateString,
               'Endorsement': profiles[index].endorsement,
