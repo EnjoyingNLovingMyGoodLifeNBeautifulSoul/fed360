@@ -3015,8 +3015,8 @@ function addNewTrainings(allTrainings, profiles, callback) {
 					// only add if record does not exist
 					var existingTrainingId = '';
 					for (var index4 in allTrainings) {
-						if (allTrainings.get('Title') == profiles[index].competencies[index2].endorsedTraining[index3].endorsedName) {
-							existingTrainingId = allTrainings.getId();
+						if (allTrainings.title == profiles[index].competencies[index2].endorsedTraining[index3].endorsedName) {
+							existingTrainingId = index4;
 						}
 					}
 					if (existingTrainingId != '') {
