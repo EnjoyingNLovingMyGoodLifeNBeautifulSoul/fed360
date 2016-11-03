@@ -3112,12 +3112,13 @@ function addNewTrainings(allTrainings, profiles, callback) {
 }
 
 function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
-	console.log('allTrainings: ' + allTrainings);
-	console.log('allTraining keys: ' + Object.keys(allTrainings));
+	console.log('updating training endorsements');
+	//console.log('allTrainings: ' + allTrainings);
+	//console.log('allTraining keys: ' + Object.keys(allTrainings));
 	var totalUpdates = 0;
 	async.forEachOf(allTrainings, function(training, trainingId, callback2) {
 		// check endorsements in each training record.  Add id if its listed in newEndorsements.  Remove id if its listed in removeEndorsements
-		console.log('trainingId : ' + trainingId);
+		//console.log('trainingId : ' + trainingId);
 		
 		var endorsementsForTraining = [];
 		// go through all the endorsements that contain this training (id)
@@ -3145,6 +3146,7 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 		}
 		
 		if (endorsementListChanged == true) {
+			console.log('updating trainingId : ' + trainingId);
 			base('Trainings').update(trainingId, {
 					  'Associated Endorsements': endorsementsForTraining
 
