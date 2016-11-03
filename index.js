@@ -3107,6 +3107,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 
 function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 	
+	var totalUpdates = 0;
 	async.eachOf(allTrainings, function(training, trainingId, callback2) {
 		// check endorsements in each training record.  Add id if its listed in newEndorsements.  Remove id if its listed in removeEndorsements
 		
@@ -3145,13 +3146,23 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 				  if (error) {
 					console.log('error:');
 					console.log(error);
-					callback3(error);
+					callback2(error);
 				  } else {
 					totalUpdates++;
-					callback3(null,'training endorsements updated successfully');
+					callback2(null,'training endorsements updated successfully');
 				  }
 			});
 		}
+	}, function(err) {
+		console.log('finishing async training updates');
+		if (err) {
+			console.log('Error: ' + err);
+			callback(err);
+		} else {
+			console.log('All ' + totalUpdates + ' training updates completed ');
+			callback(null, 'success');
+		}
+    });
 		
 }
 
