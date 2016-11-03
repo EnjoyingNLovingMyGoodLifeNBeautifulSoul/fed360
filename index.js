@@ -3125,7 +3125,7 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 		for (var index in allEndorsements) {
 			for (var index2 in allEndorsements[index].recommendedtraining) {
 				if (allEndorsements[index].recommendedtraining[index2] == trainingId) {
-					endorsementsForTraining.push(allEndorsements[index].endorsementid);
+					endorsementsForTraining.push(index);
 				}
 			}
 		}
