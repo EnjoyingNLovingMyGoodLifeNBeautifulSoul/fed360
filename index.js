@@ -3063,10 +3063,10 @@ function addNewTrainings(allTrainings, profiles, callback) {
 						  'Predefined': 'FALSE',
 
 				}, function(err, record) {
-					  if (error) {
+					  if (err) {
 						console.log('error:');
-						console.log(error);
-						callback2(error);
+						console.log(err);
+						callback2(err);
 					  } else {
 						totalNewRecords++;
 						for (var index in profiles) {
