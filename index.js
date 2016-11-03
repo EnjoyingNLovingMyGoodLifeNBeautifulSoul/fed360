@@ -3059,7 +3059,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 						  'Description (markdown compatible?)': newtraining.endorsedDescription,
 						  'Link': newtraining.endorsedReadMoreURL,
 // computed column		  'Related Competencies': [newtraining.competencyid],
-						  'Associated Endorsements': [newtraining.endorsementid],
+// is added later         'Associated Endorsements': newtraining.newendorsementids,
 						  'Predefined': 'FALSE',
 
 				}, function(err, record) {
