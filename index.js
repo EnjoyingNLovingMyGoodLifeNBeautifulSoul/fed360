@@ -2738,7 +2738,7 @@ function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, re
             endorsements.push(blankEndorsement);
 
           } else {
-			console.log('building endorsed endorsement with traaning');
+			console.log('building endorsed endorsement with training');
             var endorsementCount = 0;
             for (var index2 in profiles[index].competencies) {
               if (profiles[index].competencies[index2].endorsedCompetency == false) {
@@ -2751,7 +2751,7 @@ function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, re
               for (var index3 in profiles[index].competencies[index2].endorsedTraining) {
                 trainingArray.push(profiles[index].competencies[index2].endorsedTraining[index3].id);
               }
-			  console.log('training array: ' + trainingArray);
+			  console.log('training array length: ' + trainingArray.length);
               //if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
               var endorsement = {
 
