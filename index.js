@@ -3140,6 +3140,7 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 			for (var index2 in training.endorsements) {
 				if (endorsementsForTraining[index] == training.endorsements[index2]) {
 					endorsementAlreadyInTraining = true;
+					console.log('found matching endorsement id: from endorsement ' + endorsementsForTraining[index] + ' from training ' + training.endorsements[index2]);
 				}
 			}
 			if (endorsementAlreadyInTraining == false) {
@@ -3149,7 +3150,7 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 		
 		if (endorsementListChanged == true) {
 			console.log('updating trainingId : ' + trainingId);
-			console.log('endorsementsForTraining : ' + endorsementsForTraining);
+			//console.log('endorsementsForTraining : ' + endorsementsForTraining);
 			base('Trainings').update(trainingId, {
 					  'Associated Endorsements': endorsementsForTraining
 
@@ -3164,7 +3165,7 @@ function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 				  }
 			});
 		} else {
-			console.log('endorsement not updated');
+			console.log('training endorsement not updated');
 		}
 	}, function(err) {
 		console.log('finishing async training updates');
