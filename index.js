@@ -2753,8 +2753,8 @@ function saveEndorsements(allEndorsements, profiles, deliveryid, submitterid, re
               var endorsement = {
 
                 'Of': profiles[index].id,
-                'Related Delivery': delivery.id,
-                'By': submitter.id,
+                'Related Delivery': deliveryid,
+                'By': submitterid,
                 'Competency': [profiles[index].competencies[index2].id],
                 'Timestamp': dateString,
                 'Endorsement': profiles[index].endorsement,
