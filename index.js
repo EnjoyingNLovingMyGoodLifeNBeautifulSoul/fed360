@@ -2646,7 +2646,7 @@ app.post('/saveEndorsements', function(request, response) {
 	
 	function(callback) {
 		console.log('updating all endorsements trainings');
-		updateNewTrainings(allTrainings, profilesJSON, callback);
+		updateNewTrainings(allTrainings, allEndorsements, profilesJSON, callback);
 	}
     ],
     // series callback
@@ -2879,9 +2879,21 @@ function saveEndorsements(allEndorsements, profiles, removeEndorsements, callbac
 							profiles[index].newEndorsements = [];
 						}
 						profiles[index].newEndorsements.push(record.getId());
+						
 					}
 				}
-				//record.getId();
+				// add newly returned record to allEndorsements
+				allEndorsements[record.getId()] = {
+					'endorsementid': record.get('Endorsement ID'),
+					'timestamp': record.get('Timestamp'),
+					'relateddelivery': record.get('Related Delivery') ? record.get('Related Delivery') : '',
+					'competency': record.get('Competency') ? record.get('Competency') : '',
+					'of': record.get('Of') ? record.get('Of') : '',
+					'by': record.get('By') ? record.get('By') : '',
+					'endorsement': record.get('Endorsement'),
+					'recommendedtraining': record.get('Recommended Training')
+
+				  };
                 callback2(null, 'success');
 
               });
@@ -2895,6 +2907,19 @@ function saveEndorsements(allEndorsements, profiles, removeEndorsements, callbac
                   return;
                 }
                 console.log('saved updated endorsement of ' + endorsement['Of'] + ' by ' + endorsement['By']);
+				
+				// update newly updated record to allEndorsements
+				allEndorsements[record.getId()] = {
+					'endorsementid': record.get('Endorsement ID'),
+					'timestamp': record.get('Timestamp'),
+					'relateddelivery': record.get('Related Delivery') ? record.get('Related Delivery') : '',
+					'competency': record.get('Competency') ? record.get('Competency') : '',
+					'of': record.get('Of') ? record.get('Of') : '',
+					'by': record.get('By') ? record.get('By') : '',
+					'endorsement': record.get('Endorsement'),
+					'recommendedtraining': record.get('Recommended Training')
+
+				  };
                 callback2(null, 'success');
 
               });
@@ -3080,131 +3105,41 @@ function addNewTrainings(allTrainings, profiles, callback) {
 		});	
 }
 
-function updateTrainings(allTrainings, profiles, callback) {
+function updateTrainings(allTrainings, allEndorsements, profiles, callback) {
 	
-	async.each(allTrainings, function(training, callback2) {
+	async.eachOf(allTrainings, function(training, trainingId, callback2) {
 		// check endorsements in each training record.  Add id if its listed in newEndorsements.  Remove id if its listed in removeEndorsements
 		
-		profiles[index].competencies[index2].endorsedTraining[index3].id
+		profiles[index].competencies[index2].endorsedTraining[index3].id;
 		
-		for (var index in training.endorsements) {
-			var alreadyHasEndorsement = false;
-			for (var index2 in profiles) {
-				for (var index3 in profiles[index2].newEndorsements) {
-					if (training.endorsements[index] == profiles[index2].newEndorsements[index3]) {
-						alreadyHasEndorsement = true;
-					}
+		var endorsementsForTraining = [];
+		// go through all the endorsements that contain this training (id)
+		for (var index in allEndorsements) {
+			for (var index2 in allEndorsements[index].recommendedtraining) {
+				if (allEndorsements[index].recommendedtraining[index2] == trainingId) {
+					endorsementsForTraining.push(allEndorsements[index].endorsementid);
 				}
 			}
-			if (alreadyHasEndorsement == false) {
-				training.endorsements.push(
-			}
-			
 		}
-
-		callback2(null,' training update success');
-	}, function(err) {
-		console.log('finishing async');
-		if (err) {
-			console.log('Error: ' + err);
-			callback(error);
-		} else {
-			console.log('All ' + totalUpdates + ' trainings updated or added or deleted records');
-			callback(null,'all trainings upadted success');
-		}
-	});
-
-	/*
-	// build list of uploaded trainings.  this time with newly compiled endorsement list.
-	var newTrainings = [];
-	for (var index in profiles) {
-		for (var index2 in profiles.competencies) {
-			for (var index3 in profiles.competencies[index].endorsedTraining) {
-				if (profiles[index].competencies[index2].endorsedTraining[index3].newTraining == true) {
-					// create endorsement list from previous and new endorsments
-					var endorsementList = [];
-
-					for (var index5 in profiles[index].newEndorsements) {
-						endorsementList.push(profiles[index].newEndorsements[index5]);
-					}
-					
-					newTrainings.push({
-						'endorsedDescription':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedDescription,
-						'endorsedName':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedName,
-						'endorsedReadMoreURL':  profiles[index].competencies[index2].endorsedTraining[index3].endorsedReadMoreURL,
-						'id':  profiles[index].competencies[index2].endorsedTraining[index3].id,
-						'newTraining':  profiles[index].competencies[index2].endorsedTraining[index3].newTraining,
-						'competency': profiles[index].competencies[index2].name,
-						'competencyid': profiles[index].competencies[index2].id,
-						'newendorsementids': endorsementList
-					});
-				}
-				
-			}
-		}
-	}
+		
+		// update training id if there are any changes in the endorsement list
 	
-	// update all trainings
-	async.series([
-      function(callback2) {
-        var totalUpdates = 0;
-		var totalNewRecords = 0;
-        // process all uploaded training records
-		async.each(newTrainings, function(newtraining, callback3) {
-			console.log(' ' + newtraining.endorsedName + ' being created/updated');
-			
-			// if the uploaded training is new, it has no id
-			if (typeof newtraining.id == 'undefined') {
-				console.log('created new training record');
-				
-				base('Trainings').create({
-						  'Title': newtraining.endorsedName,
-						  'Description (markdown compatible?)': newtraining.endorsedDescription,
-						  'Link': newtraining.endorsedReadMoreURL,
-						  'Related Competencies': competencylist,
-						  'Associated Endorsements': newtraining.endorsementid,
-						  'Predefined': 'FALSE',
-
-				}, function(err, record) {
-					  if (error) {
-						console.log('error:');
-						console.log(error);
-						callback3(error);
-					  } else {
-						totalNewRecords++;
-						callback3(null,'training record created successfully');
-					  }
-				});
-				
-				return;
-			}
-
-			// if it does have an id, then update its competency and endorsement list
-			var competencylist = [];
-			// load existing competency list if the previous record exists
-			competencyList = allTrainings[newtraining.id].competencies;
-			if (competencyList.indexOf(newtraining.competencyid) != -1 ) {
-				competencyList.push(newtraining.competencyid);
-			}
-			
-			
-			var endorsementlist = [];
-			// load existing endorsement list if the previous record exists
-			endorsementList = allTrainings[newtraining.id].endorsements;
-			for (var index in newtraining.newendorsementids) {
-				if (endorsementList.indexOf(newtraining.newendorsementids[index]) != -1 ) {
-					endorsementList.push(newtraining.newendorsementids[index]);
+		var endorsementListChanged = false;
+		for (var index in endorsementsForTraining) {
+			var endorsementAlreadyInTraining = false;
+			for (var index2 in training.endorsements) {
+				if (endorsementsForTraining[index] == training.endorsements[index2]) {
+					endorsementAlreadyInTraining = true;
 				}
 			}
-			
-
-			
-			base('Trainings').update(newtraining.id, {
-					  'Title': newtraining.endorsedName,
-					  'Description (markdown compatible?)': newtraining.endorsedDescription,
-					  'Related Competencies': competencylist,
-					  'Associated Endorsements': newtraining.endorsementids,
-					  'Predefined': 'FALSE',
+			if (endorsementAlreadyInTraining == false) {
+				endorsementListChanged = true;
+			}
+		}
+		
+		if (endorsementListChanged == true) {
+			base('Trainings').update(trainingId, {
+					  'Associated Endorsements': endorsementsForTraining
 
 			}, function(err, record) {
 				  if (error) {
@@ -3213,38 +3148,11 @@ function updateTrainings(allTrainings, profiles, callback) {
 					callback3(error);
 				  } else {
 					totalUpdates++;
-					callback3(null,'training updated successfully');
+					callback3(null,'training endorsements updated successfully');
 				  }
 			});
-			
-		}, function(err) {
-			console.log('finishing async');
-			if (err) {
-				console.log('Error: ' + err);
-				callback2(error);
-			} else {
-				console.log('All ' + totalUpdates + ' trainings updated or added or deleted records');
-				callback2(null,'all trainings upadted success');
-			}
-		});
-      },
-	  function(callback2) {
-		// delete trainings with no endorsements
-	  }
-	  ],
-    // series callback
-    function(err, results) {
-      console.log('finishing updateNewTrainings');
-      if (err) {
-        console.log('Error: ' + err);
-        callback(err);
-      } else {
-		console.log('all new trainings updated or added');
-        callback(null,'success');
-      }
-    });
-	  
-	*/
+		}
+		
 }
 
 app.post('/updateViewedByEndorsee', function(request, response) {
