@@ -2627,7 +2627,7 @@ app.post('/saveEndorsements', function(request, response) {
 	  },
 	  function(callback) {
 		console.log('add new training records');
-		addNewTraining(allTrainings, profilesJSON.profiles, callback);
+		addNewTrainings(allTrainings, profilesJSON.profiles, callback);
 	  },
       function(callback) {
 		  console.log('loading all endorsements');
