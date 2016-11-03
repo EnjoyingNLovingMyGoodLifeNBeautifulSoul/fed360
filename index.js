@@ -1270,7 +1270,7 @@ app.get('/loadProfiles', function(request, response) {
           records.forEach(function(record) {
             console.log('processing organization ' + record.get('Name'));
             organizations[record.getId()] = {
-              'name': record.get('Title (Subject Line)'),
+              'name': record.get('Name'),
               'people': record.get('People'),
               'number': record.get('Number'),
               'positions': record.get('Positions'),
