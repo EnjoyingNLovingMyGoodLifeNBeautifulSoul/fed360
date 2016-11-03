@@ -1449,7 +1449,8 @@ app.get('/loadProfiles', function(request, response) {
               'of': record.get('Of'),
               'by': record.get('By'),
               'endorsement': record.get('Endorsement'),
-              'recommendedtraining': record.get('Recommended Training') == 'True' ? true : false
+			  'recommendedtraining': typeof record.get('Recommended Training') == 'undefined' ? [] : record.get('Recommended Training')
+              //'recommendedtraining': record.get('Recommended Training') == 'True' ? true : false
 
             };
 
