@@ -3020,6 +3020,7 @@ function addNewTrainings(allTrainings, profiles, callback) {
 					for (var index4 in allTrainings) {
 						if (allTrainings.title == profiles[index].competencies[index2].endorsedTraining[index3].endorsedName) {
 							existingTrainingId = index4;
+							console.log('previous training existing id: ' + existingTrainingId);
 						}
 					}
 					if (existingTrainingId != '') {
