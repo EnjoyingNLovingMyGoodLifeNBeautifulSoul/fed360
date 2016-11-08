@@ -1476,6 +1476,12 @@ app.get('/loadProfiles', function(request, response) {
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
+			  // skip endorsement if delivery does not match viewed delivery
+			  if (endorsements['relateddelivery'] != deliveryId) {
+				  continue;
+			  }
+
+
               // skip endorsement if submitter isn't this person
               if (endorsements[endorsementId].by != submitterId) {
                 continue;
