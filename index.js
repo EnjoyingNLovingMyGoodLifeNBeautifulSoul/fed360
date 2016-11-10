@@ -1481,6 +1481,7 @@ app.get('/loadProfiles', function(request, response) {
 
 			  // skip endorsement if delivery does not match viewed delivery
 			  if (endorsements['relateddelivery'] != deliveryId) {
+				  console.log('delivery ' + endorsements['relateddelivery'] + ' does not match ' + deliveryId);
 				  continue;
 			  }
 
