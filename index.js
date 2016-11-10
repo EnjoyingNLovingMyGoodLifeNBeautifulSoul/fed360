@@ -390,11 +390,13 @@ app.post('/sendEndorseLink',
 
             var toEmailList = '';
             for (var index in allEmails) {
-              if (allEmails[index].email != emailItem.email) {
-                toEmailList = toEmailList + allEmails[index].email + ',';
-                //console.log(toEmailList);
+				// check to ensure user does not get his own email as endorsement option
+				if (allEmails[index].email != emailItem.email) {
+				  
+					toEmailList = toEmailList + allEmails[index].email + ',';
+					//console.log(toEmailList);
 
-              }
+				}
             }
             if (toEmailList.charAt(toEmailList.length - 1) == ',') {
               toEmailList = toEmailList.slice(0, toEmailList.length - 1);
@@ -1471,6 +1473,7 @@ app.get('/loadProfiles', function(request, response) {
           //console.log(endorsements);
           for (var index in profilesJSON.profiles) {
             var endorsementsFromSubmitter = [];
+			console.log('profile ' + profilesJSON.profiles[index].firstname + ' ' + profilesJSON.profiles[index].firstname + ' has ' + profilesJSON.profiles[index].endorsements.length + ' endorsements');
             for (var index2 in profilesJSON.profiles[index].endorsements) {
 
               var endorsementId = profilesJSON.profiles[index].endorsements[index2];
