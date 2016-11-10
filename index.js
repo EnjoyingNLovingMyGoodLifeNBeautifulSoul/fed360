@@ -1480,8 +1480,8 @@ app.get('/loadProfiles', function(request, response) {
               var endorsedCompetencyId = endorsements[endorsementId].competency;
 
 			  // skip endorsement if delivery does not match viewed delivery
-			  if (endorsements['relateddelivery'] != deliveryId) {
-				  console.log('delivery ' + endorsements['relateddelivery'] + ' does not match ' + deliveryId);
+			  if (endorsements[endorsementId].relateddelivery != deliveryId) {
+				  console.log('delivery ' + endorsements[endorsementId].relateddelivery  + ' does not match ' + deliveryId);
 				  continue;
 			  }
 
